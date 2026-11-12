@@ -1,0 +1,21 @@
+{
+ "mode": "horizon",
+ "pair": [
+  "tests/out/xp_aot",
+  "tests/out/xp_lle"
+ ],
+ "noise_max": 3,
+ "range": [
+  0,
+  25901
+ ],
+ "frames": 25902,
+ "horizon_host": 16122,
+ "horizon_body": 59,
+ "horizon_total": 64,
+ "pre_frames": 16122,
+ "healed_runs": 71,
+ "pre_longest_run": 1687,
+ "pre_peak": 2897,
+ "last_body": 29652
+}

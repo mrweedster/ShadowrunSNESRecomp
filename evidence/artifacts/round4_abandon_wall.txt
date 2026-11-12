@@ -1,0 +1,44 @@
+# round4_abandon_wall.txt
+#
+# what: the seeds that stopped the route: what the host reported when a seeded body met an unauthorized dispatch
+# how:  the sweep rows whose route exit is not a script quit, joined to the abandon accounting in each build's last_run_report.json
+#
+# framework pin: 773285b8210f2254ae87d0a14113980fb36990ad
+# generated: 2026-11-08T08:02:38Z (host Darwin arm64)
+# source tree: /Users/wee/Documents/work/ports/ShadowrunSNESRecomp
+
+s80C1C9	seed $80C1C9	build rc=0	exit=3 wall=23s  exit: script until timed out after 21530 frames	[unresolved-abandon] first hit site=$80F4F9 frame=1766	aot   0.39%	state: first divergence at frame_001766;2809 of 4575 frames differ;
+s80C1B3	seed $80C1B3	build rc=0	exit=3 wall=25s  exit: script until timed out after 21530 frames	[unresolved-abandon] first hit site=$80F4F9 frame=1766	aot   0.39%	state: first divergence at frame_001766;2809 of 4575 frames differ;
+s80F495	seed $80F495	build rc=0	exit=3 wall=24s  exit: script until timed out after 21530 frames	[unresolved-abandon] first hit site=$80F4F9 frame=1766	aot   0.39%	state: first divergence at frame_001766;2809 of 4575 frames differ;
+s80F362	seed $80F362	build rc=0	exit=3 wall=25s  exit: script until timed out after 21530 frames	[unresolved-abandon] first hit site=$80F4F9 frame=1766	aot   0.39%	state: first divergence at frame_001766;2809 of 4575 frames differ;
+s80F4F9	seed $80F4F9	build rc=0	exit=3 wall=25s  exit: script until timed out after 21530 frames	[unresolved-abandon] first hit site=$80F4F9 frame=1766	aot   0.39%	state: first divergence at frame_001766;2809 of 4575 frames differ;
+s80F889	seed $80F889	build rc=0	exit=3 wall=25s  exit: script until timed out after 21530 frames	[unresolved-abandon] first hit site=$80F4F9 frame=1766	aot   0.39%	state: first divergence at frame_001766;2809 of 4575 frames differ;
+
+==== build-r4base
+   total_hits=0 distinct_sites=0 sites=[]
+==== build-r4pair
+   total_hits=0 distinct_sites=0 sites=[]
+==== build-r4clean
+   total_hits=0 distinct_sites=0 sites=[]
+==== build-s80C1C9
+   total_hits=5 distinct_sites=1 sites=[{'site': '0x80F4F9', 'hits': 5, 'first_frame': 1766, 'last_frame': 1770, 'last_hrv': 2}]
+==== build-s80C1B3
+   total_hits=5 distinct_sites=1 sites=[{'site': '0x80F4F9', 'hits': 5, 'first_frame': 1766, 'last_frame': 1770, 'last_hrv': 2}]
+==== build-s80C399
+   total_hits=0 distinct_sites=0 sites=[]
+==== build-s80F495
+   total_hits=5 distinct_sites=1 sites=[{'site': '0x80F4F9', 'hits': 5, 'first_frame': 1766, 'last_frame': 1770, 'last_hrv': 2}]
+==== build-s80F362
+   total_hits=5 distinct_sites=1 sites=[{'site': '0x80F4F9', 'hits': 5, 'first_frame': 1766, 'last_frame': 1770, 'last_hrv': 2}]
+==== build-s80AAB3
+   total_hits=0 distinct_sites=0 sites=[]
+==== build-s80F4F9
+   total_hits=5 distinct_sites=1 sites=[{'site': '0x80F4F9', 'hits': 5, 'first_frame': 1766, 'last_frame': 1770, 'last_hrv': 2}]
+==== build-s80ABBC
+   total_hits=0 distinct_sites=0 sites=[]
+==== build-s80B1DB
+   total_hits=0 distinct_sites=0 sites=[]
+==== build-s80F889
+   total_hits=5 distinct_sites=1 sites=[{'site': '0x80F4F9', 'hits': 5, 'first_frame': 1766, 'last_frame': 1770, 'last_hrv': 2}]
+==== build-r4probe
+   total_hits=0 distinct_sites=0 sites=[]

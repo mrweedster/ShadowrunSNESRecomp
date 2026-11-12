@@ -1,0 +1,48 @@
+# round5_pair_checkpoints.txt
+#
+# what: the shipped pair at every tagged checkpoint against the directive-bearing control: per-checkpoint state verdict, then the master-clock delta
+# how:  tests/cpdump_matrix.py tests/out/r4/r5base tests/out/r4/r5pair, whose output was saved as tests/out/r4/r5pair_checkpoints.txt; the dumps are the 22 tagged checkpoints each run wrote
+#
+# framework pin: 773285b8210f2254ae87d0a14113980fb36990ad
+# generated: 2026-11-08T09:29:56Z (host Darwin arm64)
+# source tree: /Users/wee/Documents/work/ports/ShadowrunSNESRecomp
+
+# checkpoint-state matrix
+
+Control run: `tests/out/r4/r5base`.  Each cell is one tagged checkpoint, comparing the
+state images both runs took at that frame (`tests/framedump_diff.py cpdump`):
+24 regs.json keys, wram/vram/oam/cgram/sram images, the host framebuffer,
+and the apu/ppuw/dma traces.
+
+| checkpoint | control frame | tests/out/r4/r5pair |
+|---|---|---|
+| H8 | 16188 | apu-only |
+| J1 | 16865 | apu-only |
+| J2 | 17196 | apu-only |
+| J3 | 17317 | apu-only |
+| J4 | 17438 | apu-only |
+| J5 | 17559 | apu-only |
+| J6 | 17680 | apu-only |
+| J7 | 17801 | apu-only |
+| J8 | 17951 | apu-only |
+| J9 | 18101 | apu-only |
+| J10 | 18401 | apu-only |
+| K1 | 18552 | apu-only |
+| K2 | 18703 | apu-only |
+| K3 | 19003 | apu-only |
+| L0 | 19454 | apu-only |
+| L1 | 19761 | apu-only |
+| A0 | 20730 | apu-only |
+| A1 | 20844 | apu-only |
+| A2 | 21144 | apu-only |
+| A3 | 21444 | apu-only |
+| A4 | 21744 | apu-only |
+| A5 | 22044 | apu-only |
+
+The master-clock delta is the variant's clock at that checkpoint minus
+the control's; a seeded body runs the same guest instructions, so a
+state-clean tree shows +0 there.
+
+| variant | checkpoints | clean | apu-only | guest-state differing | regs keys differed | master-clock delta at first/last checkpoint |
+|---|---|---|---|---|---|---|
+| tests/out/r4/r5pair | 22 | 0 | 22 | none | 0 | H8 +0 / A5 +0 |

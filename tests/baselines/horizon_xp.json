@@ -1,0 +1,97 @@
+{
+ "mode": "horizon",
+ "pair": [
+  "tests/out/xp_aot_r9",
+  "tests/out/xp_lle_r9"
+ ],
+ "noise_max": 3,
+ "range": [
+  0,
+  22043
+ ],
+ "frames": 22044,
+ "horizon_host": 16125,
+ "horizon_body": 26,
+ "horizon_total": 31,
+ "pre_frames": 16125,
+ "healed_runs": 65,
+ "pre_longest_run": 5204,
+ "pre_peak": 995,
+ "last_body": 530,
+ "provenance": {
+  "run1": {
+   "schema": 1,
+   "exe": {
+    "path": "/Users/wee/Documents/work/ports/ShadowrunSNESRecomp/build-r2b/ShadowrunSNESRecomp",
+    "bytes": 2936672,
+    "sha256": "4c1775badab30111c0b52bbb4908346ae5cf41288fac3330d9bc6684ff2ac2fb"
+   },
+   "build_tree": {
+    "dir": "/Users/wee/Documents/work/ports/ShadowrunSNESRecomp/build-r2b",
+    "config": "Release",
+    "embed_rom": "OFF",
+    "build_version": "(derived from VERSION)",
+    "gen_objects_compiled": 18,
+    "sources_newer_than_binary": 18
+   },
+   "framework": {
+    "root": "/private/var/folders/cc/_czwdt293dg9ty_zgc1b57x00000gn/T/opencode/sr-pin",
+    "rev": "773285b8210f2254ae87d0a14113980fb36990ad",
+    "dirty": false
+   },
+   "generated_set": {
+    "sha256": "8374878ada424ce4e8b7682de811f11e20a2ed03a3357e7961218e36eae345c7",
+    "units": 18,
+    "promoted_functions": 204,
+    "dispatch_entries": 252,
+    "files": 20,
+    "describes_this_binary": true
+   },
+   "port_git": {
+    "root": "/Users/wee/Documents/work/ports/ShadowrunSNESRecomp",
+    "rev": "0a9543b9d06b3bf533e11a0553f00309438eb51d",
+    "dirty": true
+   },
+   "warnings": [
+    "18 generated file(s) touched after this executable was linked: the binary may not contain them"
+   ]
+  },
+  "run2": {
+   "schema": 1,
+   "exe": {
+    "path": "/Users/wee/Documents/work/ports/ShadowrunSNESRecomp/build-llefloor-r2b/ShadowrunSNESRecomp",
+    "bytes": 1254208,
+    "sha256": "088307497a2dcd78a9713fd73f637c0680b8edb2806b3ba1ab7b2acf5635699f"
+   },
+   "build_tree": {
+    "dir": "/Users/wee/Documents/work/ports/ShadowrunSNESRecomp/build-llefloor-r2b",
+    "config": "Release",
+    "embed_rom": "OFF",
+    "build_version": "(derived from VERSION)",
+    "gen_objects_compiled": 7,
+    "sources_newer_than_binary": 0
+   },
+   "framework": {
+    "root": "/private/var/folders/cc/_czwdt293dg9ty_zgc1b57x00000gn/T/opencode/sr-pin",
+    "rev": "773285b8210f2254ae87d0a14113980fb36990ad",
+    "dirty": false
+   },
+   "generated_set": {
+    "sha256": "8374878ada424ce4e8b7682de811f11e20a2ed03a3357e7961218e36eae345c7",
+    "units": 18,
+    "promoted_functions": 204,
+    "dispatch_entries": 252,
+    "files": 20,
+    "describes_this_binary": false
+   },
+   "port_git": {
+    "root": "/Users/wee/Documents/work/ports/ShadowrunSNESRecomp",
+    "rev": "0a9543b9d06b3bf533e11a0553f00309438eb51d",
+    "dirty": true
+   },
+   "warnings": [
+    "stale build tree: 7 generated .o against 18 generated units in /Users/wee/Documents/work/ports/ShadowrunSNESRecomp/src/gen"
+   ]
+  }
+ }
+}

@@ -1,0 +1,221 @@
+# Round 7: where the two tiers sample the $2137 H/V latch
+
+# how:  framework probe tree at the pin rev below, two probe legs and
+#       two parity runs on tests/out/probe_dense.txt.  A [tap] is a
+#       real entry into $80C530 (PHASETAP); a [latch] is its $2137
+#       read after the beam is advanced to sync=, with the latched
+#       H/V.  Raw: tests/out/r7/{inv_ctrl,inv_seed,gate_base,
+#       gate_sync}; the probe diff is artifacts/round7_probe.diff.
+
+# framework rev   773285b8210f2254ae87d0a14113980fb36990ad  (pin stayed clean; the probe is a clone at
+#                 this rev with the diff in §5, not the pin itself)
+# probe diff      sha256 607d6bdc21edd12790425224d5df6834a62b62bd618c17f815005746441f95be  (artifacts/round7_probe.diff)
+# gen_r6pair      sha256 7ea8e46fbe24f392bc0b96e6bd9b96e04806c10581832eba1fef41afd554964c  283 nodes, 18 units
+# gen_r6pc1c9     sha256 7fc3f3928c257a7cdfd095a9a6034046937be85d2563522d1d3dc428c05148c2  486 nodes, 33 units
+# ctrl exe        sha256 ef5d2102bce8c3ac  3,104,048 B
+# seed exe        sha256 79dfda73c2e41980  3,927,824 B
+
+== 1. The same guest instruction, both tiers ==
+
+  frame   ctrl_entry  ctrl_latch   seed_entry  seed_latch   d_entry  d_latch  d_h  d_latch/4
+   1832    655291846    655291910    655291794    655291882      -52      -28   -7    -7.0
+   1833    655644780    655644844    655644740    655644828      -40      -16   -4    -4.0
+   1834    656009800    656009864    656009856    656009944      +56      +80  +20   +20.0
+   1835    656370924    656370988    656370924    656371012       +0      +24   +6    +6.0
+   1836    656716844    656716908    656716844    656716932       +0      +24   +6    +6.0
+
+  in-body charge (latch - entry): f1832 ctrl +64 / seed +88, f1833 ctrl +64 / seed +88, f1834 ctrl +64 / seed +88, f1835 ctrl +64 / seed +88, f1836 ctrl +64 / seed +88
+
+  The +24 is the LDA $2137's own bus transfers.  The compiled body
+  charges its three fetch cycles before the read and the fourth
+  (the paced data read) inside cpu_read8_paced, and ReadRegOpenBus
+  advances the beam to cpu->master_cycles: 4 x 6 = 24 master clocks.
+  The interpreter commits s_interp_bus_master only after
+  interp816_runOpcode returns, so at the same read it sits 24 clocks
+  earlier.  Every row has d_latch == d_entry + 24.
+
+  The rows do not share one d_latch: the entry clocks themselves
+  differ by up to 56 master clocks, because the frame reaches the
+  body at a different point on the two tiers.  That is the phase
+  term the read convention cannot remove.
+
+== 2. The latch follows the sample time exactly ==
+
+  d_h is always d_latch/4: the H counter advances one count per 4
+  master clocks, so the latched H is a direct function of sync=.  A
+  difference in d_latch is therefore a difference in the value the
+  game reads, not a bookkeeping residual: f1832 reads H=98 (ctrl)
+  against H=91 (seed), a 7-dot split at the same guest instruction.
+
+== 3. The gate, with and without a read-time fix ==
+
+  default                : first state f1830, 305 of 4575 frames, 895 bytes
+  SNESRECOMP_LATCH_SYNC=1: first state f1830, 1333 of 4575 frames, 3031 bytes
+  crc32_wram first diff  : f1828 0xB615CF19 vs 0xC912779D  (same in both parity runs)
+
+  LATCH_SYNC advances every interpreted latch by its pending master,
+  so it removes the 24-clock convention term: d_latch becomes
+  d_entry (+24 -> 0 on f1835/f1836, +80 -> +56 on f1834, but
+  -28 -> -52 and -16 -> -40 on f1832/f1833).  The gate's first state
+  divergence does not move (f1830) and the frame count grows
+  305 -> 1333 (895 -> 3031 bytes).  Removing the convention term is
+  not enough: the entry-phase term dominates the early frames, and
+  the divergence is already set before this body runs.
+
+== 4. What this settles ==
+
+  'Price the counter read' is necessary but not sufficient.  The
+  compiled body does latch 24 master clocks later than the
+  interpreter at an equal entry clock, and that is a real, fixable
+  convention difference.  But the two tiers also enter the body at
+  clocks that differ by up to 56 master clocks, so the latched H
+  differs by a variable number of dots.  A framework change that
+  only adjusts the read cannot restore the pair; the guest timeline
+  up to the read has to be path-invariant first.  That is the
+  direction the upstream seam report (§5 item 3) names, and it is
+  larger than this round's probe.
+
+  The earliest non-label state byte (f1830, $7E00126) precedes the
+  first $80C530 entry on both tiers (f1832), so this latch is not
+  that byte's cause; it is the mechanism behind the DP $00/$01
+  cluster that opens at f1832, which is what round 6's write trace
+  named.
+
+== 5. The framework probe ==
+
+  diff --git a/runner/src/common_cpu_infra.c b/runner/src/common_cpu_infra.c
+  index c9314d9a..2716f64a 100644
+  --- a/runner/src/common_cpu_infra.c
+  +++ b/runner/src/common_cpu_infra.c
+  @@ -930,6 +930,23 @@ void snes_refresh_state_set(uint64_t phase, uint64_t charged_upto) {
+   }
+
+   // Called at loop headers in generated code — detect infinite loops
+  +unsigned long g_r7_c530_inv;
+  +
+  +/* Round-7 phase tap: exact AOT entries into one body, with the cumulative
+  + * master clock.  Called from the trace-off cpu_trace_func_entry inline, so it
+  + * sees only real function entries (WatchdogCheck also fires on interior
+  + * blocks of the same function).  Gated by SNESRECOMP_PHASETAP. */
+  +void r7_tap_func_entry(CpuState *cpu, uint32_t pc24, const char *name) {
+  +  static int tap = -1;
+  +  if (tap < 0) { const char *e = getenv("SNESRECOMP_PHASETAP");
+  +                 tap = (e && e[0] && e[0] != '0') ? 1 : 0; }
+  +  if (!tap || pc24 != 0x80C530u) return;
+  +  g_r7_c530_inv++;
+  +  fprintf(stderr, "[tap] f=%d inv=%lu tier=aot func=%s master=%llu\n",
+  +          snes_frame_counter, g_r7_c530_inv, name ? name : "-",
+  +          (unsigned long long)cpu->master_cycles);
+  +}
+  +
+   void WatchdogCheck(void) {
+     snes_refresh_charge();
+   #ifdef SNES_COSIM
+  diff --git a/runner/src/common_rtl.c b/runner/src/common_rtl.c
+  index e1016188..33c26c73 100644
+  --- a/runner/src/common_rtl.c
+  +++ b/runner/src/common_rtl.c
+  @@ -1682,8 +1682,48 @@ uint8 ReadRegOpenBus(uint16 reg, uint8 open_bus) {
+     if (reg >= 0x2000 && reg < 0x2008) {
+       return msu1_enabled() ? msu1_read(reg) : open_bus;
+     }
+  -  if (reg == 0x2137)
+  -    snes_sync_master_clock(g_snes, g_cpu.master_cycles);
+  +  if (reg == 0x2137) {
+  +    /* Round-7 experiment: the interpreter commits its per-transfer master
+  +     * charge only after the opcode returns, so at this read it still sits at
+  +     * the opcode's start, while AOT has already charged this instruction's
+  +     * fetches and the paced data transfer.  Optionally advance the beam to the
+  +     * in-flight time so both tiers latch the same counter phase.  Default off
+  +     * (= pinned behaviour); SNESRECOMP_LATCHLOG frames it. */
+  +    extern uint64_t interp_bridge_pending_master(void);
+  +    extern unsigned long g_r7_c530_inv;
+  +    uint64_t _pending = interp_bridge_pending_master();
+  +    static int _sync_pending = -1;
+  +    if (_sync_pending < 0) {
+  +      const char *e = getenv("SNESRECOMP_LATCH_SYNC");
+  +      _sync_pending = (e && e[0] && e[0] != '0') ? 1 : 0;
+  +    }
+  +    static int _ll = -1, _llo = 0, _lhi = 0x7fffffff;
+  +    if (_ll < 0) {
+  +      const char *e = getenv("SNESRECOMP_LATCHLOG");
+  +      _ll = (e && e[0] && e[0] != '0') ? 1 : 0;
+  +      e = getenv("SNESRECOMP_LATCHLOG_FRAMES");
+  +      if (e && e[0] && sscanf(e, "%d-%d", &_llo, &_lhi) != 2) _llo = 0, _lhi = 0x7fffffff;
+  +    }
+  +    uint64_t _sync = g_cpu.master_cycles + (_sync_pending ? _pending : 0);
+  +    snes_sync_master_clock(g_snes, _sync);
+  +    if (_ll) {
+  +      extern int snes_frame_counter;
+  +      extern const char *g_last_recomp_func;
+  +      extern uint32_t g_interp_wlog_pc24;
+  +      if (snes_frame_counter >= _llo && snes_frame_counter <= _lhi)
+  +        fprintf(stderr,
+  +                "[latch] f=%d inv=%lu tier=%s func=%s pc=%06X master=%llu pending=%llu "
+  +                "eff=%llu sync=%llu h=%u v=%u\n",
+  +                snes_frame_counter, g_r7_c530_inv, _pending ? "interp" : "aot",
+  +                g_last_recomp_func ? g_last_recomp_func : "-",
+  +                (unsigned)g_interp_wlog_pc24,
+  +                (unsigned long long)g_cpu.master_cycles,
+  +                (unsigned long long)_pending,
+  +                (unsigned long long)(g_cpu.master_cycles + _pending),
+  +                (unsigned long long)_sync,
+  +                (unsigned)(g_snes->hPos / 4), (unsigned)g_snes->vPos);
+  +    }
+  +  }
+     if (reg >= 0x3000 && reg < 0x3300 && g_snes->cart->type == CART_SUPERFX) {
+       cart_sync_coprocessors(g_snes->cart, g_cpu.master_cycles);
+       return cart_read(g_snes->cart, 0, reg);
+  diff --git a/runner/src/cpu_trace.h b/runner/src/cpu_trace.h
+  index 9e229aaa..5c76b97f 100644
+  --- a/runner/src/cpu_trace.h
+  +++ b/runner/src/cpu_trace.h
+  @@ -1314,7 +1314,8 @@ void cpu_trace_dump_wram(const char *tag, int scan_n);
+   #else  /* SNESRECOMP_TRACE = 0 */
+
+   static inline void cpu_trace_block(CpuState *cpu, uint32_t pc24)            { (void)cpu; (void)pc24; }
+  -static inline void cpu_trace_func_entry(CpuState *cpu, uint32_t pc24, const char *name) { (void)cpu; (void)pc24; (void)name; }
+  +void r7_tap_func_entry(CpuState *cpu, uint32_t pc24, const char *name);
+  +static inline void cpu_trace_func_entry(CpuState *cpu, uint32_t pc24, const char *name) { r7_tap_func_entry(cpu, pc24, name); }
+   static inline void cpu_trace_event(CpuState *cpu, uint32_t pc24, uint8_t et,
+                                      uint8_t e0, uint16_t e1)                 { (void)cpu; (void)pc24; (void)et; (void)e0; (void)e1; }
+   static inline void cpu_trace_db_change(CpuState *cpu, uint32_t pc24, uint8_t o,
+  diff --git a/runner/src/snes/interp_bridge.c b/runner/src/snes/interp_bridge.c
+  index 6de65c17..6dc1b420 100644
+  --- a/runner/src/snes/interp_bridge.c
+  +++ b/runner/src/snes/interp_bridge.c
+  @@ -186,6 +186,15 @@ static unsigned bridge_region_speed(uint32_t adr) {
+       return (unsigned)cpu_region_speed(adr);
+   }
+
+  +/* Round-7 experiment: master clocks this interpreted opcode has already spent
+  + * on real bus transfers but not yet committed to cpu->master_cycles.  The
+  + * commit happens after interp816_runOpcode returns (see the tail of the step
+  + * loop), so a hardware register read inside the opcode would otherwise sample
+  + * the beam at the opcode's start.  Zero between opcodes and on the AOT tier. */
+  +uint64_t interp_bridge_pending_master(void) {
+  +    return s_interp_bus_timing_active ? s_interp_bus_master : 0;
+  +}
+  +
+   /* Index of the lowest set bit; v must be non-zero. */
+   static inline unsigned bridge_ctz64(uint64_t v) {
+   #if defined(_MSC_VER) && !defined(__clang__)
+  @@ -2662,6 +2671,18 @@ static int _interp_run_core(CpuState *cpu, uint32_t entry_pc24,
+           s_interp_bus_cycles=0;
+           s_bus_trace_pc = pc_before;
+           s_interp_bus_timing_active=1;
+  +        /* Round-7 phase tap: first interpreted entry per frame into $80C530. */
+  +        { static int _tap = -1;
+  +          if (_tap < 0) { const char *e = getenv("SNESRECOMP_PHASETAP");
+  +                          _tap = (e && e[0] && e[0] != '0') ? 1 : 0; }
+  +          if (_tap && pc_before == 0x80C530u) {
+  +            extern unsigned long g_r7_c530_inv;
+  +            g_r7_c530_inv++;
+  +            fprintf(stderr, "[tap] f=%d inv=%lu tier=interp pc=%06X master=%llu\n",
+  +                    snes_frame_counter, g_r7_c530_inv, (unsigned)pc_before,
+  +                    (unsigned long long)cpu->master_cycles);
+  +          }
+  +        }
+           /* Optional first-divergence observability: bus callbacks receive only
+            * CpuState, while the live interpreter registers normally stay in the
+            * local Interp816 struct until a bridge boundary.  Publish the pre-op

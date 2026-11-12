@@ -1,0 +1,59 @@
+{
+ "binary": "/Users/wee/Documents/work/ports/ShadowrunSNESRecomp/build-r2/ShadowrunSNESRecomp",
+ "build_tree": {
+  "build_version": "(derived from VERSION)",
+  "config": "Release",
+  "dir": "/Users/wee/Documents/work/ports/ShadowrunSNESRecomp/build-r2",
+  "embed_rom": "OFF",
+  "gen_objects_compiled": 18,
+  "sources_newer_than_binary": 0
+ },
+ "cart_trace": null,
+ "coverage": {
+  "measured_against": {
+   "generated_set_sha256": "53faff9d16de5d9bd5065ee2ca16a82d5b44a30185ff422dbfd99e2734d76b31",
+   "root": "/Users/wee/Documents/work/ports/ShadowrunSNESRecomp",
+   "units": 18
+  },
+  "nm_available": true,
+  "wrappers_declared": 250,
+  "wrappers_in_binary": 250,
+  "wrappers_missing_from_binary": []
+ },
+ "dump_dir": {
+  "frame_bytes_sha256": "574e66802bece79d0fc349a112cc664ad53d3f73787f1dcc952d2ec0e80a26b9",
+  "frames": 43,
+  "manifest": true,
+  "path": "/Users/wee/Documents/work/ports/ShadowrunSNESRecomp/tests/out/xp_aot_r6"
+ },
+ "exe": {
+  "bytes": 2937072,
+  "path": "/Users/wee/Documents/work/ports/ShadowrunSNESRecomp/build-r2/ShadowrunSNESRecomp",
+  "sha256": "833f17c50fb809880acec9f5dd88c30449444a9ed159de435f424405a7fc8a68"
+ },
+ "execution_share": {
+  "aot_cycle_pct": 3.9402,
+  "cpu_cycles": 1108981502,
+  "frame": 25902,
+  "interp_cycle_pct": 96.0598,
+  "interp_cycles": 1065285588,
+  "interp_insns": 263660881,
+  "master_cycles": 9257210204
+ },
+ "frame_service": "frame service: implementation=LLE seconds=45.133236625 fps=573.901 cpu_seconds=44.519356000",
+ "framework": {
+  "dirty": false,
+  "rev": "773285b8210f2254ae87d0a14113980fb36990ad",
+  "root": "/private/var/folders/cc/_czwdt293dg9ty_zgc1b57x00000gn/T/opencode/sr-pin"
+ },
+ "generated_set": {
+  "describes_this_binary": true,
+  "dispatch_entries": 257,
+  "files": 20,
+  "promoted_functions": 204,
+  "sha256": "53faff9d16de5d9bd5065ee2ca16a82d5b44a30185ff422dbfd99e2734d76b31",
+  "units": 18
+ },
+ "problems": [],
+ "schema": "snesrecomp.aot-share.v1"
+}

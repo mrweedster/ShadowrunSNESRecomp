@@ -1,0 +1,23 @@
+# ROM identity for the Swedish release of Shadowrun — one edition of the port.
+#
+# Same format and consumers as rom_identity.txt (USA). The Swedish translation
+# shares the German layout (cursor block at $7E01D4/$7E01D6/$7E01D8) but is a
+# different image, so it has its own digests and generated code (src/gen-sv).
+#
+# Build this edition with:
+#   bash tools/regen.sh --identity rom_identity.sv.txt --out-dir src/gen-sv \
+#                       --cfg-dir recomp-lle
+#   cmake --preset linux-x64-sv        # windows-x64-sv, macos-arm64-sv, ...
+#
+# See evidence/language_roms.md for how these were measured.
+
+display_name    = Shadowrun (Sweden)
+rom_file        = Shadowrun (Sweden).sfc
+expected_crc32  = 30829d8e
+expected_md5    = cd22a7ff4908575f2fe5bd9f1e34ffc8
+expected_sha1   = 830464152553faada700bb93d4bb6b8975f79e0a
+expected_sha256 = 4fb9eb8fa4d9c3a0b6c24bac5b0a0b0f079f083f5e6dfa937a161c8f4bcde853
+rom_size        = 1048576
+mapping         = lorom
+region          = Sweden
+game_id         = shadowrun-sv

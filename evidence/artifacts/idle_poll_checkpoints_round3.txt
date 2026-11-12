@@ -1,0 +1,193 @@
+== every tagged checkpoint, each idle-poll leg against the undeclared control (M2 promotion round 3, 2026-11-07) ==
+record: evidence/m2_promotion_round3.md sections 5 and 6
+framework pin: snesrecomp=773285b8210f2254ae87d0a14113980fb36990ad
+executable: 8374878ada  build-r3/ShadowrunSNESRecomp (2,936,800 B)
+   exe sha256 1341448773c19617   framework 773285b8210f2254ae87d0a14113980fb36990ad   config Release, embed_rom off
+   generated set: 8374878ada424ce4 units=18 promoted=204 dispatch=252 files=20
+executable: 8374878ada  build-r2b/ShadowrunSNESRecomp (2,936,672 B)
+   exe sha256 4c1775badab30111   framework 773285b8210f2254ae87d0a14113980fb36990ad   config Release, embed_rom off
+   generated set: 8374878ada424ce4 units=18 promoted=204 dispatch=252 files=20
+   warning: 18 generated file(s) touched after this executable was linked: the binary may not contain them
+   both executables carry the same generated-set sha256: the A/B is host-side only
+   (those 'touched after' warnings are about file mtimes only; the hash above is
+    over the generated contents, and it is identical on both executables)
+how to read this: 'mc delta' is master cycles at the checkpoint vs the control, and a
+   guest frame index printed twice means the two legs reached it on different frames.
+   'regs keys differing' is PPU / HDMA state only (runner/src/state_dump.h) -- no dump
+   in this round carries CPU registers. 'images differing' is a sha256 mismatch on the
+   bytes beside the checkpoint, so 'none' is a byte-level statement, not a crc guess.
+a checkpoint reached at the same guest frame with the same images is as far as this
+   harness can say 'nothing changed'; a master_clock delta with identical images is a
+   seam effect that did not reach the guest, and that distinction is what sections 5
+   and 6 rest on.
+
+== the committed route (tests/scripts/combat.txt), ip_m1x0 vs ip_off ==
+   declared polls: 81ee8e
+   tag           frame  mc delta      hpos   regs keys differing            images differing
+   A0            20730        +4       0/4   dma, hscroll, m7matrix, vscroll wram, vram, oam, fb, apu, ppuw
+   A1            20844       -10      14/4   dma, hscroll, m7matrix, vscroll wram, vram, oam, fb, apu, ppuw
+   A2            21144       +26     12/38   dma, hscroll, m7matrix, vscroll wram, vram, oam, fb, apu, ppuw
+   A3            21444        -8       8/0   dma, hscroll, m7matrix, vscroll wram, vram, oam, fb, apu, ppuw
+   A4            21744        +0         0   dma, hscroll, m7matrix, vscroll wram, vram, oam, fb, apu, ppuw
+   A5            22044       +34      0/34   dma, hscroll, m7matrix, vscroll wram, vram, oam, fb, apu, ppuw
+   H8            16188        +0         0   -                              wram, apu
+   J1            16865        -8       8/0   dma                            wram, vram, oam, fb, apu, ppuw
+   J2            17196       -18      18/0   dma                            wram, vram, oam, fb, apu, ppuw
+   J3            17317        -8       8/0   dma                            wram, vram, oam, fb, apu
+   J4            17438        -4         0   dma                            wram, vram, apu
+   J5            17559        +0        34   -                              wram, vram, oam, apu
+   J6            17680       +38      0/38   dma, hscroll, m7matrix, vscroll wram, vram, oam, fb, apu, ppuw
+   J7            17801        +8      22/0   dma                            wram, vram, apu
+   J8            17951        +4       4/8   -                              wram, vram, oam, apu
+   J9            18101       +20      0/20   -                              wram, vram, oam, apu
+   J10           18401       +28      2/30   -                              wram, vram, oam, apu
+   K1            18552        +0         0   -                              wram, vram, oam, apu
+   K2            18703       -10      12/2   dma, hscroll, m7matrix, vscroll wram, vram, oam, fb, apu, ppuw
+   K3            19003       +18      4/22   dma, hscroll, m7matrix, vscroll wram, vram, oam, fb, apu, ppuw
+   L0            19454       +12      0/12   hscroll, m7matrix              wram, vram, oam, fb, apu, ppuw
+   L1            19761       -26      26/0   hscroll, m7matrix              wram, vram, oam, fb, apu, ppuw
+
+== the committed route (tests/scripts/combat.txt), ip_on vs ip_off ==
+   declared polls: 81b061,81ee8e
+   tag           frame  mc delta      hpos   regs keys differing            images differing
+   A0            20730        +8       0/8   dma, hscroll, m7matrix, vscroll wram, vram, oam, fb, apu, ppuw
+   H8            16188        +8         0   -                              wram, apu
+   J1            16865        +6      8/14   dma                            wram, vram, oam, apu, ppuw
+   J2            17196       +16     18/34   dma                            wram, vram, oam, fb, apu
+   J3            17317        -8       8/0   dma                            wram, vram, oam, fb, apu, ppuw
+   J4            17438       -12         0   dma                            wram, vram, apu
+   J5            17559       -26      34/8   dma                            wram, vram, oam, apu
+   J6            17680       +10      0/10   dma                            wram, vram, oam, apu, ppuw
+   J7            17801       -16      22/6   dma                            wram, vram, apu
+   J8            17951       +12      4/16   -                              wram, vram, oam, apu
+   J9            18101       +60      0/60   -                              wram, vram, oam, apu
+   J10           18401        +8      2/10   -                              wram, vram, oam, apu
+   K1            18552       +20      0/20   -                              wram, vram, oam, apu
+   K2            18703        -6      12/6   -                              wram, vram, oam, apu
+   K3            19003       +10      4/14   dma                            wram, vram, oam, fb, apu
+   L0            19454       +12      0/12   hscroll, m7matrix              wram, vram, oam, fb, apu, ppuw
+   L1            19761       -24      26/2   hscroll, m7matrix              wram, vram, oam, fb, apu, ppuw
+
+== the committed route (tests/scripts/combat.txt), ip_m0x0 vs ip_off ==
+   declared polls: 81b061
+   tag           frame  mc delta      hpos   regs keys differing            images differing
+   A0            20730       +20      0/20   dma, hscroll, m7matrix, vscroll wram, vram, oam, cgram, fb, apu, ppuw
+   A1            20844        +0        14   dma, hscroll, m7matrix, vscroll wram, vram, oam, cgram, fb, apu, ppuw
+   A2            21144       +16     12/28   dma, hscroll, m7matrix, vscroll wram, vram, oam, cgram, fb, apu, ppuw
+   A3            21444       +30      8/38   dma, hscroll, m7matrix, vscroll wram, vram, oam, cgram, fb, apu, ppuw
+   A4            21744        +0         0   dma, hscroll, m7matrix, vscroll wram, vram, oam, cgram, fb, apu, ppuw
+   A5            22044        +0         0   dma, hscroll, m7matrix, vscroll wram, vram, oam, cgram, fb, apu, ppuw
+   H8            16188       +12         0   -                              wram, apu
+   J1            16865        +0         8   dma                            wram, vram, apu, ppuw
+   J2            17196        -4     18/14   dma                            wram, vram, oam, fb, apu
+   J3            17317        +6      8/14   dma                            wram, vram, oam, fb, apu
+   J4            17438       -24         0   dma                            wram, vram, apu
+   J5            17559       -20     34/14   dma                            wram, vram, oam, apu
+   J6            17680       +26      0/26   dma                            wram, vram, oam, apu, ppuw
+   J7            17801       -12      22/0   dma                            wram, vram, cgram, apu
+   J8            17951       +10      4/14   -                              wram, oam, cgram, apu
+   J9            18101       +16      0/16   dma                            wram, vram, oam, cgram, apu
+   J10           18401       +18      2/20   -                              wram, oam, cgram, apu
+   K1            18552       +12      0/12   -                              wram, oam, cgram, apu
+   K2            18703        -2     12/10   -                              wram, oam, cgram, apu
+   K3            19003       +34      4/38   dma                            wram, vram, oam, cgram, fb, apu
+   L0            19454        +2       0/2   hscroll, m7matrix              wram, vram, oam, cgram, fb, apu, ppuw
+   L1            19761       +10     26/36   hscroll, m7matrix              wram, vram, oam, cgram, fb, apu, ppuw
+
+== no-input boot probe (tests/scripts/idle_f205.txt), p81b061 vs idle_f205_off ==
+   declared polls: 81b061
+   tag           frame  mc delta      hpos   regs keys differing            images differing
+   p195            195        +0       900   -                              none
+         -> every dumped byte equal, same guest frame, same master clock
+   p200            200        +0         0   -                              none
+         -> every dumped byte equal, same guest frame, same master clock
+   p203            203        +0        34   -                              none
+         -> every dumped byte equal, same guest frame, same master clock
+   p205            205        +0         0   -                              none
+         -> every dumped byte equal, same guest frame, same master clock
+   p210            210        +0        18   -                              none
+         -> every dumped byte equal, same guest frame, same master clock
+
+== no-input boot probe (tests/scripts/idle_f205.txt), p81b061_81ee8e vs idle_f205_off ==
+   declared polls: 81b061,81ee8e
+   tag           frame  mc delta      hpos   regs keys differing            images differing
+   p195            195        -2   900/898   -                              wram, apu
+   p200            200       +20         0   -                              apu
+   p203            203        -2     34/32   -                              apu
+   p205            205        -2         0   -                              apu
+   p210            210        -2     18/16   -                              apu
+
+== no-input boot probe (tests/scripts/idle_f205.txt), p81ee8e vs idle_f205_off ==
+   declared polls: 81ee8e
+   tag           frame  mc delta      hpos   regs keys differing            images differing
+   p195            195        -2   900/898   -                              wram, apu
+   p200            200       +20         0   -                              apu
+   p203            203        -2     34/32   -                              apu
+   p205            205        -2         0   -                              apu
+   p210            210        -2     18/16   -                              apu
+
+== dense per-frame probe (tests/scripts/idle_dense.txt), p81b061 vs idle_dense_off ==
+   declared polls: 81b061
+   tag           frame  mc delta      hpos   regs keys differing            images differing
+   q005              5        +0         0   -                              none
+         -> every dumped byte equal, same guest frame, same master clock
+   q006              6        +0         0   -                              none
+         -> every dumped byte equal, same guest frame, same master clock
+   q007              7        +0         0   -                              none
+         -> every dumped byte equal, same guest frame, same master clock
+   q008              8        +0         0   -                              none
+         -> every dumped byte equal, same guest frame, same master clock
+   q009              9        +0         0   -                              none
+         -> every dumped byte equal, same guest frame, same master clock
+   q010             10        +0        30   -                              none
+         -> every dumped byte equal, same guest frame, same master clock
+   q011             11        +0        10   -                              none
+         -> every dumped byte equal, same guest frame, same master clock
+   q012             12        +0         8   -                              none
+         -> every dumped byte equal, same guest frame, same master clock
+   q013             13        +0        20   -                              none
+         -> every dumped byte equal, same guest frame, same master clock
+   q014             14        +0        10   -                              none
+         -> every dumped byte equal, same guest frame, same master clock
+
+== dense per-frame probe (tests/scripts/idle_dense.txt), p81b061_81ee8e vs idle_dense_off ==
+   declared polls: 81b061,81ee8e
+   tag           frame  mc delta      hpos   regs keys differing            images differing
+   q005              5        +0         0   -                              none
+         -> every dumped byte equal, same guest frame, same master clock
+   q006              6        +0         0   -                              none
+         -> every dumped byte equal, same guest frame, same master clock
+   q007              7        +0         0   -                              none
+         -> every dumped byte equal, same guest frame, same master clock
+   q008              8        +0         0   -                              none
+         -> every dumped byte equal, same guest frame, same master clock
+   q009              9       +14      0/14   -                              none
+   q010             10        -8     30/22   -                              wram
+   q011             11        -2      10/8   -                              none
+   q012             12        -6       8/2   -                              none
+   q013             13       -10     20/10   -                              none
+   q014             14        +4     10/14   -                              none
+
+== dense per-frame probe (tests/scripts/idle_dense.txt), p81ee8e vs idle_dense_off ==
+   declared polls: 81ee8e
+   tag           frame  mc delta      hpos   regs keys differing            images differing
+   q005              5        +0         0   -                              none
+         -> every dumped byte equal, same guest frame, same master clock
+   q006              6        +0         0   -                              none
+         -> every dumped byte equal, same guest frame, same master clock
+   q007              7        +0         0   -                              none
+         -> every dumped byte equal, same guest frame, same master clock
+   q008              8        +0         0   -                              none
+         -> every dumped byte equal, same guest frame, same master clock
+   q009              9       +14      0/14   -                              none
+   q010             10        -8     30/22   -                              wram
+   q011             11        -2      10/8   -                              none
+   q012             12        -6       8/2   -                              none
+   q013             13       -10     20/10   -                              none
+   q014             14        +4     10/14   -                              none
+
+reproduce:
+  FULLBYTES=1 TRIM=1 BIN=build-r3/ShadowrunSNESRecomp ./tests/idle_parity.sh
+  BIN=build-r3/ShadowrunSNESRecomp ./tests/idle_f205.sh   # both probe routes, all declarations
+  python3 tests/framedump_diff.py cpdump <control-dir> <leg-dir> [tag]   # one pair, by hand
+  python3 tests/idle_artifacts.py checkpoints   # this file, again

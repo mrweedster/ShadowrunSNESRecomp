@@ -1,0 +1,115 @@
+=== ROM-read trace digest ===
+schema snesrecomp.cart-trace.v2  rom_size 1048576  block_bytes 512
+seams cpu_read8,cpu_read16,cart_read,dma_abus,interp816_fetch
+re-derive: bash tests/collect_read_traces.sh   (writes the traces and
+tests/out/b0/report.md), then this file with --digest. The traces are
+build output and are not committed; their hashes are what bind this file.
+Both gates refuse a binary whose framework is not the revision named in
+framework_pins.txt (tests/provenance.py pin), so the program behind these
+numbers is named by the run, not by this file.
+
+-- inputs --------------------------------------------------------------
+combat       2712742 B  sha256 cbb2baa0761a0a51  tests/out/b0/combat.json
+door         2462354 B  sha256 d3e0c1faa3b8db9f  tests/out/b0/door.json
+menu         1050020 B  sha256 803d41c11f810e4a  tests/out/b0/menu.json
+nav1         2568705 B  sha256 8c8f59f5b95395de  tests/out/b0/nav1.json
+nav2         2703444 B  sha256 3d2adb6b7e036e61  tests/out/b0/nav2.json
+selfcheck     876553 B  sha256 8ff305aaef91990b  tests/out/b0/selfcheck.json
+
+-- per route -----------------------------------------------------------
+route          rom_reads           cpu        dma         instr   pairs ring_wraps  trunc  blocks
+combat         921317878     919016826    2301052     611733580   24228      56232   True     765
+door           550013957     548883861    1130096     357334926   17738      33570  False     483
+menu            38258200      37996056     262144      27872467    2583       2335  False     149
+nav1           598297144     597111592    1185552     391198672   18849      36517  False     507
+nav2           669676961     668145417    1531544     439480162   23132      40873   True     724
+selfcheck        8423454       8292382     131072       6167123     885        514  False      32
+merged        2785987594    2779446134    6541460    1833786930                             765
+           of 2048 blocks in the image; 88 carry instruction reads
+
+instruction-stream share: 65.8%   DMA share: 0.235%
+honesty: pair_overflows=0  tail_reads=0  rom_resets=0  ring_wraps=170041   pairs_truncated=combat, nav2
+(ring_wraps only rolls the recent-read sample; blocks, pairs and the
+totals are complete. pairs_truncated shortens the pair table only.)
+
+-- footprint, 512 B blocks (2048 blocks in the image) ------------------
+read at all              765 blocks   391680 B  37.4%
+fetched (instruction)     88 blocks    45056 B   4.3%
+read, never fetched      677 blocks   346624 B  33.1%
+never read              1283 blocks   656896 B  62.6%
+
+-- where the reads go (merged 2785987594 reads) ------------------------
+  00B000 $81:B000     628704912 22.57% via cf f1712-25901
+  003200 $80:B200     304711164 10.94% via cf f1767-25901
+  00EE00 $81:EE00     261904344  9.40% via cdf f1-25260
+  003600 $80:B600     239774540  8.61% via cf f1767-25901
+  002A00 $80:AA00     151367723  5.43% via cf f1765-25901
+  007400 $80:F400     132954923  4.77% via cf f1766-25901
+  002E00 $80:AE00     132346567  4.75% via cf f1765-25901
+  003000 $80:B000     125238136  4.50% via cf f1765-25901
+  top 8 blocks (4 KiB) carry 71.0% of all reads
+  top 20 blocks (10 KiB) carry 93.3% of all reads
+
+-- fetched runs (8 of 88 fetched blocks) -------------------------------
+  000000-0053FF  $80:8000-$80:D3FF  21 KiB
+  005E00-0063FF  $80:DE00-$80:E3FF  1 KiB
+  007200-0097FF  $80:F200-$81:97FF  9 KiB
+  009A00-00A5FF  $81:9A00-$81:A5FF  3 KiB
+  00A800-00B1FF  $81:A800-$81:B1FF  2 KiB
+  00D400-00D7FF  $81:D400-$81:D7FF  1 KiB
+  00DC00-00E7FF  $81:DC00-$81:E7FF  3 KiB
+  00EA00-00F3FF  $81:EA00-$81:F3FF  2 KiB
+
+bus banks carrying a fetch mark: $00, $80, $81
+(the bank table is never truncated, unlike the pair table; $00 is the
+LoROM mirror of physical bank 0)
+
+-- largest never-read runs (160 of 1283 blocks) ------------------------
+  090E00-09F9FF  $92:8E00-$93:F9FF  59 KiB
+  042C00-04BFFF  $88:AC00-$89:BFFF  37 KiB
+  032800-03A1FF  $86:A800-$87:A1FF  30 KiB
+  0F0A00-0F63FF  $9E:8A00-$9E:E3FF  22 KiB
+  0E8600-0EDDFF  $9D:8600-$9D:DDFF  22 KiB
+  09FC00-0A49FF  $93:FC00-$94:C9FF  19 KiB
+  075400-0791FF  $8E:D400-$8F:91FF  15 KiB
+  0A7400-0AB1FF  $94:F400-$95:B1FF  15 KiB
+  07F800-0833FF  $8F:F800-$90:B3FF  15 KiB
+  0C8C00-0CC3FF  $99:8C00-$99:C3FF  14 KiB
+
+-- join against promoted code (214 entry points) -----------------------
+  fetched           208
+  read not fetched    2
+  not read at all     4
+  fetched blocks with no promoted entry point: 28 = 14 KiB of 88 fetched blocks
+  (a promoted function's extent is not recorded anywhere, so these are
+  block-level statements: one 512 B block can hold a promoted routine and
+  a neighbour the interpreter ran. That is why this trace cannot produce
+  the byte-level extraction list; it can only bound it.)
+  00A772 $81:A772 bank_81_A772_M0X0 ($81:A772)  [10880 reads, via d]
+  00A7FC $81:A7FC bank_81_A7FC_M0X0 ($81:A7FC)  [10880 reads, via d]
+  00D839 $81:D839 bank_81_D839_M0X0 ($81:D839)  [none]
+  00D8A2 $81:D8A2 bank_81_D8A2_M0X0 ($81:D8A2)  [none]
+  00D8E4 $81:D8E4 bank_81_D8E4_M0X0 ($81:D8E4)  [none]
+  00E8A6 $81:E8A6 bank_81_E8A6_M0X0 ($81:E8A6)  [none]
+
+-- join against program_manifest.json ----------------------------------
+  nodes 262 (aot_eligible=222 lle_only=40)  roots 32  insns 9264
+  bounding spans: 35898 B over 89 blocks (44 KiB, 4.3% of image)
+  span blocks: fetched 85  read-not-fetched 1  never-read 3
+  promotion frontier (fetched, inside no span): 3 blocks = 1 KiB, 1820 reads = 0.0% of all reads
+  lle_only blocks: 43  (proven code left interpreted on purpose)
+  frontier reads split by kind (pair rows, so a floor; row tables short on combat, nav2):
+    run                             reads          fetch     by address
+    000C00-000DFF            1003            882            119
+    005200-0053FF              73              8              0
+    00A400-00A5FF             744            738              6
+    frontier total                   1820           1628            125
+  (a node's span is a bounding box, and analysis is seeded by
+  recomp/symbols.toml: 'inside no span' means unanalysed, not proven to
+  be data. Both errors make the frontier smaller, not bigger.)
+  action: [[func]] entries at those addresses, then tools/regen.sh
+
+-- neutrality (tests/cart_trace_neutral.sh) ----------------------------
+Same SRAM snapshot, three legs, per-frame WRAM crc32. ctrl differs from
+off by the framework source only; off differs from on by the env variable.
+  (no --neutral logs given; the gate prints these lines itself)

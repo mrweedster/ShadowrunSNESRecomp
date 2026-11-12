@@ -1,0 +1,19 @@
+# round4_sweep.tsv
+#
+# what: the per-seed sweep: one row per gap seed, what the route did with it, and the frame-dump verdict
+# how:  cat of tests/out/r4/sweep_r4base.tsv (redirect of tests/seed_sweep.sh); columns: variant, seed, build, route exit, first abandon, aot share, state verdict
+#
+# framework pin: 773285b8210f2254ae87d0a14113980fb36990ad
+# generated: 2026-11-08T08:02:38Z (host Darwin arm64)
+# source tree: /Users/wee/Documents/work/ports/ShadowrunSNESRecomp
+
+s80C1C9	seed $80C1C9	build rc=0	exit=3 wall=23s  exit: script until timed out after 21530 frames	[unresolved-abandon] first hit site=$80F4F9 frame=1766	aot   0.39%	state: first divergence at frame_001766;2809 of 4575 frames differ;
+s80C399	seed $80C399	build rc=0	exit=0 wall=31s  exit: script quit after 22044 frames		aot   5.88%	state: identical over 4575 frames;
+s80C1B3	seed $80C1B3	build rc=0	exit=3 wall=25s  exit: script until timed out after 21530 frames	[unresolved-abandon] first hit site=$80F4F9 frame=1766	aot   0.39%	state: first divergence at frame_001766;2809 of 4575 frames differ;
+s80F495	seed $80F495	build rc=0	exit=3 wall=24s  exit: script until timed out after 21530 frames	[unresolved-abandon] first hit site=$80F4F9 frame=1766	aot   0.39%	state: first divergence at frame_001766;2809 of 4575 frames differ;
+s80F362	seed $80F362	build rc=0	exit=3 wall=25s  exit: script until timed out after 21530 frames	[unresolved-abandon] first hit site=$80F4F9 frame=1766	aot   0.39%	state: first divergence at frame_001766;2809 of 4575 frames differ;
+s80AAB3	seed $80AAB3	build rc=0	exit=0 wall=32s  exit: script quit after 22044 frames		aot   7.93%	state: identical over 4575 frames;
+s80F4F9	seed $80F4F9	build rc=0	exit=3 wall=25s  exit: script until timed out after 21530 frames	[unresolved-abandon] first hit site=$80F4F9 frame=1766	aot   0.39%	state: first divergence at frame_001766;2809 of 4575 frames differ;
+s80ABBC	seed $80ABBC	build rc=0	exit=0 wall=33s  exit: script quit after 22044 frames		aot   5.48%	state: first divergence at frame_001828;2745 of 4575 frames differ;
+s80B1DB	seed $80B1DB	build rc=0	exit=0 wall=26s  exit: script quit after 22044 frames		aot  26.47%	state: first divergence at frame_001831;2744 of 4575 frames differ;
+s80F889	seed $80F889	build rc=0	exit=3 wall=25s  exit: script until timed out after 21530 frames	[unresolved-abandon] first hit site=$80F4F9 frame=1766	aot   0.39%	state: first divergence at frame_001766;2809 of 4575 frames differ;

@@ -1,0 +1,409 @@
+# Progressive symbol map for Shadowrun.
+#
+# Each [[func]] names an address the analyzer should treat as a function.
+# Set emit = true to promote one into ahead-of-time codegen; leave it false
+# to keep it interpreted. tools/regen.sh syncs labels and tier choices into
+# each recomp/bankNN.cfg; only emit=true adds a func/funcs.h declaration.
+# Do not hand-edit the generated blocks in the bank configs.
+
+[[func]]
+name = "I_RESET"
+addr = "e34c"
+bank = 0
+emit = true
+note = "Emulation RESET vector ($FFFC)"
+
+[[func]]
+name = "I_NMI"
+addr = "c0e2"
+bank = 0
+emit = true
+note = "Native NMI vector ($FFEA)"
+
+# --- promotion round 1 (2026-11-06): the B0 frontier -------------------------
+#
+# Every address below is the first byte of a 512-byte ROM block that the B0 read
+# trace shows the interpreter taking INSTRUCTION bytes from (fetch seam: 26 blocks,
+# 1,084,397,942 reads = 38.9 % of all ROM reads) and that sits inside no span the
+# analyzer had ever covered (src/gen/program_manifest.json then held 226 nodes over
+# 66 blocks). The recompiler could not promote them because it had no root there.
+# Seeds come from tests/frontier_seeds.py; three blocks under 1,024 fetch reads were
+# held back as too small to trust as code. Addresses are bus addresses, so bit 15 is
+# set: LoROM maps a cart bank at $8000-$FFFF only, and a below-$8000 address is not
+# ROM at all - the analyzer answers those with empty_decode.
+#
+# Result of this round, measured: the frontier closes (26 blocks -> 3, the rest under
+# the trust floor), but 20 of these 23 roots are refused as lle_only by named
+# structural reasons (brk_at_*, truncated_call_continuation, unproven_call_at_*), and
+# several decode to BRK at the declared byte - the block start is not an entry there.
+# 3 seeds promoted; 8 new AOT bodies total, the rest continuations beside the seeds.
+# Traffic byte-identical, horizon unmoved, combat AOT share 3.73 -> 3.94 % cycles:
+# evidence/m2_promotion_round1.md. Closing the structural reasons is round 2, and its
+# seeds are the callee addresses named in the refusals, not more read-trace blocks.
+[[func]]
+name = "FR_808000"
+addr = "8000"
+bank = 0x80
+emit = true
+note = "promotion round seed: B0 trace fetched 12,110,295 reads at $80:8000"
+
+[[func]]
+name = "FR_808200"
+addr = "8200"
+bank = 0x80
+emit = true
+note = "promotion round seed: B0 trace fetched 1,020,614 reads at $80:8200"
+
+# $80:8600-$80:8A00  phys 000600-000BFF  1 KiB, 3 blocks, 30,344 reads
+[[func]]
+name = "FR_808600"
+addr = "8600"
+bank = 0x80
+emit = true
+note = "promotion round seed: B0 trace fetched 12,170 reads at $80:8600"
+
+[[func]]
+name = "FR_808800"
+addr = "8800"
+bank = 0x80
+emit = true
+note = "promotion round seed: B0 trace fetched 6,696 reads at $80:8800"
+
+[[func]]
+name = "FR_808A00"
+addr = "8A00"
+bank = 0x80
+emit = true
+note = "promotion round seed: B0 trace fetched 11,478 reads at $80:8A00"
+
+# $80:9000-$80:9200  phys 001000-0013FF  1 KiB, 2 blocks, 120,200 reads
+[[func]]
+name = "FR_809000"
+addr = "9000"
+bank = 0x80
+emit = true
+note = "promotion round seed: B0 trace fetched 119,130 reads at $80:9000"
+
+[[func]]
+name = "FR_809200"
+addr = "9200"
+bank = 0x80
+emit = true
+note = "promotion round seed: B0 trace fetched 1,070 reads at $80:9200"
+
+# $80:AC00-$80:B800  phys 002C00-0039FF  3 KiB, 7 blocks, 911,958,913 reads
+[[func]]
+name = "FR_80AC00"
+addr = "AC00"
+bank = 0x80
+emit = true
+note = "promotion round seed: B0 trace fetched 1,718,835 reads at $80:AC00"
+
+[[func]]
+name = "FR_80AE00"
+addr = "AE00"
+bank = 0x80
+emit = true
+note = "promotion round seed: B0 trace fetched 132,346,567 reads at $80:AE00"
+
+[[func]]
+name = "FR_80B000"
+addr = "B000"
+bank = 0x80
+emit = true
+note = "promotion round seed: B0 trace fetched 125,238,136 reads at $80:B000"
+
+[[func]]
+name = "FR_80B200"
+addr = "B200"
+bank = 0x80
+emit = true
+note = "promotion round seed: B0 trace fetched 304,711,164 reads at $80:B200"
+
+[[func]]
+name = "FR_80B400"
+addr = "B400"
+bank = 0x80
+emit = true
+note = "promotion round seed: B0 trace fetched 45,304,275 reads at $80:B400"
+
+[[func]]
+name = "FR_80B600"
+addr = "B600"
+bank = 0x80
+emit = true
+note = "promotion round seed: B0 trace fetched 239,774,540 reads at $80:B600"
+
+[[func]]
+name = "FR_80B800"
+addr = "B800"
+bank = 0x80
+emit = true
+note = "promotion round seed: B0 trace fetched 62,865,396 reads at $80:B800"
+
+# $80:C600-$80:CA00  phys 004600-004BFF  1 KiB, 3 blocks, 8,713,725 reads
+[[func]]
+name = "FR_80C600"
+addr = "C600"
+bank = 0x80
+emit = true
+note = "promotion round seed: B0 trace fetched 414,836 reads at $80:C600"
+
+[[func]]
+name = "FR_80C800"
+addr = "C800"
+bank = 0x80
+emit = true
+note = "promotion round seed: B0 trace fetched 1,100,752 reads at $80:C800"
+
+[[func]]
+name = "FR_80CA00"
+addr = "CA00"
+bank = 0x80
+emit = true
+note = "promotion round seed: B0 trace fetched 7,198,137 reads at $80:CA00"
+
+# $80:CE00-$80:D000  phys 004E00-0051FF  1 KiB, 2 blocks, 15,420 reads
+[[func]]
+name = "FR_80CE00"
+addr = "CE00"
+bank = 0x80
+emit = true
+note = "promotion round seed: B0 trace fetched 5,222 reads at $80:CE00"
+
+[[func]]
+name = "FR_80D000"
+addr = "D000"
+bank = 0x80
+emit = true
+note = "promotion round seed: B0 trace fetched 10,198 reads at $80:D000"
+
+# $80:DE00-$80:E000  phys 005E00-0061FF  1 KiB, 2 blocks, 9,118,372 reads
+[[func]]
+name = "FR_80DE00"
+addr = "DE00"
+bank = 0x80
+emit = true
+note = "promotion round seed: B0 trace fetched 7,046,968 reads at $80:DE00"
+
+[[func]]
+name = "FR_80E000"
+addr = "E000"
+bank = 0x80
+emit = true
+note = "promotion round seed: B0 trace fetched 2,071,404 reads at $80:E000"
+
+# $80:F400-$80:F600  phys 007400-0077FF  1 KiB, 2 blocks, 141,308,239 reads
+[[func]]
+name = "FR_80F400"
+addr = "F400"
+bank = 0x80
+emit = true
+note = "promotion round seed: B0 trace fetched 132,954,923 reads at $80:F400"
+
+[[func]]
+name = "FR_80F600"
+addr = "F600"
+bank = 0x80
+emit = true
+note = "promotion round seed: B0 trace fetched 8,353,316 reads at $80:F600"
+
+# --- M2 promotion round 2 (2026-11-07): the callees the refusals named -------------
+#
+# Round 1 closed the fetch frontier but 20 of its 23 roots were refused as lle_only,
+# each with an `unproven_call_at_<site>_to_<callee>_m<m>x<x>`. reason naming a callee
+# the recompiler had no entry for (evidence/m2_promotion_round1.md 2). The 15 addresses
+# below are the ones from those 20 callee names that this file did not already declare;
+# every one of them is an address a round-1 refusal asked for, so this round asks for
+# the OTHER half of the frontier rather than more read-trace blocks. Nothing here is a
+# new idea from the trace: tests/frontier_seeds.py now reports 3 blocks left (1,820
+# reads, 0.0 % of 2,785,987,594) and all three are below the round's 1,024-read floor,
+# so the read-trace seed source is retired.
+#
+# entry_m/entry_x are stated where they are NOT the default (1,1), because the demand
+# modes come from the refusals themselves: 6 of these callees are demanded in m1x1 and
+# 9 in m0x0. A seed with the wrong entry mode would create a variant nobody calls.
+#
+# Outcome, measured (evidence/m2_promotion_round2.md): the round yields 4 new AOT
+# bodies - m1x1 variants of 80FA31, 80FA76, 81AC79, 81B05D, 45 instructions, of which
+# 80FA76 and 81AC79 are callees the refusals named but that did not need an entry here -
+# and 11 more lle_only nodes with reasons; nothing observable in execution moved (both
+# paths byte-identical to round 1). Two seeds are gone as of round 2b: $80:7FA9 and
+# $AB:2FAB are callees the analyzer resolves `lle_exact` into memory the cart's LoROM
+# mapping does not back at all ($80:7FA9 is below $8000 in a low canonical bank;
+# $AB:2FAB maps to cart offset $15AFAB, past the 1 MiB image, and Shadowrun is not an
+# SA-1 card). No seed can promote those, and a seed for them only adds a dispatch row
+# whose four variant slots are all NULL. The other three addresses of that shape
+# ($80:01A9, $80:0AAD, $80:3230) appear only in the refusal strings, not here. The rule
+# for future rounds: check the demand's `resolution` first - `aot_exact` can be
+# converted by a seed, `lle_exact` cannot.
+
+[[func]]
+name = "CC_80A568"
+addr = "A568"
+bank = 0x80
+emit = true
+note = "round-2 seed: already aot at m0x0; this is the m1x1 variant the refusals ask for"
+
+[[func]]
+name = "CC_80B07A"
+addr = "B07A"
+bank = 0x80
+emit = true
+note = "round-2 seed: the $80:B000 block's own continuation entry, refused as truncated"
+
+[[func]]
+name = "CC_80BE2B"
+addr = "BE2B"
+bank = 0x80
+emit = true
+note = "round-2 seed: already aot at m0x0; m1x1 variant named twice"
+
+[[func]]
+name = "CC_80FA31"
+addr = "FA31"
+bank = 0x80
+emit = true
+note = "round-2 seed: already aot at m0x0; m1x1 variant named by the $80:F600 continuation"
+
+[[func]]
+name = "CC_8186E5"
+addr = "86E5"
+bank = 0x81
+emit = true
+note = "round-2 seed: named by unproven_call in the $81:B000 block's continuation"
+
+[[func]]
+name = "CC_81B05D"
+addr = "B05D"
+bank = 0x81
+emit = true
+note = "round-2 seed: already aot at m0x0; m1x1 variant named by the $81:B000 continuation"
+
+[[func]]
+name = "CC_80961C"
+addr = "961C"
+bank = 0x80
+emit = true
+entry_m = 0
+entry_x = 0
+note = "round-2 seed: refused as truncated_call_continuation; entry named by 80967F"
+
+[[func]]
+name = "CC_809676"
+addr = "9676"
+bank = 0x80
+emit = true
+entry_m = 0
+entry_x = 0
+note = "round-2 seed: refused as truncated_call_continuation; entry named by 80A0F3"
+
+[[func]]
+name = "CC_80996E"
+addr = "996E"
+bank = 0x80
+emit = true
+entry_m = 0
+entry_x = 0
+note = "round-2 seed: 167 instructions refused as truncated; entry named by 80BFDB"
+
+[[func]]
+name = "CC_80A0EB"
+addr = "A0EB"
+bank = 0x80
+emit = true
+entry_m = 0
+entry_x = 0
+note = "round-2 seed: refused as truncated_call_continuation; entry named by 80A157"
+
+[[func]]
+name = "CC_80A113"
+addr = "A113"
+bank = 0x80
+emit = true
+entry_m = 0
+entry_x = 0
+note = "round-2 seed: 38 instructions refused as truncated; entry named at 80A113 by the trace"
+
+[[func]]
+name = "CC_80A632"
+addr = "A632"
+bank = 0x80
+emit = true
+entry_m = 0
+entry_x = 0
+note = "round-2 seed: 154 instructions refused as truncated; entry named by 809B00"
+
+[[func]]
+name = "CC_80BF0B"
+addr = "BF0B"
+bank = 0x80
+emit = true
+entry_m = 0
+entry_x = 0
+note = "round-2 seed: 113 instructions refused as truncated; entry named by 809640"
+
+[[func]]
+name = "CC_80C11F"
+addr = "C11F"
+bank = 0x80
+emit = true
+entry_m = 0
+entry_x = 0
+note = "round-2 seed: already aot (1 insn, has_lle_indirect_edge); named 4x as a callee"
+
+[[func]]
+name = "CC_80C43E"
+addr = "C43E"
+bank = 0x80
+emit = true
+entry_m = 0
+entry_x = 0
+note = "round-2 seed: already aot; named by the 80A7A6 call inside 80A632"
+
+
+# --- M2 promotion round 4 (gap-driven seeds) ---------------------------------
+#
+# Rounds 1-2 seeded from the read trace (tests/frontier_seeds.py), a source
+# retired at 0.0 % of reads left. Round 3 measured what the interpreted residue
+# is instead (evidence/m2_promotion_round3.md): 28,131,074 of 919,307,323
+# attributed interpreted guest cycles sit at a transfer gap the bridge could
+# hand a body to, and the other 96.94 % is entered by fall-through, back-edge
+# or resume, where no seed at any address intercepts it.
+#
+# The 2 entries below are the top of that ranking as tests/coverage_gaps.py
+# ranks it, emitted by tests/gap_seeds.py from tier2_capture_round3_combat.json
+# over combat, and 4 sighted entries already have an entry at that address and
+# mode, so they are left out. Every number in a note is the capture's own for
+# that address, not a guess.
+#
+#   This block is a subset of the ranking, emitted with --only $80C399,$80AAB3:
+#   2 of the 229 kept entries survive it, and they gate 3,680,454 cyc. The
+#   ceiling figures below still describe the full ranking.
+#
+#   capture identity  program_digest 240af24bb4a71049  generation_digest
+#   4e902f1ff9bdca6f
+#   rom_sha256 e6bc0a595d5c7c4b  mapper lorom  captures 1  warnings []
+#   these 2 ranking seeds gate 3,680,454 cyc = 0.40 % of the residue, 13.1 % of
+#   what is seedable (top 10 = 1.62 %, top 50 = 2.71 %, all 229 kept entries =
+#   3.06 %): the knee is at the top of the list, so a round that stops here is
+#   not leaving money on the table
+
+[[func]]
+name = "GS_80C399"
+addr = "C399"
+bank = 0x80
+emit = true
+entry_m = 0
+entry_x = 0
+note = "round-4 gap seed: 2,196,990 cyc interp, 366,165 hits via call at $80C1C9; frames 1766..22043; gate candidate_requires_analysis_and_replay"
+
+[[func]]
+name = "GS_80AAB3"
+addr = "AAB3"
+bank = 0x80
+emit = true
+entry_m = 0
+entry_x = 0
+note = "round-4 gap seed: 1,483,464 cyc interp, 247,244 hits via call at $80AF66; frames 1765..22043; gate candidate_requires_analysis_and_replay"
+

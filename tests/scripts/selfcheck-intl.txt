@@ -1,0 +1,13 @@
+# Same self-verifying run as selfcheck.txt, for the German and Swedish
+# editions.  The translations moved code and data, so the game's per-frame tick
+# counter is not at the USA address.  Measured rather than assumed: two WRAM
+# dumps ten frames apart, and the one 16-bit cell that advanced by ten is
+#   $7E1C76 (DE: 12 at frame 20; SV: 11 at frame 20),
+# so it advances once per emulated frame exactly like the USA counter at
+# $7E1C92.  The high byte is checked the same way selfcheck.txt checks it.
+#
+# If a condition never becomes true the host exits 3, which is how a stuck boot
+# shows up as a failed test instead of a silent hang.
+until16 01c76 != 0000 300
+until 01c77 != 00 900
+quit

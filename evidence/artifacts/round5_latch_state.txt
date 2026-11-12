@@ -1,0 +1,27 @@
+# round5_latch_state.txt
+#
+# what: the same combat-route split read at frame boundaries: whether DP, S, the live stack and the latch bytes agree around it
+# how:  python3 tests/latch_state.py --route tests/scripts/bisect_h8.txt --frames 14662,14671,14701,16181,16201 on the same trace builds; raw output: tests/out/r4/latch_state_combat.txt
+#
+# framework pin: 773285b8210f2254ae87d0a14113980fb36990ad
+# generated: 2026-11-08T09:29:56Z (host Darwin arm64)
+# source tree: /Users/wee/Documents/work/ports/ShadowrunSNESRecomp
+
+ctrl f14663  S=0x0133 D=0x0000 cyc=660888862 mcyc=5240393894 pc=0x819c6e latch126_127=9E80
+ctrl f14672  S=0x012e D=0x0000 cyc=661363105 mcyc=5243610222 pc=0x81ac6e latch126_127=4007
+ctrl f14702  S=0x013a D=0x0000 cyc=662505459 mcyc=5254331236 pc=0x81b061 latch126_127=E89E
+ctrl f16182  S=0x012f D=0x0000 cyc=718012339 mcyc=5783235876 pc=0x81908c latch126_127=0479
+ctrl f16202  S=0x0129 D=0x0000 cyc=719064557 mcyc=5790383258 pc=0x818e5e latch126_127=8D81
+seed f14663  S=0x0133 D=0x0000 cyc=660886297 mcyc=5240393892 pc=0x819c76 latch126_127=9E80
+seed f14672  S=0x012e D=0x0000 cyc=661360534 mcyc=5243610214 pc=0x81ac6e latch126_127=4007
+seed f14702  S=0x013a D=0x0000 cyc=662502861 mcyc=5254331236 pc=0x81b061 latch126_127=E89E
+seed f16182  S=0x012f D=0x0000 cyc=718009555 mcyc=5783235894 pc=0x819094 latch126_127=0584
+seed f16202  S=0x0129 D=0x0000 cyc=719061769 mcyc=5790383246 pc=0x818e6d latch126_127=8D81
+
+f14663/14663: DP identical=True latch identical=True live-stack diffs=0 below-S diffs=2 S ctrl=0133 seed=0133 mcyc d=-2 cyc d=-2565
+   below-S: [('$011F', '24', 'A4'), ('$0120', '31', '2E')]
+f14672/14672: DP identical=True latch identical=True live-stack diffs=0 below-S diffs=0 S ctrl=012E seed=012E mcyc d=-8 cyc d=-2571
+f14702/14702: DP identical=True latch identical=True live-stack diffs=0 below-S diffs=0 S ctrl=013A seed=013A mcyc d=+0 cyc d=-2598
+f16182/16182: DP identical=True latch identical=False live-stack diffs=0 below-S diffs=2 S ctrl=012F seed=012F mcyc d=+18 cyc d=-2784
+   below-S: [('$0126', '04', '05'), ('$0127', '79', '84')]
+f16202/16202: DP identical=True latch identical=True live-stack diffs=0 below-S diffs=0 S ctrl=0129 seed=0129 mcyc d=-12 cyc d=-2788

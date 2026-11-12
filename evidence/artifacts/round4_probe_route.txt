@@ -1,0 +1,30 @@
+turbo on
+wait 1300
+press a 6
+wait 120
+press a 6
+wait 120
+press start 6
+wait 200
+press down 6
+wait 100
+press a 6
+wait 150
+wait 150
+wait 150
+wait 150
+wait 150
+wait 150
+wait 150
+wait 150
+wait 150
+wait 150
+wait 150
+wait 150
+wait 150
+wait 150
+wait 150
+wait 150
+wait 150
+wait 150
+quit

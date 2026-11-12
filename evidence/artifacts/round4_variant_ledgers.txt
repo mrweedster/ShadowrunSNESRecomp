@@ -1,0 +1,515 @@
+# round4_variant_ledgers.txt
+#
+# what: one block per seed variant: seed table, regen counts, manifest and generated-set digests, exe digest, route exit, execution share
+# how:  cat of tests/out/r4/variant_<name>.out, the redirects of tests/seed_variant.sh; the 'baseline: ... [[func]] entries left' line is re-derived from recomp/symbols.toml (the committed table the variants were cut from) by the current gap_seeds.py, because those logs predate the anchored entry counter (a loose count read the table's header prose as an entry, 41 for a 40-entry baseline)
+#
+# framework pin: 773285b8210f2254ae87d0a14113980fb36990ad
+# generated: 2026-11-08T08:02:38Z (host Darwin arm64)
+# source tree: /Users/wee/Documents/work/ports/ShadowrunSNESRecomp
+
+
+================================================================================
+## variant r4base  (source: tests/out/r4/variant_r4base.out)
+== variant r4base: committed table minus gap-seed blocks + gap_seeds.py --no-seeds ==
+   baseline: 1 generated block(s) removed, 40 [[func]] entries left
+   no gap seeds added (control tree)
+   symbols [[func]] entries: 40
+== regen at the pin ==
+   analysis: 47 roots -> 269 exact variants, 514 edges
+   analysis: 226 AOT-eligible, 43 LLE-only
+   manifest: 269 nodes (226 aot_eligible, 43 lle_only), 47 roots, sha256 240af24bb4a71049
+   archived 914be087adf50b94 tests/out/r4/manifest_r4base.json.bz2
+   archived cce16c60ce5e8797 tests/out/r4/gen_r4base.tar.gz
+== configure + build build-r4base ==
+   -- ShadowrunSNESRecomp: 18 generated translation unit(s) from /Users/wee/Documents/work/ports/ShadowrunSNESRecomp/src/gen
+   exe sha256 1341448773c19617 build-r4base/ShadowrunSNESRecomp
+== run tests/scripts/combat.txt on it ==
+   gen_sha256=8374878ada42  gen_units=18  gen_functions=204  gen_dispatch=252  framework=773285b8210f  config=Release  embed_rom=OFF  exe_sha256=1341448773c1
+   exit=0 wall=30s  exit: script quit after 22044 frames
+   interp  96.15%  aot   3.85%  interp_cycles 919,307,323  cpu_cycles 956,096,571  master_cycles 7,878,127,092
+
+src/gen now holds variant r4base. To restore the committed table:
+  SNESRECOMP_ROOT=/private/var/folders/cc/_czwdt293dg9ty_zgc1b57x00000gn/T/opencode/sr-pin bash tools/regen.sh   # with the live recomp/symbols.toml
+
+================================================================================
+## variant r4clean  (source: tests/out/r4/variant_r4clean.out)
+== variant r4clean: committed table minus gap-seed blocks + gap_seeds.py --only $80C399,$80AAB3,$80ABBC,$80B1DB ==
+   baseline: 1 generated block(s) removed, 40 [[func]] entries left
+   symbols [[func]] entries: 44
+   seed 80C399
+   seed 80AAB3
+   seed 80ABBC
+   seed 80B1DB
+== regen at the pin ==
+   analysis: 51 roots -> 287 exact variants, 566 edges
+   analysis: 244 AOT-eligible, 43 LLE-only
+   manifest: 287 nodes (244 aot_eligible, 43 lle_only), 51 roots, sha256 faf039a048ab30b5
+== configure + build build-r4clean ==
+   -- ShadowrunSNESRecomp: 18 generated translation unit(s) from /Users/wee/Documents/work/ports/ShadowrunSNESRecomp/src/gen
+   exe sha256 3e1a68bd32e963cc build-r4clean/ShadowrunSNESRecomp
+== run tests/scripts/combat.txt on it ==
+   gen_sha256=ef873adc7314  gen_units=18  gen_functions=217  gen_dispatch=266  framework=773285b8210f  config=Release  embed_rom=OFF  exe_sha256=3e1a68bd32e9
+   exit=0 wall=23s  exit: script quit after 22044 frames
+   interp  65.57%  aot  34.43%  interp_cycles 626,711,944  cpu_cycles 955,775,558  master_cycles 7,878,127,112
+
+src/gen now holds variant r4clean. To restore the committed table:
+  SNESRECOMP_ROOT=/private/var/folders/cc/_czwdt293dg9ty_zgc1b57x00000gn/T/opencode/sr-pin bash tools/regen.sh   # with the live recomp/symbols.toml
+
+================================================================================
+## variant r4clean_b  (source: tests/out/r4/variant_r4clean_b.out)
+== variant r4clean: committed table minus gap-seed blocks + gap_seeds.py --only $80C399,$80AAB3,$80ABBC,$80B1DB ==
+   baseline: 1 generated block(s) removed, 40 [[func]] entries left
+   symbols [[func]] entries: 44
+   seed 80C399
+   seed 80AAB3
+   seed 80ABBC
+   seed 80B1DB
+== regen at the pin ==
+   analysis: 51 roots -> 287 exact variants, 566 edges
+   analysis: 244 AOT-eligible, 43 LLE-only
+   manifest: 287 nodes (244 aot_eligible, 43 lle_only), 51 roots, sha256 faf039a048ab30b5
+   archived f2e09dcc43280e1e tests/out/r4/manifest_r4clean.json.bz2
+   archived 7db5bcc0a107f01a tests/out/r4/gen_r4clean.tar.gz
+== configure + build build-r4clean ==
+   -- ShadowrunSNESRecomp: 18 generated translation unit(s) from /Users/wee/Documents/work/ports/ShadowrunSNESRecomp/src/gen
+   exe sha256 3e1a68bd32e963cc build-r4clean/ShadowrunSNESRecomp
+== run tests/scripts/combat.txt on it ==
+   gen_sha256=ef873adc7314  gen_units=18  gen_functions=217  gen_dispatch=266  framework=773285b8210f  config=Release  embed_rom=OFF  exe_sha256=3e1a68bd32e9
+   exit=0 wall=24s  exit: script quit after 22044 frames
+   interp  65.57%  aot  34.43%  interp_cycles 626,711,944  cpu_cycles 955,775,558  master_cycles 7,878,127,112
+
+src/gen now holds variant r4clean. To restore the committed table:
+  SNESRECOMP_ROOT=/private/var/folders/cc/_czwdt293dg9ty_zgc1b57x00000gn/T/opencode/sr-pin bash tools/regen.sh   # with the live recomp/symbols.toml
+
+================================================================================
+## variant r4f362  (source: tests/out/r4/variant_r4f362.out)
+== variant r4f362: committed table minus gap-seed blocks + gap_seeds.py --only $80F362 ==
+   baseline: 1 generated block(s) removed, 40 [[func]] entries left
+   symbols [[func]] entries: 41
+   seed 80F362
+== regen at the pin ==
+   analysis: 48 roots -> 345 exact variants, 5597 edges
+   analysis: 235 AOT-eligible, 110 LLE-only
+   manifest: 345 nodes (235 aot_eligible, 110 lle_only), 48 roots, sha256 d60e6f5cdddd71ba
+== configure + build build-r4f362 ==
+   -- ShadowrunSNESRecomp: 18 generated translation unit(s) from /Users/wee/Documents/work/ports/ShadowrunSNESRecomp/src/gen
+   exe sha256 ffb7bee1b564e87b build-r4f362/ShadowrunSNESRecomp
+== run tests/scripts/combat.txt on it ==
+   gen_sha256=685e8ad10335  gen_units=18  gen_functions=213  gen_dispatch=327  framework=773285b8210f  config=Release  embed_rom=OFF  exe_sha256=ffb7bee1b564
+   exit=3 wall=24s  exit: script until timed out after 21530 frames
+   [unresolved-abandon] first hit site=$80F4F9 frame=1766 entry_s=$0137 hrv=2 (handler side effects SKIPPED — authorize this dispatch)
+   interp_cap entries:    5 last=$81AC7C
+   interp  99.61%  aot   0.39%  interp_cycles 983,986,122  cpu_cycles 987,816,280  master_cycles 7,963,538,080
+
+src/gen now holds variant r4f362. To restore the committed table:
+  SNESRECOMP_ROOT=/private/var/folders/cc/_czwdt293dg9ty_zgc1b57x00000gn/T/opencode/sr-pin bash tools/regen.sh   # with the live recomp/symbols.toml
+
+================================================================================
+## variant r4g  (source: tests/out/r4/variant_r4g.out)
+== variant r4g: committed table minus gap-seed blocks + gap_seeds.py --only $80F362,$80F495,$80F4F9,$80F889 ==
+   baseline: 1 generated block(s) removed, 40 [[func]] entries left
+   symbols [[func]] entries: 44
+   seed 80F495
+   seed 80F362
+   seed 80F4F9
+   seed 80F889
+== regen at the pin ==
+   analysis: 51 roots -> 345 exact variants, 5662 edges
+   analysis: 301 AOT-eligible, 44 LLE-only
+   manifest: 345 nodes (301 aot_eligible, 44 lle_only), 51 roots, sha256 caa25224e380f0ce
+== configure + build build-r4g ==
+   -- ShadowrunSNESRecomp: 32 generated translation unit(s) from /Users/wee/Documents/work/ports/ShadowrunSNESRecomp/src/gen
+   exe sha256 627ff3d7be347734 build-r4g/ShadowrunSNESRecomp
+== run tests/scripts/combat.txt on it ==
+   gen_sha256=347c86b619ac  gen_units=32  gen_functions=275  gen_dispatch=327  framework=773285b8210f  config=Release  embed_rom=OFF  exe_sha256=627ff3d7be34
+   exit=3 wall=24s  exit: script until timed out after 21530 frames
+   [unresolved-abandon] first hit site=$80F4F9 frame=1766 entry_s=$0137 hrv=2 (handler side effects SKIPPED — authorize this dispatch)
+   interp_cap entries:    5 last=$81AC7C
+   interp  99.61%  aot   0.39%  interp_cycles 983,986,122  cpu_cycles 987,816,280  master_cycles 7,963,538,080
+
+src/gen now holds variant r4g. To restore the committed table:
+  SNESRECOMP_ROOT=/private/var/folders/cc/_czwdt293dg9ty_zgc1b57x00000gn/T/opencode/sr-pin bash tools/regen.sh   # with the live recomp/symbols.toml
+
+================================================================================
+## variant r4g2  (source: tests/out/r4/variant_r4g2.out)
+== variant r4g2: committed table minus gap-seed blocks + gap_seeds.py --only $80F362,$80F495,$80F889 ==
+   baseline: 1 generated block(s) removed, 40 [[func]] entries left
+   symbols [[func]] entries: 43
+   seed 80F495
+   seed 80F362
+   seed 80F889
+== regen at the pin ==
+   analysis: 50 roots -> 345 exact variants, 5662 edges
+   analysis: 301 AOT-eligible, 44 LLE-only
+   manifest: 345 nodes (301 aot_eligible, 44 lle_only), 50 roots, sha256 c7835349677633a8
+== configure + build build-r4g2 ==
+   -- ShadowrunSNESRecomp: 32 generated translation unit(s) from /Users/wee/Documents/work/ports/ShadowrunSNESRecomp/src/gen
+   exe sha256 d5f942f0fd8a3a35 build-r4g2/ShadowrunSNESRecomp
+== run tests/scripts/combat.txt on it ==
+   gen_sha256=76ba72dee73f  gen_units=32  gen_functions=276  gen_dispatch=327  framework=773285b8210f  config=Release  embed_rom=OFF  exe_sha256=d5f942f0fd8a
+   exit=3 wall=24s  exit: script until timed out after 21530 frames
+   [unresolved-abandon] first hit site=$80F4F9 frame=1766 entry_s=$0137 hrv=2 (handler side effects SKIPPED — authorize this dispatch)
+   interp_cap entries:    5 last=$81AC7C
+   interp  99.61%  aot   0.39%  interp_cycles 983,986,122  cpu_cycles 987,816,280  master_cycles 7,963,538,080
+
+src/gen now holds variant r4g2. To restore the committed table:
+  SNESRECOMP_ROOT=/private/var/folders/cc/_czwdt293dg9ty_zgc1b57x00000gn/T/opencode/sr-pin bash tools/regen.sh   # with the live recomp/symbols.toml
+
+================================================================================
+## variant r4o6  (source: tests/out/r4/variant_r4o6.out)
+== variant r4o6: committed table minus gap-seed blocks + gap_seeds.py --exclude $80F362,$80F495,$80F4F9,$80F889 ==
+   baseline: 1 generated block(s) removed, 40 [[func]] entries left
+   symbols [[func]] entries: 50
+   seed 80C1C9
+   seed 80C399
+   seed 80C1B3
+   seed 80AAB3
+   seed 80ABBC
+   seed 80B1DB
+   seed 80F37B
+   seed 80F6DF
+   seed 80F3EA
+   seed 80B101
+== regen at the pin ==
+   analysis: 57 roots -> 366 exact variants, 5861 edges
+   analysis: 253 AOT-eligible, 113 LLE-only
+   manifest: 366 nodes (253 aot_eligible, 113 lle_only), 57 roots, sha256 d10b5db60e0f3ca9
+== configure + build build-r4o6 ==
+   -- ShadowrunSNESRecomp: 18 generated translation unit(s) from /Users/wee/Documents/work/ports/ShadowrunSNESRecomp/src/gen
+   exe sha256 a7ade2a0b6a68a3c build-r4o6/ShadowrunSNESRecomp
+== run tests/scripts/combat.txt on it ==
+   gen_sha256=c0f6af776707  gen_units=18  gen_functions=225  gen_dispatch=344  framework=773285b8210f  config=Release  embed_rom=OFF  exe_sha256=a7ade2a0b6a6
+   exit=3 wall=25s  exit: script until timed out after 21530 frames
+   [unresolved-abandon] first hit site=$80F4F9 frame=1766 entry_s=$0137 hrv=2 (handler side effects SKIPPED — authorize this dispatch)
+   interp_cap entries:    5 last=$81AC7C
+   interp  99.61%  aot   0.39%  interp_cycles 983,981,893  cpu_cycles 987,816,280  master_cycles 7,963,538,080
+
+src/gen now holds variant r4o6. To restore the committed table:
+  SNESRECOMP_ROOT=/private/var/folders/cc/_czwdt293dg9ty_zgc1b57x00000gn/T/opencode/sr-pin bash tools/regen.sh   # with the live recomp/symbols.toml
+
+================================================================================
+## variant r4pair  (source: tests/out/r4/variant_r4pair.out)
+== variant r4pair: committed table minus gap-seed blocks + gap_seeds.py --only $80C399,$80AAB3 ==
+   baseline: 1 generated block(s) removed, 40 [[func]] entries left
+   symbols [[func]] entries: 42
+   seed 80C399
+   seed 80AAB3
+== regen at the pin ==
+   analysis: 49 roots -> 283 exact variants, 540 edges
+   analysis: 240 AOT-eligible, 43 LLE-only
+   [cost 3s regen]
+   manifest: 283 nodes (240 aot_eligible, 43 lle_only), 49 roots, sha256 eea52f0716ab0f40
+   archived faa60941ced13a00 tests/out/r4/manifest_r4pair.json.bz2
+   archived 5efb56355ad00b7a tests/out/r4/gen_r4pair.tar.gz
+== configure + build build-r4pair ==
+   -- ShadowrunSNESRecomp: 18 generated translation unit(s) from /Users/wee/Documents/work/ports/ShadowrunSNESRecomp/src/gen
+   exe sha256 2b478e8d26bb27f9 build-r4pair/ShadowrunSNESRecomp
+   [cost 4s build]
+== run tests/scripts/combat.txt on it ==
+   gen_sha256=785bd064707f  gen_units=18  gen_functions=215  gen_dispatch=263  framework=773285b8210f  config=Release  embed_rom=OFF  exe_sha256=2b478e8d26bb
+   exit=0 wall=30s  exit: script quit after 22044 frames
+   interp  90.04%  aot   9.96%  interp_cycles 860,839,515  cpu_cycles 956,096,571  master_cycles 7,878,127,092
+   [cost 30s run]
+
+src/gen now holds variant r4pair. To restore the committed table:
+  SNESRECOMP_ROOT=/private/var/folders/cc/_czwdt293dg9ty_zgc1b57x00000gn/T/opencode/sr-pin bash tools/regen.sh   # with the live recomp/symbols.toml
+
+================================================================================
+## variant r4ref  (source: tests/out/r4/variant_r4ref.out)
+== variant r4ref: committed table minus gap-seed blocks + gap_seeds.py --only $80C1C9,$80C399,$80C1B3,$80AAB3,$80ABBC,$80B1DB ==
+   baseline: 1 generated block(s) removed, 40 [[func]] entries left
+   symbols [[func]] entries: 46
+   seed 80C1C9
+   seed 80C399
+   seed 80C1B3
+   seed 80AAB3
+   seed 80ABBC
+   seed 80B1DB
+== regen at the pin ==
+   analysis: 53 roots -> 366 exact variants, 5663 edges
+   analysis: 253 AOT-eligible, 113 LLE-only
+   manifest: 366 nodes (253 aot_eligible, 113 lle_only), 53 roots, sha256 3d2f3046b468b151
+== configure + build build-r4ref ==
+   -- ShadowrunSNESRecomp: 18 generated translation unit(s) from /Users/wee/Documents/work/ports/ShadowrunSNESRecomp/src/gen
+   exe sha256 ab842ee20ffcc1ef build-r4ref/ShadowrunSNESRecomp
+== run tests/scripts/combat.txt on it ==
+   gen_sha256=29740e058cda  gen_units=18  gen_functions=226  gen_dispatch=344  framework=773285b8210f  config=Release  embed_rom=OFF  exe_sha256=ab842ee20ffc
+   exit=3 wall=24s  exit: script until timed out after 21530 frames
+   [unresolved-abandon] first hit site=$80F4F9 frame=1766 entry_s=$0137 hrv=2 (handler side effects SKIPPED — authorize this dispatch)
+   interp_cap entries:    5 last=$81AC7C
+   interp  99.61%  aot   0.39%  interp_cycles 983,981,893  cpu_cycles 987,816,280  master_cycles 7,963,538,080
+
+src/gen now holds variant r4ref. To restore the committed table:
+  SNESRECOMP_ROOT=/private/var/folders/cc/_czwdt293dg9ty_zgc1b57x00000gn/T/opencode/sr-pin bash tools/regen.sh   # with the live recomp/symbols.toml
+
+================================================================================
+## variant s80AAB3  (source: tests/out/r4/variant_s80AAB3.out)
+== variant s80AAB3: committed table minus gap-seed blocks + gap_seeds.py --only $80AAB3 ==
+   baseline: 1 generated block(s) removed, 40 [[func]] entries left
+   symbols [[func]] entries: 41
+   seed 80AAB3
+== regen at the pin ==
+   analysis: 48 roots -> 282 exact variants, 540 edges
+   analysis: 239 AOT-eligible, 43 LLE-only
+   [cost 1s regen]
+   manifest: 282 nodes (239 aot_eligible, 43 lle_only), 48 roots, sha256 e537de49a25bc47c
+   archived 0fa43a8c472e63b8 tests/out/r4/manifest_s80AAB3.json.bz2
+   archived 5a905b5ee24e1fb8 tests/out/r4/gen_s80AAB3.tar.gz
+== configure + build build-s80AAB3 ==
+   -- ShadowrunSNESRecomp: 18 generated translation unit(s) from /Users/wee/Documents/work/ports/ShadowrunSNESRecomp/src/gen
+   exe sha256 df29756f8367716a build-s80AAB3/ShadowrunSNESRecomp
+   [cost 4s build]
+== run tests/scripts/combat.txt on it ==
+   gen_sha256=31c59fbd6b60  gen_units=18  gen_functions=215  gen_dispatch=262  framework=773285b8210f  config=Release  embed_rom=OFF  exe_sha256=df29756f8367
+   exit=0 wall=32s  exit: script quit after 22044 frames
+   interp  92.07%  aot   7.93%  interp_cycles 880,287,406  cpu_cycles 956,096,571  master_cycles 7,878,127,092
+   [cost 32s run]
+
+src/gen now holds variant s80AAB3. To restore the committed table:
+  SNESRECOMP_ROOT=/private/var/folders/cc/_czwdt293dg9ty_zgc1b57x00000gn/T/opencode/sr-pin bash tools/regen.sh   # with the live recomp/symbols.toml
+
+================================================================================
+## variant s80ABBC  (source: tests/out/r4/variant_s80ABBC.out)
+== variant s80ABBC: committed table minus gap-seed blocks + gap_seeds.py --only $80ABBC ==
+   baseline: 1 generated block(s) removed, 40 [[func]] entries left
+   symbols [[func]] entries: 41
+   seed 80ABBC
+== regen at the pin ==
+   analysis: 48 roots -> 270 exact variants, 514 edges
+   analysis: 227 AOT-eligible, 43 LLE-only
+   [cost 1s regen]
+   manifest: 270 nodes (227 aot_eligible, 43 lle_only), 48 roots, sha256 d25cb83dbc6c29a2
+   archived 9bb755fb9710c364 tests/out/r4/manifest_s80ABBC.json.bz2
+   archived 743972c5627b23ff tests/out/r4/gen_s80ABBC.tar.gz
+== configure + build build-s80ABBC ==
+   -- ShadowrunSNESRecomp: 18 generated translation unit(s) from /Users/wee/Documents/work/ports/ShadowrunSNESRecomp/src/gen
+   exe sha256 05f8aefb69d18851 build-s80ABBC/ShadowrunSNESRecomp
+   [cost 3s build]
+== run tests/scripts/combat.txt on it ==
+   gen_sha256=cfc7e2e1afd1  gen_units=18  gen_functions=204  gen_dispatch=253  framework=773285b8210f  config=Release  embed_rom=OFF  exe_sha256=05f8aefb69d1
+   exit=0 wall=33s  exit: script quit after 22044 frames
+   interp  94.52%  aot   5.48%  interp_cycles 903,700,726  cpu_cycles 956,058,833  master_cycles 7,878,127,128
+   [cost 33s run]
+
+src/gen now holds variant s80ABBC. To restore the committed table:
+  SNESRECOMP_ROOT=/private/var/folders/cc/_czwdt293dg9ty_zgc1b57x00000gn/T/opencode/sr-pin bash tools/regen.sh   # with the live recomp/symbols.toml
+
+================================================================================
+## variant s80B1DB  (source: tests/out/r4/variant_s80B1DB.out)
+== variant s80B1DB: committed table minus gap-seed blocks + gap_seeds.py --only $80B1DB ==
+   baseline: 1 generated block(s) removed, 40 [[func]] entries left
+   symbols [[func]] entries: 41
+   seed 80B1DB
+== regen at the pin ==
+   analysis: 48 roots -> 272 exact variants, 540 edges
+   analysis: 229 AOT-eligible, 43 LLE-only
+   [cost 1s regen]
+   manifest: 272 nodes (229 aot_eligible, 43 lle_only), 48 roots, sha256 04bf2014e1e8b567
+   archived 475437b09c512b61 tests/out/r4/manifest_s80B1DB.json.bz2
+   archived 355b26be8aaf2610 tests/out/r4/gen_s80B1DB.tar.gz
+== configure + build build-s80B1DB ==
+   -- ShadowrunSNESRecomp: 18 generated translation unit(s) from /Users/wee/Documents/work/ports/ShadowrunSNESRecomp/src/gen
+   exe sha256 d1fb51a5274b3e8d build-s80B1DB/ShadowrunSNESRecomp
+   [cost 4s build]
+== run tests/scripts/combat.txt on it ==
+   gen_sha256=05fc155cdb4a  gen_units=18  gen_functions=206  gen_dispatch=254  framework=773285b8210f  config=Release  embed_rom=OFF  exe_sha256=d1fb51a5274b
+   exit=0 wall=26s  exit: script quit after 22044 frames
+   interp  73.53%  aot  26.47%  interp_cycles 701,658,067  cpu_cycles 954,239,118  master_cycles 7,878,127,130
+   [cost 26s run]
+
+src/gen now holds variant s80B1DB. To restore the committed table:
+  SNESRECOMP_ROOT=/private/var/folders/cc/_czwdt293dg9ty_zgc1b57x00000gn/T/opencode/sr-pin bash tools/regen.sh   # with the live recomp/symbols.toml
+
+================================================================================
+## variant s80C1B3  (source: tests/out/r4/variant_s80C1B3.out)
+== variant s80C1B3: committed table minus gap-seed blocks + gap_seeds.py --only $80C1B3 ==
+   baseline: 1 generated block(s) removed, 40 [[func]] entries left
+   symbols [[func]] entries: 41
+   seed 80C1B3
+== regen at the pin ==
+   analysis: 48 roots -> 349 exact variants, 5611 edges
+   analysis: 236 AOT-eligible, 113 LLE-only
+   [cost 25s regen]
+   manifest: 349 nodes (236 aot_eligible, 113 lle_only), 48 roots, sha256 d8ff0458817b6319
+   archived 6127ad4acd71f428 tests/out/r4/manifest_s80C1B3.json.bz2
+   archived 82e89491269da484 tests/out/r4/gen_s80C1B3.tar.gz
+== configure + build build-s80C1B3 ==
+   -- ShadowrunSNESRecomp: 18 generated translation unit(s) from /Users/wee/Documents/work/ports/ShadowrunSNESRecomp/src/gen
+   exe sha256 86d7d2e889554b62 build-s80C1B3/ShadowrunSNESRecomp
+   [cost 4s build]
+== run tests/scripts/combat.txt on it ==
+   gen_sha256=5ce734d84c0a  gen_units=18  gen_functions=214  gen_dispatch=331  framework=773285b8210f  config=Release  embed_rom=OFF  exe_sha256=86d7d2e88955
+   exit=3 wall=25s  exit: script until timed out after 21530 frames
+   [unresolved-abandon] first hit site=$80F4F9 frame=1766 entry_s=$0137 hrv=2 (handler side effects SKIPPED — authorize this dispatch)
+   interp_cap entries:    5 last=$81AC7C
+   interp  99.61%  aot   0.39%  interp_cycles 983,986,001  cpu_cycles 987,816,280  master_cycles 7,963,538,080
+   [cost 25s run]
+
+src/gen now holds variant s80C1B3. To restore the committed table:
+  SNESRECOMP_ROOT=/private/var/folders/cc/_czwdt293dg9ty_zgc1b57x00000gn/T/opencode/sr-pin bash tools/regen.sh   # with the live recomp/symbols.toml
+
+================================================================================
+## variant s80C1C9  (source: tests/out/r4/variant_s80C1C9.out)
+== variant s80C1C9: committed table minus gap-seed blocks + gap_seeds.py --only $80C1C9 ==
+   baseline: 1 generated block(s) removed, 40 [[func]] entries left
+   symbols [[func]] entries: 41
+   seed 80C1C9
+== regen at the pin ==
+   analysis: 48 roots -> 348 exact variants, 5610 edges
+   analysis: 236 AOT-eligible, 112 LLE-only
+   [cost 24s regen]
+   manifest: 348 nodes (236 aot_eligible, 112 lle_only), 48 roots, sha256 7a268166b6ccba19
+   archived 2320a47fe1d8c924 tests/out/r4/manifest_s80C1C9.json.bz2
+   archived 87e5fd8b1fe88822 tests/out/r4/gen_s80C1C9.tar.gz
+== configure + build build-s80C1C9 ==
+   -- ShadowrunSNESRecomp: 18 generated translation unit(s) from /Users/wee/Documents/work/ports/ShadowrunSNESRecomp/src/gen
+   exe sha256 4e6f362a2a23e39a build-s80C1C9/ShadowrunSNESRecomp
+   [cost 3s build]
+== run tests/scripts/combat.txt on it ==
+   gen_sha256=d640d692246c  gen_units=18  gen_functions=214  gen_dispatch=330  framework=773285b8210f  config=Release  embed_rom=OFF  exe_sha256=4e6f362a2a23
+   exit=3 wall=23s  exit: script until timed out after 21530 frames
+   [unresolved-abandon] first hit site=$80F4F9 frame=1766 entry_s=$0137 hrv=2 (handler side effects SKIPPED — authorize this dispatch)
+   interp_cap entries:    5 last=$81AC7C
+   interp  99.61%  aot   0.39%  interp_cycles 983,986,001  cpu_cycles 987,816,280  master_cycles 7,963,538,080
+   [cost 24s run]
+
+src/gen now holds variant s80C1C9. To restore the committed table:
+  SNESRECOMP_ROOT=/private/var/folders/cc/_czwdt293dg9ty_zgc1b57x00000gn/T/opencode/sr-pin bash tools/regen.sh   # with the live recomp/symbols.toml
+
+================================================================================
+## variant s80C399  (source: tests/out/r4/variant_s80C399.out)
+== variant s80C399: committed table minus gap-seed blocks + gap_seeds.py --only $80C399 ==
+   baseline: 1 generated block(s) removed, 40 [[func]] entries left
+   symbols [[func]] entries: 41
+   seed 80C399
+== regen at the pin ==
+   analysis: 48 roots -> 270 exact variants, 514 edges
+   analysis: 227 AOT-eligible, 43 LLE-only
+   [cost 2s regen]
+   manifest: 270 nodes (227 aot_eligible, 43 lle_only), 48 roots, sha256 4935fd8fbf3148be
+   archived d45ebf80f99c2007 tests/out/r4/manifest_s80C399.json.bz2
+   archived 814994ac8a6e2e6b tests/out/r4/gen_s80C399.tar.gz
+== configure + build build-s80C399 ==
+   -- ShadowrunSNESRecomp: 18 generated translation unit(s) from /Users/wee/Documents/work/ports/ShadowrunSNESRecomp/src/gen
+   exe sha256 e841e036e49064de build-s80C399/ShadowrunSNESRecomp
+   [cost 4s build]
+== run tests/scripts/combat.txt on it ==
+   gen_sha256=4f35236134d5  gen_units=18  gen_functions=204  gen_dispatch=253  framework=773285b8210f  config=Release  embed_rom=OFF  exe_sha256=e841e036e490
+   exit=0 wall=31s  exit: script quit after 22044 frames
+   interp  94.12%  aot   5.88%  interp_cycles 899,859,432  cpu_cycles 956,096,571  master_cycles 7,878,127,092
+   [cost 31s run]
+
+src/gen now holds variant s80C399. To restore the committed table:
+  SNESRECOMP_ROOT=/private/var/folders/cc/_czwdt293dg9ty_zgc1b57x00000gn/T/opencode/sr-pin bash tools/regen.sh   # with the live recomp/symbols.toml
+
+================================================================================
+## variant s80F362  (source: tests/out/r4/variant_s80F362.out)
+== variant s80F362: committed table minus gap-seed blocks + gap_seeds.py --only $80F362 ==
+   baseline: 1 generated block(s) removed, 40 [[func]] entries left
+   symbols [[func]] entries: 41
+   seed 80F362
+== regen at the pin ==
+   analysis: 48 roots -> 345 exact variants, 5597 edges
+   analysis: 235 AOT-eligible, 110 LLE-only
+   [cost 27s regen]
+   manifest: 345 nodes (235 aot_eligible, 110 lle_only), 48 roots, sha256 d60e6f5cdddd71ba
+   archived 24e44177fb88d048 tests/out/r4/manifest_s80F362.json.bz2
+   archived 37b37d3001e59357 tests/out/r4/gen_s80F362.tar.gz
+== configure + build build-s80F362 ==
+   -- ShadowrunSNESRecomp: 18 generated translation unit(s) from /Users/wee/Documents/work/ports/ShadowrunSNESRecomp/src/gen
+   exe sha256 ffb7bee1b564e87b build-s80F362/ShadowrunSNESRecomp
+   [cost 4s build]
+== run tests/scripts/combat.txt on it ==
+   gen_sha256=685e8ad10335  gen_units=18  gen_functions=213  gen_dispatch=327  framework=773285b8210f  config=Release  embed_rom=OFF  exe_sha256=ffb7bee1b564
+   exit=3 wall=25s  exit: script until timed out after 21530 frames
+   [unresolved-abandon] first hit site=$80F4F9 frame=1766 entry_s=$0137 hrv=2 (handler side effects SKIPPED — authorize this dispatch)
+   interp_cap entries:    5 last=$81AC7C
+   interp  99.61%  aot   0.39%  interp_cycles 983,986,122  cpu_cycles 987,816,280  master_cycles 7,963,538,080
+   [cost 25s run]
+
+src/gen now holds variant s80F362. To restore the committed table:
+  SNESRECOMP_ROOT=/private/var/folders/cc/_czwdt293dg9ty_zgc1b57x00000gn/T/opencode/sr-pin bash tools/regen.sh   # with the live recomp/symbols.toml
+
+================================================================================
+## variant s80F495  (source: tests/out/r4/variant_s80F495.out)
+== variant s80F495: committed table minus gap-seed blocks + gap_seeds.py --only $80F495 ==
+   baseline: 1 generated block(s) removed, 40 [[func]] entries left
+   symbols [[func]] entries: 41
+   seed 80F495
+== regen at the pin ==
+   analysis: 48 roots -> 271 exact variants, 516 edges
+   analysis: 227 AOT-eligible, 44 LLE-only
+   [cost 1s regen]
+   manifest: 271 nodes (227 aot_eligible, 44 lle_only), 48 roots, sha256 bb02eb84c796b406
+   archived e25863a1adb540b4 tests/out/r4/manifest_s80F495.json.bz2
+   archived 529d504737e12767 tests/out/r4/gen_s80F495.tar.gz
+== configure + build build-s80F495 ==
+   -- ShadowrunSNESRecomp: 18 generated translation unit(s) from /Users/wee/Documents/work/ports/ShadowrunSNESRecomp/src/gen
+   exe sha256 e0de95e6e10eedd9 build-s80F495/ShadowrunSNESRecomp
+   [cost 4s build]
+== run tests/scripts/combat.txt on it ==
+   gen_sha256=ae73b4b5ae8c  gen_units=18  gen_functions=205  gen_dispatch=254  framework=773285b8210f  config=Release  embed_rom=OFF  exe_sha256=e0de95e6e10e
+   exit=3 wall=24s  exit: script until timed out after 21530 frames
+   [unresolved-abandon] first hit site=$80F4F9 frame=1766 entry_s=$0137 hrv=2 (handler side effects SKIPPED — authorize this dispatch)
+   interp_cap entries:    5 last=$81AC7C
+   interp  99.61%  aot   0.39%  interp_cycles 983,986,122  cpu_cycles 987,816,280  master_cycles 7,963,538,080
+   [cost 24s run]
+
+src/gen now holds variant s80F495. To restore the committed table:
+  SNESRECOMP_ROOT=/private/var/folders/cc/_czwdt293dg9ty_zgc1b57x00000gn/T/opencode/sr-pin bash tools/regen.sh   # with the live recomp/symbols.toml
+
+================================================================================
+## variant s80F4F9  (source: tests/out/r4/variant_s80F4F9.out)
+== variant s80F4F9: committed table minus gap-seed blocks + gap_seeds.py --only $80F4F9 ==
+   baseline: 1 generated block(s) removed, 40 [[func]] entries left
+   symbols [[func]] entries: 41
+   seed 80F4F9
+== regen at the pin ==
+   analysis: 48 roots -> 270 exact variants, 515 edges
+   analysis: 227 AOT-eligible, 43 LLE-only
+   [cost 0s regen]
+   manifest: 270 nodes (227 aot_eligible, 43 lle_only), 48 roots, sha256 68bd05194481fbb3
+   archived 678af7c59ec67677 tests/out/r4/manifest_s80F4F9.json.bz2
+   archived b607a55b69ac3bfe tests/out/r4/gen_s80F4F9.tar.gz
+== configure + build build-s80F4F9 ==
+   -- ShadowrunSNESRecomp: 18 generated translation unit(s) from /Users/wee/Documents/work/ports/ShadowrunSNESRecomp/src/gen
+   exe sha256 93aedb9013506f8f build-s80F4F9/ShadowrunSNESRecomp
+   [cost 4s build]
+== run tests/scripts/combat.txt on it ==
+   gen_sha256=cb75012da311  gen_units=18  gen_functions=204  gen_dispatch=253  framework=773285b8210f  config=Release  embed_rom=OFF  exe_sha256=93aedb901350
+   exit=3 wall=25s  exit: script until timed out after 21530 frames
+   [unresolved-abandon] first hit site=$80F4F9 frame=1766 entry_s=$0137 hrv=2 (handler side effects SKIPPED — authorize this dispatch)
+   interp_cap entries:    5 last=$81AC7C
+   interp  99.61%  aot   0.39%  interp_cycles 983,986,122  cpu_cycles 987,816,280  master_cycles 7,963,538,080
+   [cost 25s run]
+
+src/gen now holds variant s80F4F9. To restore the committed table:
+  SNESRECOMP_ROOT=/private/var/folders/cc/_czwdt293dg9ty_zgc1b57x00000gn/T/opencode/sr-pin bash tools/regen.sh   # with the live recomp/symbols.toml
+
+================================================================================
+## variant s80F889  (source: tests/out/r4/variant_s80F889.out)
+== variant s80F889: committed table minus gap-seed blocks + gap_seeds.py --only $80F889 ==
+   baseline: 1 generated block(s) removed, 40 [[func]] entries left
+   symbols [[func]] entries: 41
+   seed 80F889
+== regen at the pin ==
+   analysis: 48 roots -> 345 exact variants, 5597 edges
+   analysis: 235 AOT-eligible, 110 LLE-only
+   [cost 26s regen]
+   manifest: 345 nodes (235 aot_eligible, 110 lle_only), 48 roots, sha256 988fda9bbb4a6104
+   archived 0d9b705b11c1132a tests/out/r4/manifest_s80F889.json.bz2
+   archived 04b6e1c27f1bcfd2 tests/out/r4/gen_s80F889.tar.gz
+== configure + build build-s80F889 ==
+   -- ShadowrunSNESRecomp: 18 generated translation unit(s) from /Users/wee/Documents/work/ports/ShadowrunSNESRecomp/src/gen
+   exe sha256 927b68beabb4703a build-s80F889/ShadowrunSNESRecomp
+   [cost 4s build]
+== run tests/scripts/combat.txt on it ==
+   gen_sha256=fdeac8a091f3  gen_units=18  gen_functions=213  gen_dispatch=327  framework=773285b8210f  config=Release  embed_rom=OFF  exe_sha256=927b68beabb4
+   exit=3 wall=25s  exit: script until timed out after 21530 frames
+   [unresolved-abandon] first hit site=$80F4F9 frame=1766 entry_s=$0137 hrv=2 (handler side effects SKIPPED — authorize this dispatch)
+   interp_cap entries:    5 last=$81AC7C
+   interp  99.61%  aot   0.39%  interp_cycles 983,986,122  cpu_cycles 987,816,280  master_cycles 7,963,538,080
+   [cost 25s run]
+
+src/gen now holds variant s80F889. To restore the committed table:
+  SNESRECOMP_ROOT=/private/var/folders/cc/_czwdt293dg9ty_zgc1b57x00000gn/T/opencode/sr-pin bash tools/regen.sh   # with the live recomp/symbols.toml

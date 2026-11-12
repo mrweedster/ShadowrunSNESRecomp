@@ -1,0 +1,186 @@
+# round4_gap_seed_audit.txt
+#
+# what: what the analyzer did with each seed set: node disposition, plus the capture-side cost that falls inside the bodies it added
+# how:  python3 tests/gap_seed_audit.py, four invocations, over the archived manifests; the merged-span figure is an upper bound because two ranges can share a body
+#
+# framework pin: 773285b8210f2254ae87d0a14113980fb36990ad
+# generated: 2026-11-08T08:02:38Z (host Darwin arm64)
+# source tree: /Users/wee/Documents/work/ports/ShadowrunSNESRecomp
+
+
+================================================================================
+## accepted pair, shipped
+##   symbols        tests/out/r4/variant_r4pair_symbols.toml
+##   post-manifest  tests/out/r4/manifest_r4pair.json.bz2
+# gap-seed audit
+
+capture        tier2_capture_round3_combat.json  sha256 3ea7fd1e494a15b2
+               program_digest 240af24bb4a71049085d650e33b1d97d1c62a536402d4fa63dc80e2f1e13edcc  generation_digest 4e902f1ff9bdca6f6557e5a2a8d9563178d65dcd4c3202257859cd316a0cc432
+               rom_sha256 e6bc0a595d5c7c4b  mapper lorom  captures 1  warnings []
+               interpreted 226,953,466 insns / 919,307,323 guest cycles
+pre  manifest   evidence/artifacts/round4_manifest_pre.json.bz2  sha256 914be087adf50b94
+               269 nodes (226 aot_eligible, 43 lle_only), 47 roots
+post manifest   tests/out/r4/manifest_r4pair.json.bz2  sha256 faa60941ced13a00
+               283 nodes (240 aot_eligible, 43 lle_only), 49 roots
+
+manifest diff  269 -> 283 nodes, 47 -> 49 roots
+               +14 nodes (14 aot_eligible, 0 lle_only), -0 removed, 0 pre-existing node changed
+
+ranking        229 kept entries gate 28,131,074 of 919,307,323 cyc = 3.06 % of the residue
+               4 hot-sighted gap entries were not kept (already an entry at that address and mode)
+               top 10  =  14,923,151 cyc  1.62 % of the residue, 53.0 % of what is seedable
+               top 20  =  19,988,664 cyc  2.17 % of the residue, 71.1 % of what is seedable
+               top 50  =  24,881,571 cyc  2.71 % of the residue, 88.4 % of what is seedable
+               top 229 =  28,034,539 cyc  3.05 % of the residue, 99.7 % of what is seedable
+
+seeds under audit (2 added over the baseline table, tests/out/r4/variant_r4pair_symbols.toml)
+               entry       cyc   %res  hot insns  gap hits  frames        disposition  body  span                 in-span cyc     why
+               $80AAB3 M0X0    1,483,464  0.16    247,244   247,244  1765..22043   aot            108  $80AAB3-$80ABBB      34,181,159 (3.72%)  
+               $80C399 M0X0    2,196,990  0.24    366,165   366,165  1766..22043   aot             26  $80C399-$80C3D0      19,447,891 (2.12%)  
+
+               entry-gated cycles (the capture's discoveries) are not the same
+               quantity as cycles spent inside a body's own span: `hot_instructions`
+               attributes exclusively per PC, so a body's span says how much interpreted
+               cost stops when the body runs.
+               the 2 compiled seeds' spans cover 110 hot-instruction PCs, 12,889,654 insns, 53,629,050 cyc = 5.83 % of the residue
+               the 14 nodes they added (2 seeds + 12 bodies reached through them) span 14 ranges that merge to 6;
+               their spans carry 14,126,932 insns, 58,467,808 cyc counted per range (sum of overlapping ranges counted twice), 58,467,808 cyc over the merged ranges = 6.36 % of the residue
+
+               of the 3,680,454 cyc these entries gate: 3,680,454 cyc (100.0 %) reached a body, 0 cyc (0.0 %) stayed lle_only, 0 got no node
+               entry-gated terms only: the analyzer agreed to give a body to 0.40 %
+               of the residue where the ranking promised 0.40 %
+
+================================================================================
+## all 10 seeds, not shipped
+##   symbols        tests/out/r4/cfg/symbols_r4_full10.toml
+##   post-manifest  evidence/artifacts/round4_manifest_full10.json.bz2
+# gap-seed audit
+
+capture        tier2_capture_round3_combat.json  sha256 3ea7fd1e494a15b2
+               program_digest 240af24bb4a71049085d650e33b1d97d1c62a536402d4fa63dc80e2f1e13edcc  generation_digest 4e902f1ff9bdca6f6557e5a2a8d9563178d65dcd4c3202257859cd316a0cc432
+               rom_sha256 e6bc0a595d5c7c4b  mapper lorom  captures 1  warnings []
+               interpreted 226,953,466 insns / 919,307,323 guest cycles
+pre  manifest   evidence/artifacts/round4_manifest_pre.json.bz2  sha256 914be087adf50b94
+               269 nodes (226 aot_eligible, 43 lle_only), 47 roots
+post manifest   evidence/artifacts/round4_manifest_full10.json.bz2  sha256 5208005659bf4451
+               366 nodes (320 aot_eligible, 46 lle_only), 57 roots
+
+manifest diff  269 -> 366 nodes, 47 -> 57 roots
+               +97 nodes (94 aot_eligible, 3 lle_only), -0 removed, 0 pre-existing node changed
+
+ranking        229 kept entries gate 28,131,074 of 919,307,323 cyc = 3.06 % of the residue
+               4 hot-sighted gap entries were not kept (already an entry at that address and mode)
+               top 10  =  14,923,151 cyc  1.62 % of the residue, 53.0 % of what is seedable
+               top 20  =  19,988,664 cyc  2.17 % of the residue, 71.1 % of what is seedable
+               top 50  =  24,881,571 cyc  2.71 % of the residue, 88.4 % of what is seedable
+               top 229 =  28,034,539 cyc  3.05 % of the residue, 99.7 % of what is seedable
+
+seeds under audit (10 added over the baseline table, tests/out/r4/cfg/symbols_r4_full10.toml)
+               entry       cyc   %res  hot insns  gap hits  frames        disposition  body  span                 in-span cyc     why
+               $80AAB3 M0X0    1,483,464  0.16    247,244   247,244  1765..22043   aot            108  $80AAB3-$80ABBB      34,181,159 (3.72%)  
+               $80ABBC M0X0      988,976  0.11    247,244   247,244  1765..22043   aot            196  $80ABBC-$80AD80      15,658,252 (1.70%)  
+               $80B1DB M0X0      957,845  0.10    191,569   191,569  1767..22043   aot            756  $80B1DB-$80B82E     204,312,080 (22.22%)  
+               $80C1B3 M0X0    1,927,350  0.21    385,470    19,305  1765..22043   lle_only         9  $80C1B3-$80C1C8                         truncated_call_continuation,unproven_call_at_80C1B8_to_80C1C9_m0x0,unproven_callee_exit
+               $80C1C9 M0X0    2,196,990  0.24    366,165   366,165  1766..22043   lle_only        12  $80C1C9-$80C208                         truncated_call_continuation,unproven_call_at_80C1D8_to_80F342_m0x0,unproven_callee_exit
+               $80C399 M0X0    2,196,990  0.24    366,165   366,165  1766..22043   aot             26  $80C399-$80C3D0      19,447,891 (2.12%)  
+               $80F362 M0X0    1,509,550  0.16    188,694   188,694  1766..22043   aot            694  $80F353-$80F91C      88,379,983 (9.61%)  
+               $80F495 M0X0    1,783,776  0.19    222,972   222,972  1766..22043   lle_only        32  $80F495-$80F4D0                         truncated_call_continuation,unproven_call_at_80F4D0_to_80F4F9_m0x0,unproven_callee_exit
+               $80F4F9 M0X0    1,114,860  0.12    222,972   222,972  1766..22043   aot              1  $80F4F9-$80F4F9       1,114,860 (0.12%)  has_lle_indirect_edge
+               $80F889 M0X0      763,350  0.08    152,670   152,670  1766..22043   aot            694  $80F353-$80F91C      88,379,983 (9.61%)  
+
+               entry-gated cycles (the capture's discoveries) are not the same
+               quantity as cycles spent inside a body's own span: `hot_instructions`
+               attributes exclusively per PC, so a body's span says how much interpreted
+               cost stops when the body runs.
+               the 7 compiled seeds' spans cover 1701 hot-instruction PCs, 118,182,886 insns, 451,474,208 cyc = 49.11 % of the residue
+               the 94 nodes they added (7 seeds + 87 bodies reached through them) span 94 ranges that merge to 10;
+               their spans carry 1,581,766,494 insns, 6,277,144,122 cyc counted per range (sum of overlapping ranges counted twice), 378,343,469 cyc over the merged ranges = 41.16 % of the residue
+
+               of the 14,923,151 cyc these entries gate: 9,015,035 cyc (60.4 %) reached a body, 5,908,116 cyc (39.6 %) stayed lle_only, 0 got no node
+               entry-gated terms only: the analyzer agreed to give a body to 0.98 %
+               of the residue where the ranking promised 1.62 %
+
+               seeds sharing one decoded span:
+                 $80F353-$80F91C (694 insns): 80F362:M0X0 80F889:M0X0
+
+================================================================================
+## rejected seed $80ABBC
+##   symbols        tests/out/r4/variant_s80ABBC_symbols.toml
+##   post-manifest  tests/out/r4/manifest_s80ABBC.json.bz2
+# gap-seed audit
+
+capture        tier2_capture_round3_combat.json  sha256 3ea7fd1e494a15b2
+               program_digest 240af24bb4a71049085d650e33b1d97d1c62a536402d4fa63dc80e2f1e13edcc  generation_digest 4e902f1ff9bdca6f6557e5a2a8d9563178d65dcd4c3202257859cd316a0cc432
+               rom_sha256 e6bc0a595d5c7c4b  mapper lorom  captures 1  warnings []
+               interpreted 226,953,466 insns / 919,307,323 guest cycles
+pre  manifest   evidence/artifacts/round4_manifest_pre.json.bz2  sha256 914be087adf50b94
+               269 nodes (226 aot_eligible, 43 lle_only), 47 roots
+post manifest   tests/out/r4/manifest_s80ABBC.json.bz2  sha256 9bb755fb9710c364
+               270 nodes (227 aot_eligible, 43 lle_only), 48 roots
+
+manifest diff  269 -> 270 nodes, 47 -> 48 roots
+               +1 nodes (1 aot_eligible, 0 lle_only), -0 removed, 0 pre-existing node changed
+
+ranking        229 kept entries gate 28,131,074 of 919,307,323 cyc = 3.06 % of the residue
+               4 hot-sighted gap entries were not kept (already an entry at that address and mode)
+               top 10  =  14,923,151 cyc  1.62 % of the residue, 53.0 % of what is seedable
+               top 20  =  19,988,664 cyc  2.17 % of the residue, 71.1 % of what is seedable
+               top 50  =  24,881,571 cyc  2.71 % of the residue, 88.4 % of what is seedable
+               top 229 =  28,034,539 cyc  3.05 % of the residue, 99.7 % of what is seedable
+
+seeds under audit (1 added over the baseline table, tests/out/r4/variant_s80ABBC_symbols.toml)
+               entry       cyc   %res  hot insns  gap hits  frames        disposition  body  span                 in-span cyc     why
+               $80ABBC M0X0      988,976  0.11    247,244   247,244  1765..22043   aot            196  $80ABBC-$80AD80      15,658,252 (1.70%)  
+
+               entry-gated cycles (the capture's discoveries) are not the same
+               quantity as cycles spent inside a body's own span: `hot_instructions`
+               attributes exclusively per PC, so a body's span says how much interpreted
+               cost stops when the body runs.
+               the 1 compiled seeds' spans cover 196 hot-instruction PCs, 3,704,659 insns, 15,658,252 cyc = 1.70 % of the residue
+               the 1 nodes they added (1 seeds + 0 bodies reached through them) span 1 ranges that merge to 1;
+               their spans carry 3,704,659 insns, 15,658,252 cyc counted per range (sum of overlapping ranges counted twice), 15,658,252 cyc over the merged ranges = 1.70 % of the residue
+
+               of the 988,976 cyc these entries gate: 988,976 cyc (100.0 %) reached a body, 0 cyc (0.0 %) stayed lle_only, 0 got no node
+               entry-gated terms only: the analyzer agreed to give a body to 0.11 %
+               of the residue where the ranking promised 0.11 %
+
+================================================================================
+## rejected seed $80B1DB
+##   symbols        tests/out/r4/variant_s80B1DB_symbols.toml
+##   post-manifest  tests/out/r4/manifest_s80B1DB.json.bz2
+# gap-seed audit
+
+capture        tier2_capture_round3_combat.json  sha256 3ea7fd1e494a15b2
+               program_digest 240af24bb4a71049085d650e33b1d97d1c62a536402d4fa63dc80e2f1e13edcc  generation_digest 4e902f1ff9bdca6f6557e5a2a8d9563178d65dcd4c3202257859cd316a0cc432
+               rom_sha256 e6bc0a595d5c7c4b  mapper lorom  captures 1  warnings []
+               interpreted 226,953,466 insns / 919,307,323 guest cycles
+pre  manifest   evidence/artifacts/round4_manifest_pre.json.bz2  sha256 914be087adf50b94
+               269 nodes (226 aot_eligible, 43 lle_only), 47 roots
+post manifest   tests/out/r4/manifest_s80B1DB.json.bz2  sha256 475437b09c512b61
+               272 nodes (229 aot_eligible, 43 lle_only), 48 roots
+
+manifest diff  269 -> 272 nodes, 47 -> 48 roots
+               +3 nodes (3 aot_eligible, 0 lle_only), -0 removed, 0 pre-existing node changed
+
+ranking        229 kept entries gate 28,131,074 of 919,307,323 cyc = 3.06 % of the residue
+               4 hot-sighted gap entries were not kept (already an entry at that address and mode)
+               top 10  =  14,923,151 cyc  1.62 % of the residue, 53.0 % of what is seedable
+               top 20  =  19,988,664 cyc  2.17 % of the residue, 71.1 % of what is seedable
+               top 50  =  24,881,571 cyc  2.71 % of the residue, 88.4 % of what is seedable
+               top 229 =  28,034,539 cyc  3.05 % of the residue, 99.7 % of what is seedable
+
+seeds under audit (1 added over the baseline table, tests/out/r4/variant_s80B1DB_symbols.toml)
+               entry       cyc   %res  hot insns  gap hits  frames        disposition  body  span                 in-span cyc     why
+               $80B1DB M0X0      957,845  0.10    191,569   191,569  1767..22043   aot            756  $80B1DB-$80B82E     204,312,080 (22.22%)  
+
+               entry-gated cycles (the capture's discoveries) are not the same
+               quantity as cycles spent inside a body's own span: `hot_instructions`
+               attributes exclusively per PC, so a body's span says how much interpreted
+               cost stops when the body runs.
+               the 1 compiled seeds' spans cover 740 hot-instruction PCs, 56,986,565 insns, 204,312,080 cyc = 22.22 % of the residue
+               the 3 nodes they added (1 seeds + 2 bodies reached through them) span 3 ranges that merge to 3;
+               their spans carry 60,233,959 insns, 215,828,188 cyc counted per range (sum of overlapping ranges counted twice), 215,828,188 cyc over the merged ranges = 23.48 % of the residue
+
+               of the 957,845 cyc these entries gate: 957,845 cyc (100.0 %) reached a body, 0 cyc (0.0 %) stayed lle_only, 0 got no node
+               entry-gated terms only: the analyzer agreed to give a body to 0.10 %
+               of the residue where the ranking promised 0.10 %

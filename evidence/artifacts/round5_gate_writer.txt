@@ -1,0 +1,15 @@
+# round5_gate_writer.txt
+#
+# what: whether the first differing byte has a differing writer: the $0126/$0127 write-value sequences on the same two legs up to the onset
+# how:  python3 tests/latch_writer.py --route tests/out/probe_dense.txt --park 1832 --addrs 0x126,0x127 on the same trace builds; raw output: tests/out/r4/gate_writer.txt
+#
+# framework pin: 773285b8210f2254ae87d0a14113980fb36990ad
+# generated: 2026-11-08T09:29:56Z (host Darwin arm64)
+# source tree: /Users/wee/Documents/work/ports/ShadowrunSNESRecomp
+
+== ctrl: parked f1833, 3572 transfers, 4380 byte writes (paged record)
+   wrote /Users/wee/Documents/work/ports/ShadowrunSNESRecomp/tests/out/latch_ctrl.json
+== seed: parked f1833, 3572 transfers, 4380 byte writes (paged record)
+   wrote /Users/wee/Documents/work/ports/ShadowrunSNESRecomp/tests/out/latch_seed.json
+
+['0126', '0127']: identical byte value sequences

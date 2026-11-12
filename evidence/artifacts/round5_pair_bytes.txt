@@ -1,0 +1,132 @@
+# round5_pair_bytes.txt
+#
+# what: the same gate at byte level: how many bytes of every state image differ at each tagged checkpoint
+# how:  tests/cp_byte_diff.py tests/out/r4/r5base tests/out/r4/r5pair over wram vram oam cgram sram and the host framebuffer; saved as tests/out/r4/r5pair_bytes.txt
+#
+# framework pin: 773285b8210f2254ae87d0a14113980fb36990ad
+# generated: 2026-11-08T09:29:56Z (host Darwin arm64)
+# source tree: /Users/wee/Documents/work/ports/ShadowrunSNESRecomp
+
+# checkpoint byte diff: tests/out/r4/r5base vs tests/out/r4/r5pair
+
+Bytes differing in the state images each run dumped at the same tagged
+checkpoint (`dump TAG` in the route).  Address columns are the guest
+bus address of the byte, control value then variant value.  On wram,
+`label` counts the bytes the label rule in framedump_diff.py excuses
+(host frame-kernel counter window, documented timer singletons);
+`state` is every other differing byte, and those are the ones shown.
+
+| checkpoint | surface | bytes differ | label | state | size | state bytes (control -> variant) | span |
+|---|---|---|---|---|---|---|---|
+| A0 | wram.bin | 0 | 0 | 0 | 131,072 | identical | - |
+| A0 | vram.bin | 0 | 0 | 0 | 65,536 | identical | - |
+| A0 | oam.bin | 0 | 0 | 0 | 544 | identical | - |
+| A0 | cgram.bin | 0 | 0 | 0 | 512 | identical | - |
+| A0 | sram.bin | 0 | 0 | 0 | 8,192 | identical | - |
+| A1 | wram.bin | 0 | 0 | 0 | 131,072 | identical | - |
+| A1 | vram.bin | 0 | 0 | 0 | 65,536 | identical | - |
+| A1 | oam.bin | 0 | 0 | 0 | 544 | identical | - |
+| A1 | cgram.bin | 0 | 0 | 0 | 512 | identical | - |
+| A1 | sram.bin | 0 | 0 | 0 | 8,192 | identical | - |
+| A2 | wram.bin | 0 | 0 | 0 | 131,072 | identical | - |
+| A2 | vram.bin | 0 | 0 | 0 | 65,536 | identical | - |
+| A2 | oam.bin | 0 | 0 | 0 | 544 | identical | - |
+| A2 | cgram.bin | 0 | 0 | 0 | 512 | identical | - |
+| A2 | sram.bin | 0 | 0 | 0 | 8,192 | identical | - |
+| A3 | wram.bin | 0 | 0 | 0 | 131,072 | identical | - |
+| A3 | vram.bin | 0 | 0 | 0 | 65,536 | identical | - |
+| A3 | oam.bin | 0 | 0 | 0 | 544 | identical | - |
+| A3 | cgram.bin | 0 | 0 | 0 | 512 | identical | - |
+| A3 | sram.bin | 0 | 0 | 0 | 8,192 | identical | - |
+| A4 | wram.bin | 0 | 0 | 0 | 131,072 | identical | - |
+| A4 | vram.bin | 0 | 0 | 0 | 65,536 | identical | - |
+| A4 | oam.bin | 0 | 0 | 0 | 544 | identical | - |
+| A4 | cgram.bin | 0 | 0 | 0 | 512 | identical | - |
+| A4 | sram.bin | 0 | 0 | 0 | 8,192 | identical | - |
+| A5 | wram.bin | 0 | 0 | 0 | 131,072 | identical | - |
+| A5 | vram.bin | 0 | 0 | 0 | 65,536 | identical | - |
+| A5 | oam.bin | 0 | 0 | 0 | 544 | identical | - |
+| A5 | cgram.bin | 0 | 0 | 0 | 512 | identical | - |
+| A5 | sram.bin | 0 | 0 | 0 | 8,192 | identical | - |
+| H8 | wram.bin | 0 | 0 | 0 | 131,072 | identical | - |
+| H8 | vram.bin | 0 | 0 | 0 | 65,536 | identical | - |
+| H8 | oam.bin | 0 | 0 | 0 | 544 | identical | - |
+| H8 | cgram.bin | 0 | 0 | 0 | 512 | identical | - |
+| H8 | sram.bin | 0 | 0 | 0 | 8,192 | identical | - |
+| J1 | wram.bin | 0 | 0 | 0 | 131,072 | identical | - |
+| J1 | vram.bin | 0 | 0 | 0 | 65,536 | identical | - |
+| J1 | oam.bin | 0 | 0 | 0 | 544 | identical | - |
+| J1 | cgram.bin | 0 | 0 | 0 | 512 | identical | - |
+| J1 | sram.bin | 0 | 0 | 0 | 8,192 | identical | - |
+| J10 | wram.bin | 0 | 0 | 0 | 131,072 | identical | - |
+| J10 | vram.bin | 0 | 0 | 0 | 65,536 | identical | - |
+| J10 | oam.bin | 0 | 0 | 0 | 544 | identical | - |
+| J10 | cgram.bin | 0 | 0 | 0 | 512 | identical | - |
+| J10 | sram.bin | 0 | 0 | 0 | 8,192 | identical | - |
+| J2 | wram.bin | 0 | 0 | 0 | 131,072 | identical | - |
+| J2 | vram.bin | 0 | 0 | 0 | 65,536 | identical | - |
+| J2 | oam.bin | 0 | 0 | 0 | 544 | identical | - |
+| J2 | cgram.bin | 0 | 0 | 0 | 512 | identical | - |
+| J2 | sram.bin | 0 | 0 | 0 | 8,192 | identical | - |
+| J3 | wram.bin | 0 | 0 | 0 | 131,072 | identical | - |
+| J3 | vram.bin | 0 | 0 | 0 | 65,536 | identical | - |
+| J3 | oam.bin | 0 | 0 | 0 | 544 | identical | - |
+| J3 | cgram.bin | 0 | 0 | 0 | 512 | identical | - |
+| J3 | sram.bin | 0 | 0 | 0 | 8,192 | identical | - |
+| J4 | wram.bin | 0 | 0 | 0 | 131,072 | identical | - |
+| J4 | vram.bin | 0 | 0 | 0 | 65,536 | identical | - |
+| J4 | oam.bin | 0 | 0 | 0 | 544 | identical | - |
+| J4 | cgram.bin | 0 | 0 | 0 | 512 | identical | - |
+| J4 | sram.bin | 0 | 0 | 0 | 8,192 | identical | - |
+| J5 | wram.bin | 0 | 0 | 0 | 131,072 | identical | - |
+| J5 | vram.bin | 0 | 0 | 0 | 65,536 | identical | - |
+| J5 | oam.bin | 0 | 0 | 0 | 544 | identical | - |
+| J5 | cgram.bin | 0 | 0 | 0 | 512 | identical | - |
+| J5 | sram.bin | 0 | 0 | 0 | 8,192 | identical | - |
+| J6 | wram.bin | 0 | 0 | 0 | 131,072 | identical | - |
+| J6 | vram.bin | 0 | 0 | 0 | 65,536 | identical | - |
+| J6 | oam.bin | 0 | 0 | 0 | 544 | identical | - |
+| J6 | cgram.bin | 0 | 0 | 0 | 512 | identical | - |
+| J6 | sram.bin | 0 | 0 | 0 | 8,192 | identical | - |
+| J7 | wram.bin | 0 | 0 | 0 | 131,072 | identical | - |
+| J7 | vram.bin | 0 | 0 | 0 | 65,536 | identical | - |
+| J7 | oam.bin | 0 | 0 | 0 | 544 | identical | - |
+| J7 | cgram.bin | 0 | 0 | 0 | 512 | identical | - |
+| J7 | sram.bin | 0 | 0 | 0 | 8,192 | identical | - |
+| J8 | wram.bin | 0 | 0 | 0 | 131,072 | identical | - |
+| J8 | vram.bin | 0 | 0 | 0 | 65,536 | identical | - |
+| J8 | oam.bin | 0 | 0 | 0 | 544 | identical | - |
+| J8 | cgram.bin | 0 | 0 | 0 | 512 | identical | - |
+| J8 | sram.bin | 0 | 0 | 0 | 8,192 | identical | - |
+| J9 | wram.bin | 0 | 0 | 0 | 131,072 | identical | - |
+| J9 | vram.bin | 0 | 0 | 0 | 65,536 | identical | - |
+| J9 | oam.bin | 0 | 0 | 0 | 544 | identical | - |
+| J9 | cgram.bin | 0 | 0 | 0 | 512 | identical | - |
+| J9 | sram.bin | 0 | 0 | 0 | 8,192 | identical | - |
+| K1 | wram.bin | 0 | 0 | 0 | 131,072 | identical | - |
+| K1 | vram.bin | 0 | 0 | 0 | 65,536 | identical | - |
+| K1 | oam.bin | 0 | 0 | 0 | 544 | identical | - |
+| K1 | cgram.bin | 0 | 0 | 0 | 512 | identical | - |
+| K1 | sram.bin | 0 | 0 | 0 | 8,192 | identical | - |
+| K2 | wram.bin | 0 | 0 | 0 | 131,072 | identical | - |
+| K2 | vram.bin | 0 | 0 | 0 | 65,536 | identical | - |
+| K2 | oam.bin | 0 | 0 | 0 | 544 | identical | - |
+| K2 | cgram.bin | 0 | 0 | 0 | 512 | identical | - |
+| K2 | sram.bin | 0 | 0 | 0 | 8,192 | identical | - |
+| K3 | wram.bin | 0 | 0 | 0 | 131,072 | identical | - |
+| K3 | vram.bin | 0 | 0 | 0 | 65,536 | identical | - |
+| K3 | oam.bin | 0 | 0 | 0 | 544 | identical | - |
+| K3 | cgram.bin | 0 | 0 | 0 | 512 | identical | - |
+| K3 | sram.bin | 0 | 0 | 0 | 8,192 | identical | - |
+| L0 | wram.bin | 0 | 0 | 0 | 131,072 | identical | - |
+| L0 | vram.bin | 0 | 0 | 0 | 65,536 | identical | - |
+| L0 | oam.bin | 0 | 0 | 0 | 544 | identical | - |
+| L0 | cgram.bin | 0 | 0 | 0 | 512 | identical | - |
+| L0 | sram.bin | 0 | 0 | 0 | 8,192 | identical | - |
+| L1 | wram.bin | 0 | 0 | 0 | 131,072 | identical | - |
+| L1 | vram.bin | 0 | 0 | 0 | 65,536 | identical | - |
+| L1 | oam.bin | 0 | 0 | 0 | 544 | identical | - |
+| L1 | cgram.bin | 0 | 0 | 0 | 512 | identical | - |
+| L1 | sram.bin | 0 | 0 | 0 | 8,192 | identical | - |
+
+no checkpoint has a state (non-label) byte differing: every WRAM difference on this run is a label byte

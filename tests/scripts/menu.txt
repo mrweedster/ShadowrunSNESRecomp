@@ -1,0 +1,12 @@
+wait 90
+press a 6
+wait 150
+press a 6
+wait 150
+press start 6
+wait 300
+press down 6
+wait 120
+press a 6
+wait 400
+quit

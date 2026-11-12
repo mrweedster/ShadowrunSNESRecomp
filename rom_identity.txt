@@ -1,0 +1,26 @@
+# ROM identity for Shadowrun — the single source of truth.
+#
+# Read by three consumers, so a revision change is made once, here:
+#   - the build   (CMake generates snesrecomp_rom_identity.h from this file)
+#   - tools/regen.sh
+#   - .github/workflows/release.yml
+#
+# Format is `key = value`, one per line; `#` starts a comment. Values may be
+# quoted. Leaving a digest empty means the build cannot verify a ROM it is
+# handed — it will say so rather than accept it.
+
+display_name    = Shadowrun
+rom_file        = Shadowrun (USA).sfc
+# Every digest of the bare image (copier header stripped), so the Retro
+# catalog can take a submission's identity from this file rather than ask
+# the submitter to hash the ROM again. The build verifies on crc32/sha256.
+expected_crc32  = 3f34dff0
+expected_md5    = 694be8df403ee59225c4b6b53c30fb7b
+expected_sha1   = b04afb21c94dab5c8b982d0c133898dd5ec1d104
+expected_sha256 = e6bc0a595d5c7c4bc0bbb61ffe35a70288a77eb78544ed74682d489a9e6f07f4
+rom_size        = 1048576
+mapping         = lorom
+region          = USA
+# What a mod package's [[target]] game_id must name to apply to this title
+# (snesrecomp/docs/MOD_PACKAGES.md). Stable across revisions on purpose.
+game_id         = shadowrun-usa

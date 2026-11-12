@@ -1,0 +1,68 @@
+# round4_execution_mode_grep.txt
+#
+# what: whether SNESRECOMP_FORCE_FLOOR / SNESRECOMP_EXECUTION_MODE is a lever in this port
+# how:  grep over the pinned framework's runner, recompiler and docs, plus this tree's src/, recomp/ and CMakeLists.txt, plus every round-4 leg log
+#
+# framework pin: 773285b8210f2254ae87d0a14113980fb36990ad
+# generated: 2026-11-08T08:02:38Z (host Darwin arm64)
+# source tree: /Users/wee/Documents/work/ports/ShadowrunSNESRecomp
+
+
+## pinned framework: FORCE_FLOOR and the execution-mode entry points
+/private/var/folders/cc/_czwdt293dg9ty_zgc1b57x00000gn/T/opencode/sr-pin/runner/runner.cmake:299:# runtime by snesrecomp_execution_mode() and can always be overridden with
+/private/var/folders/cc/_czwdt293dg9ty_zgc1b57x00000gn/T/opencode/sr-pin/runner/runner.cmake:300:# SNESRECOMP_EXECUTION_MODE, or forced back to the floor with
+/private/var/folders/cc/_czwdt293dg9ty_zgc1b57x00000gn/T/opencode/sr-pin/runner/runner.cmake:301:# SNESRECOMP_FORCE_FLOOR=1.
+/private/var/folders/cc/_czwdt293dg9ty_zgc1b57x00000gn/T/opencode/sr-pin/runner/runner.cmake:338:    SNESRECOMP_EXECUTION_DEFAULT_MODE=SNESRECOMP_EXECUTION_MODE_${_SNESRECOMP_EXEC_DEFAULT_ENUM})
+/private/var/folders/cc/_czwdt293dg9ty_zgc1b57x00000gn/T/opencode/sr-pin/runner/runner.cmake:341:    "(runtime override: SNESRECOMP_EXECUTION_MODE / SNESRECOMP_FORCE_FLOOR)")
+/private/var/folders/cc/_czwdt293dg9ty_zgc1b57x00000gn/T/opencode/sr-pin/runner/src/execution_mode.c:20:    {"off",    SNESRECOMP_EXECUTION_MODE_OFF},
+/private/var/folders/cc/_czwdt293dg9ty_zgc1b57x00000gn/T/opencode/sr-pin/runner/src/execution_mode.c:21:    {"on",     SNESRECOMP_EXECUTION_MODE_ON},
+/private/var/folders/cc/_czwdt293dg9ty_zgc1b57x00000gn/T/opencode/sr-pin/runner/src/execution_mode.c:22:    {"force",  SNESRECOMP_EXECUTION_MODE_FORCE},
+/private/var/folders/cc/_czwdt293dg9ty_zgc1b57x00000gn/T/opencode/sr-pin/runner/src/execution_mode.c:23:    {"verify", SNESRECOMP_EXECUTION_MODE_VERIFY},
+/private/var/folders/cc/_czwdt293dg9ty_zgc1b57x00000gn/T/opencode/sr-pin/runner/src/execution_mode.c:24:    {"auto",   SNESRECOMP_EXECUTION_MODE_AUTO},
+/private/var/folders/cc/_czwdt293dg9ty_zgc1b57x00000gn/T/opencode/sr-pin/runner/src/execution_mode.c:26:    {"lle",    SNESRECOMP_EXECUTION_MODE_OFF},
+/private/var/folders/cc/_czwdt293dg9ty_zgc1b57x00000gn/T/opencode/sr-pin/runner/src/execution_mode.c:27:    {"hle",    SNESRECOMP_EXECUTION_MODE_ON},
+/private/var/folders/cc/_czwdt293dg9ty_zgc1b57x00000gn/T/opencode/sr-pin/runner/src/execution_mode.c:32:    case SNESRECOMP_EXECUTION_MODE_OFF:    return "off";
+/private/var/folders/cc/_czwdt293dg9ty_zgc1b57x00000gn/T/opencode/sr-pin/runner/src/execution_mode.c:33:    case SNESRECOMP_EXECUTION_MODE_ON:     return "on";
+/private/var/folders/cc/_czwdt293dg9ty_zgc1b57x00000gn/T/opencode/sr-pin/runner/src/execution_mode.c:34:    case SNESRECOMP_EXECUTION_MODE_FORCE:  return "force";
+/private/var/folders/cc/_czwdt293dg9ty_zgc1b57x00000gn/T/opencode/sr-pin/runner/src/execution_mode.c:35:    case SNESRECOMP_EXECUTION_MODE_VERIFY: return "verify";
+/private/var/folders/cc/_czwdt293dg9ty_zgc1b57x00000gn/T/opencode/sr-pin/runner/src/execution_mode.c:36:    case SNESRECOMP_EXECUTION_MODE_AUTO:   return "auto";
+/private/var/folders/cc/_czwdt293dg9ty_zgc1b57x00000gn/T/opencode/sr-pin/runner/src/execution_mode.c:43:  return mode != SNESRECOMP_EXECUTION_MODE_OFF;
+/private/var/folders/cc/_czwdt293dg9ty_zgc1b57x00000gn/T/opencode/sr-pin/runner/src/execution_mode.c:46:bool snesrecomp_execution_publishes_floor(SnesrecompExecutionMode mode) {
+/private/var/folders/cc/_czwdt293dg9ty_zgc1b57x00000gn/T/opencode/sr-pin/runner/src/execution_mode.c:47:  return mode == SNESRECOMP_EXECUTION_MODE_OFF ||
+/private/var/folders/cc/_czwdt293dg9ty_zgc1b57x00000gn/T/opencode/sr-pin/runner/src/execution_mode.c:48:         mode == SNESRECOMP_EXECUTION_MODE_VERIFY;
+/private/var/folders/cc/_czwdt293dg9ty_zgc1b57x00000gn/T/opencode/sr-pin/runner/src/execution_mode.c:52:  return mode == SNESRECOMP_EXECUTION_MODE_FORCE;
+/private/var/folders/cc/_czwdt293dg9ty_zgc1b57x00000gn/T/opencode/sr-pin/runner/src/execution_mode.c:99:  const char *value = getenv("SNESRECOMP_EXECUTION_MODE");
+/private/var/folders/cc/_czwdt293dg9ty_zgc1b57x00000gn/T/opencode/sr-pin/runner/src/execution_mode.c:106:        source = "SNESRECOMP_EXECUTION_MODE";
+/private/var/folders/cc/_czwdt293dg9ty_zgc1b57x00000gn/T/opencode/sr-pin/runner/src/execution_mode.c:113:              "[execution_mode] ignoring SNESRECOMP_EXECUTION_MODE='%s' "
+/private/var/folders/cc/_czwdt293dg9ty_zgc1b57x00000gn/T/opencode/sr-pin/runner/src/execution_mode.c:122:  const char *floor_env = getenv("SNESRECOMP_FORCE_FLOOR");
+/private/var/folders/cc/_czwdt293dg9ty_zgc1b57x00000gn/T/opencode/sr-pin/runner/src/execution_mode.c:124:    mode = SNESRECOMP_EXECUTION_MODE_OFF;
+/private/var/folders/cc/_czwdt293dg9ty_zgc1b57x00000gn/T/opencode/sr-pin/runner/src/execution_mode.c:125:    source = "SNESRECOMP_FORCE_FLOOR";
+/private/var/folders/cc/_czwdt293dg9ty_zgc1b57x00000gn/T/opencode/sr-pin/runner/src/execution_mode.c:134:          snesrecomp_execution_publishes_floor(mode) ? "floor" : "optimized",
+/private/var/folders/cc/_czwdt293dg9ty_zgc1b57x00000gn/T/opencode/sr-pin/runner/src/execution_mode.h:1:#ifndef SNESRECOMP_EXECUTION_MODE_H
+/private/var/folders/cc/_czwdt293dg9ty_zgc1b57x00000gn/T/opencode/sr-pin/runner/src/execution_mode.h:2:#define SNESRECOMP_EXECUTION_MODE_H
+/private/var/folders/cc/_czwdt293dg9ty_zgc1b57x00000gn/T/opencode/sr-pin/runner/src/execution_mode.h:30:  SNESRECOMP_EXECUTION_MODE_OFF = 0,
+/private/var/folders/cc/_czwdt293dg9ty_zgc1b57x00000gn/T/opencode/sr-pin/runner/src/execution_mode.h:32:  SNESRECOMP_EXECUTION_MODE_ON = 1,
+/private/var/folders/cc/_czwdt293dg9ty_zgc1b57x00000gn/T/opencode/sr-pin/runner/src/execution_mode.h:35:  SNESRECOMP_EXECUTION_MODE_FORCE = 2,
+/private/var/folders/cc/_czwdt293dg9ty_zgc1b57x00000gn/T/opencode/sr-pin/runner/src/execution_mode.h:38:  SNESRECOMP_EXECUTION_MODE_VERIFY = 3,
+/private/var/folders/cc/_czwdt293dg9ty_zgc1b57x00000gn/T/opencode/sr-pin/runner/src/execution_mode.h:41:  SNESRECOMP_EXECUTION_MODE_AUTO = 4,
+/private/var/folders/cc/_czwdt293dg9ty_zgc1b57x00000gn/T/opencode/sr-pin/runner/src/execution_mode.h:46:#define SNESRECOMP_EXECUTION_MODE_LLE SNESRECOMP_EXECUTION_MODE_OFF
+/private/var/folders/cc/_czwdt293dg9ty_zgc1b57x00000gn/T/opencode/sr-pin/runner/src/execution_mode.h:47:#define SNESRECOMP_EXECUTION_MODE_HLE SNESRECOMP_EXECUTION_MODE_ON
+/private/var/folders/cc/_czwdt293dg9ty_zgc1b57x00000gn/T/opencode/sr-pin/runner/src/execution_mode.h:53: *   1. SNESRECOMP_FORCE_FLOOR=1  — the master force-floor. Always wins, so a
+/private/var/folders/cc/_czwdt293dg9ty_zgc1b57x00000gn/T/opencode/sr-pin/runner/src/execution_mode.h:56: *   2. SNESRECOMP_EXECUTION_MODE=off|on|force|verify|auto  (lle|hle accepted)
+/private/var/folders/cc/_czwdt293dg9ty_zgc1b57x00000gn/T/opencode/sr-pin/runner/src/execution_mode.h:73:#define SNESRECOMP_EXECUTION_DEFAULT_MODE SNESRECOMP_EXECUTION_MODE_OFF
+/private/var/folders/cc/_czwdt293dg9ty_zgc1b57x00000gn/T/opencode/sr-pin/runner/src/execution_mode.h:90:bool snesrecomp_execution_publishes_floor(SnesrecompExecutionMode mode);
+/private/var/folders/cc/_czwdt293dg9ty_zgc1b57x00000gn/T/opencode/sr-pin/runner/src/execution_mode.h:101: * compiled in, SNESRECOMP_EXECUTION_MODE=on would print "on" and change
+/private/var/folders/cc/_czwdt293dg9ty_zgc1b57x00000gn/T/opencode/sr-pin/docs/BENCHMARKING.md:115:`SNESRECOMP_EXECUTION_MODE=lle` mode. For SMW/MMX that is a faithful
+/private/var/folders/cc/_czwdt293dg9ty_zgc1b57x00000gn/T/opencode/sr-pin/docs/BENCHMARKING.md:958:$env:SNESRECOMP_EXECUTION_MODE = "hle"; & "<exe>" --benchmark 3000 "<rom.sfc>"
+/private/var/folders/cc/_czwdt293dg9ty_zgc1b57x00000gn/T/opencode/sr-pin/docs/BENCHMARKING.md:959:$env:SNESRECOMP_EXECUTION_MODE = "lle"; $env:SNESRECOMP_LLE_BOUNCE = "0"; & "<exe>" --benchmark 300 "<rom.sfc>"
+/private/var/folders/cc/_czwdt293dg9ty_zgc1b57x00000gn/T/opencode/sr-pin/docs/PERFORMANCE.md:95:`SNESRECOMP_EXECUTION_MODE=lle` path. In SMW and MMX that means a faithful LLE
+
+## files under runner/src that reference the execution-mode unit
+  /private/var/folders/cc/_czwdt293dg9ty_zgc1b57x00000gn/T/opencode/sr-pin/runner/src/execution_mode.c
+  /private/var/folders/cc/_czwdt293dg9ty_zgc1b57x00000gn/T/opencode/sr-pin/runner/src/execution_mode.h
+
+## this port: src/gen, recomp/, CMakeLists.txt
+
+## every round-4 leg log: did any of them print an execution-mode banner?
+  tests/out/r4/accepted/anchor_pair/ShadowrunSNESRecomp
+  (nothing above = no leg printed one, so floor/nofloor legs measure the same program)

@@ -1,0 +1,62 @@
+# round4_symbol_table_key.txt
+#
+# what: can the seed table declare one entry per (address, mode)? the pin's own loader rule, quoted, joined to the capture's hot rows
+# how:  python3 tests/symbol_table_key.py evidence/artifacts/tier2_capture_round3_combat.json tests/out/r4/manifest_r4base.json.bz2
+#
+# framework pin: 773285b8210f2254ae87d0a14113980fb36990ad
+# generated: 2026-11-08T08:02:38Z (host Darwin arm64)
+# source tree: /Users/wee/Documents/work/ports/ShadowrunSNESRecomp
+
+# can the seed table declare an entry per (address, M/X)?
+
+framework pin /private/var/folders/cc/_czwdt293dg9ty_zgc1b57x00000gn/T/opencode/sr-pin
+
+## the loader's rule, from the pin
+
+    tools/sync_symbols.py:90:         previous = addresses.get(symbol.pc24)
+    tools/sync_symbols.py:92:             raise ValueError(f"{context}: conflicting tier/entry modes at ${symbol.pc24:06X}")
+    tools/sync_symbols.py:93:         addresses[symbol.pc24] = policy
+
+So one pc24 carries exactly one (emit, entry_m, entry_x) policy in the
+symbol table; a second declaration of the same address in another mode is
+a hard loader error, not an additional entry.
+
+## what the port declares at the hottest addresses of the capture
+
+Top capture PCs whose *entry* address the port already declares, plus the
+capture's M/X modes seen at that address:
+
+| declared address | declaration | hot PC | entry modes the interpreter ran it in | interpreted insns | guest cycles | gap sightings per mode |
+|---|---|---|---|---|---|---|
+| $80C399 | GS_80C399 emit=true m=0 x=0 (recomp/symbols.toml) | $80C399 | M0X0 (2,196,990 cyc) | 366,165 | 2,196,990 | M0X0: 366,165 hits |
+| $80C399 | GS_80C399 emit=func m=0 x=0 (recomp/bank80.cfg:29) | $80C399 | M0X0 (2,196,990 cyc) | 366,165 | 2,196,990 | M0X0: 366,165 hits |
+| $80AAB3 | GS_80AAB3 emit=true m=0 x=0 (recomp/symbols.toml) | $80AAB3 | M0X0 (1,483,464 cyc) | 247,244 | 1,483,464 | M0X0: 247,244 hits |
+| $80AAB3 | GS_80AAB3 emit=func m=0 x=0 (recomp/bank80.cfg:17) | $80AAB3 | M0X0 (1,483,464 cyc) | 247,244 | 1,483,464 | M0X0: 247,244 hits |
+| $80B200 | FR_80B200 emit=true m=1 x=1 (recomp/symbols.toml) | $80B200 | M0X0 (766,276 cyc) | 191,569 | 766,276 | none |
+| $80B200 | FR_80B200 emit=func m=1 x=1 (recomp/bank80.cfg:22) | $80B200 | M0X0 (766,276 cyc) | 191,569 | 766,276 | none |
+| $80B07A | CC_80B07A emit=true m=1 x=1 (recomp/symbols.toml) | $80B07A | M0X0 (333,714 cyc) | 166,857 | 333,714 | M0X0: 166,857 hits |
+| $80B07A | CC_80B07A emit=func m=1 x=1 (recomp/bank80.cfg:21) | $80B07A | M0X0 (333,714 cyc) | 166,857 | 333,714 | M0X0: 166,857 hits |
+| $80C11F | CC_80C11F emit=true m=0 x=0 (recomp/symbols.toml) | $80C11F | M0X0 (130,806 cyc) | 21,801 | 130,806 | none |
+| $80C11F | CC_80C11F emit=func m=0 x=0 (recomp/bank80.cfg:28) | $80C11F | M0X0 (130,806 cyc) | 21,801 | 130,806 | none |
+| $81B05D | CC_81B05D emit=true m=1 x=1 (recomp/symbols.toml) | $81B05D | M0X0 (118,236 cyc) | 19,706 | 118,236 | none |
+| $81B05D | CC_81B05D emit=func m=1 x=1 (recomp/bank81.cfg:4) | $81B05D | M0X0 (118,236 cyc) | 19,706 | 118,236 | none |
+| $808000 | FR_808000 emit=true m=1 x=1 (recomp/symbols.toml) | $808000 | M0X0 (96,525 cyc) | 19,305 | 96,525 | M0X0: 19,305 hits |
+| $808000 | FR_808000 emit=func m=1 x=1 (recomp/bank80.cfg:3) | $808000 | M0X0 (96,525 cyc) | 19,305 | 96,525 | M0X0: 19,305 hits |
+| $80BF0B | CC_80BF0B emit=true m=0 x=0 (recomp/symbols.toml) | $80BF0B | M0X0 (96,525 cyc) | 19,305 | 96,525 | M0X0: 19,305 hits |
+| $80BF0B | CC_80BF0B emit=func m=0 x=0 (recomp/bank80.cfg:27) | $80BF0B | M0X0 (96,525 cyc) | 19,305 | 96,525 | M0X0: 19,305 hits |
+
+## the same addresses in the generated program
+
+| $81B061 (165,447,390 cyc interpreted) | node 81B05D:M0X0 | aot_eligible | 4 insns | span $81B05D-$81B067 | entry is a root: True |
+| $81B061 (165,447,390 cyc interpreted) | node 81B05D:M1X1 | aot_eligible | 4 insns | span $81B05D-$81B067 | entry is a root: True |
+| $81B065 (82,703,990 cyc interpreted) | node 81B05D:M0X0 | aot_eligible | 4 insns | span $81B05D-$81B067 | entry is a root: True |
+| $81B065 (82,703,990 cyc interpreted) | node 81B05D:M1X1 | aot_eligible | 4 insns | span $81B05D-$81B067 | entry is a root: True |
+| $81EE8E (26,051,305 cyc interpreted) | node 81EE7C:M0X0 | aot_eligible | 13 insns | span $81EE7C-$81EE95 | entry is a root: False |
+| $81EE8E (26,051,305 cyc interpreted) | node 81EE7C:M1X1 | aot_eligible | 13 insns | span $81EE7C-$81EE95 | entry is a root: False |
+| $81EE92 (15,629,359 cyc interpreted) | node 81EE7C:M0X0 | aot_eligible | 13 insns | span $81EE7C-$81EE95 | entry is a root: False |
+| $81EE92 (15,629,359 cyc interpreted) | node 81EE7C:M1X1 | aot_eligible | 13 insns | span $81EE7C-$81EE95 | entry is a root: False |
+| $80F353 (9,842,026 cyc interpreted) | node 80F400:M1X1 | lle_only | 7 insns | span $80F353-$80F403 | entry is a root: True |
+| $80F35A (7,381,524 cyc interpreted) | node 80F400:M1X1 | lle_only | 7 insns | span $80F353-$80F403 | entry is a root: True |
+| $80F356 (3,690,762 cyc interpreted) | node 80F400:M1X1 | lle_only | 7 insns | span $80F353-$80F403 | entry is a root: True |
+| $81F007 (2,859,300 cyc interpreted) | node 81EFFB:M1X0 | aot_eligible | 21 insns | span $81EFFB-$81F027 | entry is a root: False |
+

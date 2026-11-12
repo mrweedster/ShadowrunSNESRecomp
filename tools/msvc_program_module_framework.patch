@@ -1,0 +1,117 @@
+diff --git a/recompiler/v2/program_emit.py b/recompiler/v2/program_emit.py
+index 705afaf7..cdcd070a 100644
+--- a/recompiler/v2/program_emit.py
++++ b/recompiler/v2/program_emit.py
+@@ -83,6 +83,22 @@ def validate_module_identity(module_id: str, module_prefix: str | None):
+             "identifier, so use [A-Za-z_][A-Za-z0-9_]* (at most 32 characters)")
+ 
+ 
++def module_constructor_ident(module_id: str) -> str:
++    """C identifier for this tree's registration function.
++
++    The MSVC constructor macro gives the .CRT$XCU entry external linkage and
++    `/include:`s it, because an unreferenced static entry is dropped in a
++    Release build (the module registry then comes up empty). External linkage
++    means the name has to be unique across every tree linked into one image;
++    the module id is already required to be unique, so derive the name from
++    it.
++    """
++    safe = re.sub(r"[^A-Za-z0-9_]", "_", module_id or "")
++    if not safe or not (safe[0].isalpha() or safe[0] == "_"):
++        safe = "_" + safe
++    return f"snes_program_module_register_{safe}"
++
++
+ def collect_bank_symbols(source: str) -> list[str]:
+     """Base names of every top-level generated function in one bank's text.
+ 
+@@ -157,7 +173,8 @@ def emit_module_descriptor(module_id: str, module_prefix: str | None,
+         "",
+         "SnesProgramModule g_program_module;",
+         "",
+-        "SNES_PROGRAM_MODULE_CONSTRUCTOR(snes_program_module_register_generated) {",
++        "SNES_PROGRAM_MODULE_CONSTRUCTOR("
++        f"{module_constructor_ident(module_id)}) {{",
+         f"  g_program_module.id = \"{module_id}\";",
+         f"  g_program_module.symbol_prefix = "
+         + (f"\"{module_prefix}\";" if module_prefix else "\"\";"),
+diff --git a/runner/src/program_module.h b/runner/src/program_module.h
+index bbf0f968..23e25b99 100644
+--- a/runner/src/program_module.h
++++ b/runner/src/program_module.h
+@@ -73,13 +73,34 @@ void snes_program_module_select(const SnesProgramModule *module);
+ const SnesProgramModule *snes_program_module_active(void);
+ 
+ /* Constructor plumbing shared with mod_runtime.h's SNES_MOD_CONSTRUCTOR; kept
+- * separate so generated code depends on nothing but this header. */
++ * separate so generated code depends on nothing but this header.
++ *
++ * MSVC needs the extra `/include:` for Release. The pointer in `.CRT$XCU` is
++ * only read by the CRT's own `_initterm` walk, which the C compiler cannot
++ * see, so an internal-linkage (`static`) initialiser is dead code: Release
++ * builds with whole-program optimisation and `/OPT:REF`, and the entry was
++ * dropped. The registry was then empty, and a universal executable refused
++ * every ROM because no module was ever registered (Debug kept the entry,
++ * which is why it booted). External linkage plus `/include:` gives the linker
++ * the reference it needs -- the same fix `interp_bridge.c` uses for its dump
++ * hook. The symbol name must therefore be unique per linked tree;
++ * `v2_emit` derives it from the module id. */
+ #if defined(_MSC_VER)
+ #pragma section(".CRT$XCU", read)
++/* 32-bit MSVC decorates a C symbol with a leading underscore; x64 does not.
++ * interp_bridge.c spells both out for the same reason. */
++#if defined(_M_IX86)
++#define SNES_PROGRAM_MODULE_CONSTRUCTOR_INCLUDE(name)                        \
++    __pragma(comment(linker, "/include:_" #name "_constructor"))
++#else
++#define SNES_PROGRAM_MODULE_CONSTRUCTOR_INCLUDE(name)                        \
++    __pragma(comment(linker, "/include:" #name "_constructor"))
++#endif
+ #define SNES_PROGRAM_MODULE_CONSTRUCTOR(name)                                \
+     static void __cdecl name(void);                                          \
+     __declspec(allocate(".CRT$XCU"))                                         \
+-    static void (__cdecl *name##_constructor)(void) = name;                  \
++    void (__cdecl *name##_constructor)(void) = name;                         \
++    SNES_PROGRAM_MODULE_CONSTRUCTOR_INCLUDE(name)                            \
+     static void __cdecl name(void)
+ #elif defined(__GNUC__) || defined(__clang__)
+ #define SNES_PROGRAM_MODULE_CONSTRUCTOR(name)                                \
+diff --git a/tests/test_program_module_emit.py b/tests/test_program_module_emit.py
+index 1ed427c7..44660098 100644
+--- a/tests/test_program_module_emit.py
++++ b/tests/test_program_module_emit.py
+@@ -21,6 +21,7 @@ from v2.program_emit import (  # noqa: E402
+     emit_dispatch_table,
+     emit_module_descriptor,
+     emit_module_namespace,
++    module_constructor_ident,
+     validate_module_identity,
+     MODULE_NAMESPACE_HEADER,
+ )
+@@ -76,6 +77,26 @@ def test_descriptor_registers_tables_and_identity():
+     assert 'g_program_module.symbol_prefix = "";' in stock
+ 
+ 
++def test_descriptor_constructor_name_is_unique_per_module():
++    # MSVC's macro gives the .CRT$XCU entry external linkage (a static one is
++    # dropped in Release), so every linked tree needs its own symbol name.
++    digest = "ab" * 32
++    names = set()
++    for module_id, prefix in (("main", None), ("shadowrun-de", "shadowrun_de"),
++                              ("shadowrun-sv", "shadowrun_sv")):
++        src = emit_module_descriptor(module_id, prefix, 0x100000, digest)
++        match = re.search(r"SNES_PROGRAM_MODULE_CONSTRUCTOR\((\w+)\)", src)
++        assert match, src
++        names.add(match.group(1))
++    assert names == {
++        "snes_program_module_register_main",
++        "snes_program_module_register_shadowrun_de",
++        "snes_program_module_register_shadowrun_sv",
++    }
++    assert module_constructor_ident("smas.smb1") == \
++        "snes_program_module_register_smas_smb1"
++
++
+ def test_identity_rules():
+     validate_module_identity("smw", None)
+     validate_module_identity("smas.smb1", "smas")

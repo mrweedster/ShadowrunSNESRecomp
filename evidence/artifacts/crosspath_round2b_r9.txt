@@ -1,0 +1,214 @@
+== cross-path pair on the fixed combat.txt route (r9), 2b binaries ==
+route: tests/scripts/combat.txt (fixed: alley segment ends alive at A5)
+legs:  /Users/wee/Documents/work/ports/ShadowrunSNESRecomp/build-r2b vs /Users/wee/Documents/work/ports/ShadowrunSNESRecomp/build-llefloor-r2b
+  tests/out/xp_aot_r9.log:script: loaded 75 entries from '/Users/wee/Documents/work/ports/ShadowrunSNESRecomp/tests/scripts/combat.txt'
+  tests/out/xp_aot_r9.log:[host +37.765s] exit: script quit after 22044 frames
+  tests/out/xp_aot_r9.log:[host +37.765s] frame service: implementation=LLE seconds=37.722924625 fps=584.366 cpu_seconds=37.417268000
+  tests/out/xp_lle_r9.log:script: loaded 75 entries from '/Users/wee/Documents/work/ports/ShadowrunSNESRecomp/tests/scripts/combat.txt'
+  tests/out/xp_lle_r9.log:[host +39.057s] exit: script quit after 22044 frames
+  tests/out/xp_lle_r9.log:[host +39.057s] frame service: implementation=LLE seconds=39.023732000 fps=564.887 cpu_seconds=38.644768000
+
+== horizon verdict (baseline tests/baselines/horizon_xp.json, re-recorded from this pair) ==
+provenance of the two legs (run_manifest.json):
+  run1  4c1775badab30111  2,936,672 B  ShadowrunSNESRecomp
+        gen 18 units / 204 promoted fns / 252 dispatch entries  sha256 8374878ada424ce4
+        fw 773285b8210f2254ae87d0a14113980fb36990ad  config Release  embed OFF
+        WARN 18 generated file(s) touched after this executable was linked: the binary may not contain them
+  run2  088307497a2dcd78  1,254,208 B  ShadowrunSNESRecomp
+        gen 18 units / 204 promoted fns / 252 dispatch entries  sha256 8374878ada424ce4   <-- live src/gen, not this binary's set
+        fw 773285b8210f2254ae87d0a14113980fb36990ad  config Release  embed OFF
+        WARN stale build tree: 7 generated .o against 18 generated units in /Users/wee/Documents/work/ports/ShadowrunSNESRecomp/src/gen
+paired at the same host frame: 22044 frames (f0..f22043), frame-label bytes ignored
+noise band: 3 B outside the frame-label bytes
+before the horizon: 16125 frames; 65 stretches left the band and came back on their own (longest 5204 frames, peak 995 B)
+horizon: host f16125; the last frame that still matched was f16124
+  at the horizon: 26 B outside the frame labels (31 B including them)
+  whole-frame realignment at the horizon (run1 f16125 against run2 f16125+k, labels ignored):
+    k=-3:   3252 B
+    k=-2:   2867 B
+    k=-1:   2654 B
+    k=+0:     26 B   <- horizon pairing
+    k=+1:    283 B
+    k=+2:    396 B
+    k=+3:   1128 B
+  no whole-frame shift removes it (best k=+0 leaves 26 B): the difference is inside the frame -- one leg ran a pass of a guest loop the other had not reached
+  after the horizon (consequence, not evidence):
+    +   10 frames: f16135:     29 B
+    +  100 frames: f16225:    113 B
+    + 1000 frames: f17125:    186 B
+    + 5000 frames: f21125:    527 B
+    last frame f22043:    530 B
+
+verdict against baseline tests/baselines/horizon_xp.json (horizon f16125; before it 65 stretches, longest 5204 frames):
+  holds: horizon f16125 vs baseline f16125 (within 1 frame of slack)
+VERDICT: PASS
+horizon exit=0
+
+== checkpoint bmp md5 ==
+   A0.fb.bmp        differ
+   A1.fb.bmp        differ
+   A2.fb.bmp        differ
+   A3.fb.bmp        differ
+   A4.fb.bmp        differ
+   A5.fb.bmp        differ
+   H8.fb.bmp        match
+   J1.fb.bmp        differ
+   J10.fb.bmp       match
+   J2.fb.bmp        differ
+   J3.fb.bmp        differ
+   J4.fb.bmp        match
+   J5.fb.bmp        match
+   J6.fb.bmp        match
+   J7.fb.bmp        match
+   J8.fb.bmp        match
+   J9.fb.bmp        match
+   K1.fb.bmp        match
+   K2.fb.bmp        match
+   K3.fb.bmp        differ
+   L0.fb.bmp        differ
+   L1.fb.bmp        differ
+   checkpoint bmps: 10 match, 12 differ
+
+== drift (diagnostic) ==
+frames compared: 22044   differing 1 KiB blocks per frame (WRAM is 128 KiB = 128 blocks)
+   frames     mean   max
+       0-499      0.78     2
+     500-999      0.45     1
+    1000-1499     0.85     6
+    1500-1999     3.00    13
+    2000-2499     3.63    13
+    2500-2999     4.47    12
+    3000-3499     3.94    15
+    3500-3999     3.01     6
+    4000-4499     3.00     3
+    4500-4999     3.00     3
+    5000-5499     3.00     3
+    5500-5999     3.00     3
+    6000-6499     3.00     3
+    6500-6999     4.03    13
+    7000-7499     2.00     2
+    7500-7999     2.00     2
+    8000-8499     2.00     2
+    8500-8999     2.00     2
+    9000-9499     2.00     2
+    9500-9999     2.00     2
+   10000-10499    2.00     2
+   10500-10999    2.00     2
+   11000-11499    2.00     2
+   11500-11999    2.00     2
+   12000-12499    2.00     2
+   12500-12999    2.00     2
+   13000-13499    2.00     2
+   13500-13999    2.00     2
+   14000-14499    2.00     2
+   14500-14999    2.05    12
+   15000-15499    2.00     2
+   15500-15999    2.00     2
+   16000-16499    6.10    16
+   16500-16999    8.55    11
+   17000-17499    9.99    25
+   17500-17999   14.50    58
+   18000-18499   11.10    14
+   18500-18999   11.40    16
+   19000-19499   16.11    19
+   19500-19999   17.39    20
+   20000-20499   15.53    18
+   20500-20999   15.54    18
+   21000-21499   15.73    18
+   21500-21999   15.10    18
+   22000-22043   16.93    19
+
+first frame over 3 differing blocks: 1350
+worst frame: f17771 with 58 differing blocks
+
+exact bytes around the onset (f1326..f1374):
+  f  1326:     28 bytes total,     28 outside label bytes
+  f  1327:     37 bytes total,     37 outside label bytes
+  f  1328:     54 bytes total,     54 outside label bytes
+  f  1329:     20 bytes total,     20 outside label bytes
+  f  1330:     48 bytes total,     48 outside label bytes
+  f  1331:     45 bytes total,     45 outside label bytes
+  f  1332:     52 bytes total,     52 outside label bytes
+  f  1333:     65 bytes total,     65 outside label bytes
+  f  1334:     44 bytes total,     44 outside label bytes
+  f  1335:     45 bytes total,     45 outside label bytes
+  f  1336:     62 bytes total,     62 outside label bytes
+  f  1337:     76 bytes total,     76 outside label bytes
+  f  1338:     57 bytes total,     57 outside label bytes
+  f  1339:     92 bytes total,     92 outside label bytes
+  f  1340:     65 bytes total,     65 outside label bytes
+  f  1341:     78 bytes total,     78 outside label bytes
+  f  1342:     28 bytes total,     28 outside label bytes
+  f  1343:     26 bytes total,     26 outside label bytes
+
+== tick (diagnostic) ==
+counters: run1=21802 run2=21802 shared=21802 range=0..21801
+only in run1: 0  only in run2: 0
+phase segments (run1 host frame - run2 host frame, same guest tick):
+  k=+0  counters 0..21801  host f0..f22043  (21802 ticks)
+steps: none -- phase is constant across the whole run
+
+== shift (diagnostic) ==
+    16350   16592   16592       123       +0        123  host f16592
+    16895   17137   17137       172      -10        170  host f17127
+    17440   17682   17682       267       +0        267  host f17682
+    17985   18227   18227       119      -10        116  host f18217
+    18530   18772   18772       197       -6        187  host f18766
+    19075   19317   19317       238       +2        220  host f19319
+    19620   19862   19862       491       +6        456  host f19868
+    20165   20407   20407       419       -3        416  host f20404
+    20710   20952   20952       384       +4        383  host f20956
+    21255   21497   21497       434       -4        433  host f21493
+    21801   22043   22043       530       -8        529  host f22035
+byte-identical after phase alignment: 3 of 41
+
+== route_state verdict ==
+== tests/out/xp_aot_r9 (22 checkpoints, f16188..f22044)
+   H8    f16188   scr=(12032,36096) hp=[0, 0, 84, 0, 2, 46, 4]        hp=   '.en .....r.H!. am I?.... yeah'
+   J1    f16865   scr=(12032,36096) hp=[0, 201, 30, 245, 0, 66, 64]   hp=   ".k about...n't be alive! I sa"
+   J2    f17196   scr=(12032,36096) hp=[0, 201, 30, 245, 1, 66, 76]   hp=   ".k about...n't be alive! I sa"
+   J3    f17317   scr=(12032,36096) hp=[0, 201, 30, 245, 1, 66, 68]   hp=   ".k about...n't be alive! I sa"
+   J4    f17438   scr=(12032,36096) hp=[0, 0, 0, 4, 3, 0, 0]          hp=   ".k about...n't be alive! I sa"
+   J5    f17559   scr=(12032,36096) hp=[12, 0, 39, 4, 3, 2, 0]        hp=   ".k about...n't be alive! I sa"
+   J6    f17680   scr=(12032,36096) hp=[12, 0, 57, 4, 4, 2, 0]        hp=   ".k about...n't be alive! I sa"
+   J7    f17801   scr=(12032,36096) hp=[0, 4, 4, 4, 1, 0, 0]          hp=   ".k about...n't be alive! I sa"
+   J8    f17951   scr=(12032,36096) hp=[4, 4, 4, 4, 1, 4, 0]          hp=   ".k about...n't be alive! I sa"
+   J9    f18101   scr=(12032,36096) hp=[4, 4, 4, 4, 1, 4, 0]          hp=   'Looks like you took a wrong tu'
+   J10   f18401   scr=(12032,36096) hp=[4, 4, 4, 4, 1, 4, 0]          hp=   'Looks like you took a wrong tu'
+   K1    f18552   scr=(12032,36096) hp=[4, 4, 4, 4, 2, 4, 0]          hp=   'Looks like you took a wrong tu'
+   K2    f18703   scr=(12032,36096) hp=[4, 4, 4, 4, 3, 4, 4]          hp=   'Looks like you took a wrong tu'
+   K3    f19003   scr=(12032,36096) hp=[4, 4, 4, 4, 3, 4, 4]          hp=   'Looks like you took a wrong tu'
+   L0    f19454   scr=(12032,36096) hp=[4, 4, 4, 4, 4, 4, 4]          alive 'Looks like you took a wrong tu'
+   L1    f19761   scr=(12032,36096) hp=[4, 4, 4, 4, 4, 4, 4]          alive 'Looks like you took a wrong tu'
+   A0    f20730   scr=(31744,27904) hp=[4, 4, 4, 4, 4, 4, 4]          alive 'body. like you took a wrong tu'
+   A1    f20844   scr=(30208,27904) hp=[4, 4, 4, 4, 4, 4, 4]          alive 'body. like you took a wrong tu'
+   A2    f21144   scr=(30208,27904) hp=[4, 4, 4, 4, 4, 4, 4]          alive 'body. like you took a wrong tu'
+   A3    f21444   scr=(30208,27904) hp=[4, 4, 4, 4, 4, 4, 4]          alive 'body. like you took a wrong tu'
+   A4    f21744   scr=(30208,27904) hp=[4, 4, 4, 4, 4, 4, 4]          alive 'body. like you took a wrong tu'
+   A5    f22044   scr=(30208,27904) hp=[4, 4, 4, 4, 4, 4, 4]          alive 'body. like you took a wrong tu'
+   last alive checkpoint: A5 at f22044
+== tests/out/xp_lle_r9 (22 checkpoints, f16188..f22044)
+   H8    f16188   scr=(12032,36096) hp=[0, 0, 84, 0, 2, 46, 4]        hp=   '.en .....r.H!. am I?.... yeah'
+   J1    f16865   scr=(12032,36096) hp=[0, 201, 30, 245, 0, 72, 72]   hp=   ".k about...n't be alive! I sa"
+   J2    f17196   scr=(12032,36096) hp=[0, 201, 30, 245, 1, 0, 76]    hp=   ".k about...n't be alive! I sa"
+   J3    f17317   scr=(12032,36096) hp=[0, 201, 30, 245, 1, 0, 68]    hp=   ".k about...n't be alive! I sa"
+   J4    f17438   scr=(12032,36096) hp=[0, 0, 0, 4, 3, 0, 0]          hp=   ".k about...n't be alive! I sa"
+   J5    f17559   scr=(12032,36096) hp=[10, 0, 39, 4, 3, 0, 0]        hp=   ".k about...n't be alive! I sa"
+   J6    f17680   scr=(12032,36096) hp=[10, 0, 57, 4, 4, 0, 0]        hp=   ".k about...n't be alive! I sa"
+   J7    f17801   scr=(12032,36096) hp=[0, 4, 4, 4, 1, 0, 0]          hp=   ".k about...n't be alive! I sa"
+   J8    f17951   scr=(12032,36096) hp=[4, 4, 4, 4, 1, 4, 0]          hp=   ".k about...n't be alive! I sa"
+   J9    f18101   scr=(12032,36096) hp=[4, 4, 4, 4, 1, 4, 0]          hp=   'Looks like you took a wrong tu'
+   J10   f18401   scr=(12032,36096) hp=[4, 4, 4, 4, 1, 4, 0]          hp=   'Looks like you took a wrong tu'
+   K1    f18552   scr=(12032,36096) hp=[4, 4, 4, 4, 2, 4, 0]          hp=   'Looks like you took a wrong tu'
+   K2    f18703   scr=(12032,36096) hp=[4, 4, 4, 4, 3, 4, 4]          hp=   'Looks like you took a wrong tu'
+   K3    f19003   scr=(12032,36096) hp=[4, 4, 4, 4, 3, 4, 4]          hp=   'Looks like you took a wrong tu'
+   L0    f19454   scr=(12032,36096) hp=[4, 4, 4, 4, 4, 4, 4]          alive 'Looks like you took a wrong tu'
+   L1    f19761   scr=(12032,36096) hp=[4, 4, 4, 4, 4, 4, 4]          alive 'Looks like you took a wrong tu'
+   A0    f20730   scr=(31744,27904) hp=[4, 4, 4, 4, 4, 4, 4]          alive 'body. like you took a wrong tu'
+   A1    f20844   scr=(30208,27904) hp=[4, 4, 4, 4, 4, 4, 4]          alive 'body. like you took a wrong tu'
+   A2    f21144   scr=(30208,27904) hp=[4, 4, 4, 4, 4, 4, 4]          alive 'body. like you took a wrong tu'
+   A3    f21444   scr=(30208,27904) hp=[4, 4, 4, 4, 4, 4, 4]          alive 'body. like you took a wrong tu'
+   A4    f21744   scr=(30208,27904) hp=[4, 4, 4, 4, 4, 4, 4]          alive 'body. like you took a wrong tu'
+   A5    f22044   scr=(30208,27904) hp=[4, 4, 4, 4, 4, 4, 4]          alive 'body. like you took a wrong tu'
+   last alive checkpoint: A5 at f22044
+verdict: 0 of 44 checkpoints are after a death -> all alive

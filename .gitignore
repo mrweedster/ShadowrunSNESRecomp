@@ -1,0 +1,58 @@
+# Generated recompiler output — derived from a copyrighted ROM. Never commit.
+/src/gen/
+/src/gen-*/
+/recomp/funcs.h
+/recomp-lle/funcs.h
+
+# The ROM itself, in every form. Players supply their own.
+*.sfc
+*.smc
+*.srm
+
+# Build trees and packaged output
+/build/
+/build-*/
+/dist/
+/saves/
+
+# Local probe output that names paths on one machine
+/rom_probe.json
+
+# Launcher/runtime state written beside the executable (and in the repo root
+# when the game is run from there): the cached ROM path, keybinds, settings.
+# All of it is one machine's, none of it is the project's.
+/rom.cfg
+/keybinds.ini
+/config.ini
+/input.ini
+
+# Same idea: the mod enable-state and the per-launch report the host drops
+# beside the executable.
+/mods/preloaded/state.toml
+/last_run_report.json
+
+# A locally staged, player-facing build: the executable plus the dylib it
+# carries. Built output — scripts/package_release.sh is the shipped form.
+/Shadowrun
+/libs/
+
+# Test scratch. A single --framedump run writes ~300 MB of per-frame WRAM dumps.
+/tests/out/
+/tests/__pycache__/
+
+# Imports of the release tools (tools/package_desktop.py).
+/tools/__pycache__/
+
+# Same dumps when a script run is launched from the repo root without
+# SNESRECOMP_DUMP_DIR set: the host drops each dump tag (and each framedump
+# frame) straight beside it. Never anything anyone would want to commit.
+/*.fb.bmp
+/*.wram.bin
+/*.vram.bin
+/*.sram.bin
+/*.regs.json
+/*.ppuw.tsv
+/frame_*_wram.bin
+/frame_*.json
+
+.DS_Store

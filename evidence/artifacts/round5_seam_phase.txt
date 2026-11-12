@@ -1,0 +1,41 @@
+# round-5 seam phase experiment
+
+what: does the AOT/interpreter seam move the executed block set before the sampled state split, or does cpu->cycles drift with an identical
+      set?  Both probes are the pinned framework's own env-gated logs.
+how:  python3 tests/seam_phase.py
+inputs: tests/out/r5seam/{ctrl,seed,seed_wide}.err and cw_*.err (raw stderr of build-tr-ctrl / build-tr-seed on
+        tests/out/probe_dense.txt; commands are in evidence/upstream_seam_cycle_bookkeeping.md 8)
+
+== 1. AOT block entries, control vs seed (AOTBLK=1820-1834)
+  control rows : 1622  PCs 98
+  seed rows    : 4241  PCs 131
+  common PCs   : 92  (control-only 6, seed-only 39)
+  common rows  : control 1610  seed 1610
+  common block-entry sequence: identical over all rows
+  per-frame common-count differences: none
+
+== 2. The seeded cluster (control interprets, seed runs AOT)
+  seed-only PCs in the wide window (AOTBLK=1760-1840): 179
+  $80AB00-$80AE00: differing frames none
+  $80C300-$80C600: differing frames [(1766, 100, 122), (1832, 183, 181), (1833, 195, 187), (1837, 191, 189)]
+  $81A900-$81AA00: differing frames [(1762, 0, 908), (1763, 22, 0)]
+
+== 3. The park probe at the same frames (round5_gate_state.txt)
+  f1830: master d=-20  cycles d=-149  DP-identical=True
+  f1832: master d=+14  cycles d=-144  DP-identical=True
+  f1834: master d=-32  cycles d=-1623  DP-identical=False
+  f1836: master d=+0  cycles d=-1623  DP-identical=False
+  f1838: master d=+16  cycles d=-1840  DP-identical=False
+
+== verdict
+  The common AOT block set is identical over all 1610 common rows (f1820-1834), so the common
+  code's phase does not move in this window.  In the onset window (f1816-1836) the only block-count
+  changes are in the seed's compiled cluster: 2 entries at f1832 and 8 at f1833.  (The f1762/f1763/
+  f1766 differences are the boot/transition boundary; f1837 is a 2-entry tail after the state split.)
+  f1832 is the frame the park probe already shows a -144 cpu_cycles delta with DP identical; the
+  first sampled DP/stack difference is f1834.  So the f1832 cycle delta coincides with a real change
+  in the seed's executed cluster, and the f1834 state split follows two frames later: the counter
+  is tracking phase at that boundary.
+  The -149 delta at f1830 survives with an identical block set in every probed range, so it is a
+  sub-block residual (within-block instruction count or per-instruction charge) that AOTBLK cannot
+  resolve; an instruction-level AOT charge log would be the next instrument.

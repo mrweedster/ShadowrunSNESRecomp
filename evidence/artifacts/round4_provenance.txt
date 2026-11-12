@@ -1,0 +1,79 @@
+# round4_provenance.txt
+#
+# what: what round 4 measured against, and every artifact that carries its evidence
+# how:  this script; the file index is shasum -a 256 over evidence/artifacts/round4_*
+#
+# framework pin: 773285b8210f2254ae87d0a14113980fb36990ad
+# generated: 2026-11-08T08:02:38Z (host Darwin arm64)
+# source tree: /Users/wee/Documents/work/ports/ShadowrunSNESRecomp
+
+framework pin file : framework_pins.txt
+  snesrecomp=773285b8210f2254ae87d0a14113980fb36990ad
+framework root     : /private/var/folders/cc/_czwdt293dg9ty_zgc1b57x00000gn/T/opencode/sr-pin
+  rev=773285b8210f2254ae87d0a14113980fb36990ad  dirty=no
+route              : tests/scripts/combat.txt  sha256 0a6c550da8c40f88384575910f875b10e630ab7f7729395cd877669a3d73154c
+capture (round 3)  : evidence/artifacts/tier2_capture_round3_combat.json  sha256 3ea7fd1e494a15b21626a40c64d7cbaf27f0375b92e1743962c9c59733a538b6
+capture (accepted) : evidence/artifacts/tier2_capture_round4_accepted.json  sha256 1a4520bdf036667bca44bdce6363acf75f1ad7e4f1791bdb77c7eeacd1541963
+save state         : saves/save.srm  sha256 c47df746973ab9de95b1b8404920441af2783e82e3da7c90dc92d7fad753ebdf
+seed table (live)  : recomp/symbols.toml  sha256 c2e6a99f1e1745535367aa535d19789b2b4cfb6e6551873575ab6507a871c632
+committed cfg set  : recomp/bank00.cfg recomp/bank80.cfg recomp/bank81.cfg recomp/bankab.cfg 
+== identity of the run that measures the checked-out tree
+  gen_sha256=785bd064707f  gen_units=18  gen_functions=215  gen_dispatch=263  framework=773285b8210f  config=Release  embed_rom=OFF  exe_sha256=2b478e8d26bb
+  live src/gen      : 20 files, manifest sha256 eea52f0716ab0f40
+
+== every round-4 executable, by digest
+  build-r4base         1341448773c19617  2936800 B
+  build-r4pair         2b478e8d26bb27f9  3103776 B
+  build-r4clean        3e1a68bd32e963cc  3286016 B
+  build-r4probe        5429c29978a8d9b0  2936928 B
+  build-s80C1C9        4e6f362a2a23e39a  2954752 B
+  build-s80C399        e841e036e49064de  2936944 B
+  build-s80C1B3        86d7d2e889554b62  2954752 B
+  build-s80F495        e0de95e6e10eedd9  2937024 B
+  build-s80F362        ffb7bee1b564e87b  2954624 B
+  build-s80AAB3        df29756f8367716a  3087136 B
+  build-s80F4F9        93aedb9013506f8f  2936928 B
+  build-s80ABBC        05f8aefb69d18851  2969984 B
+  build-s80B1DB        d1fb51a5274b3e8d  3085856 B
+  build-s80F889        927b68beabb4703a  2954624 B
+
+== artifacts, by digest (this file excepted)
+  round4_abandon_wall.txt                              3222 B  8d78b13fb71f0320
+  round4_accepted_tree.txt                             3142 B  f07fd270759681de
+  round4_accepted_verify.md                           31986 B  a027d200ffd2e485
+  round4_charge_ledger.md                              7772 B  a136213c582362ff
+  round4_execution_mode_grep.txt                       8644 B  2b2d97123efcc46b
+  round4_gap_seed_audit.txt                           14620 B  dbca1460c5091008
+  round4_gen_r4base.tar.gz                           435284 B  cce16c60ce5e8797
+  round4_gen_r4pair.tar.gz                           483373 B  5efb56355ad00b7a
+  round4_generated_sets.md                            30678 B  81f2a341f0e5216d
+  round4_hot_vs_aot.md                                 3375 B  5464540634643b89
+  round4_manifest_full10.json.bz2                     11735 B  5208005659bf4451
+  round4_manifest_pre.json.bz2                         7889 B  914be087adf50b94
+  round4_manifest_r4base.json.bz2                      7889 B  914be087adf50b94
+  round4_manifest_r4clean.json.bz2                     8398 B  f2e09dcc43280e1e
+  round4_manifest_r4f362.json.bz2                     11156 B  24e44177fb88d048
+  round4_manifest_r4pair.json.bz2                      8252 B  faa60941ced13a00
+  round4_manifest_r4probe.json.bz2                     7872 B  3d3ff6c66db16926
+  round4_manifest_s80AAB3.json.bz2                     8191 B  0fa43a8c472e63b8
+  round4_manifest_s80ABBC.json.bz2                     7928 B  9bb755fb9710c364
+  round4_manifest_s80B1DB.json.bz2                     8107 B  475437b09c512b61
+  round4_manifest_s80C1B3.json.bz2                    11221 B  6127ad4acd71f428
+  round4_manifest_s80C1C9.json.bz2                    11229 B  2320a47fe1d8c924
+  round4_manifest_s80C399.json.bz2                     7897 B  d45ebf80f99c2007
+  round4_manifest_s80F362.json.bz2                    11156 B  24e44177fb88d048
+  round4_manifest_s80F495.json.bz2                     7933 B  e25863a1adb540b4
+  round4_manifest_s80F4F9.json.bz2                     7912 B  678af7c59ec67677
+  round4_manifest_s80F889.json.bz2                    11173 B  0d9b705b11c1132a
+  round4_parity_legs.md                                4207 B  474dba73d1ea191d
+  round4_probe_81b061.txt                              4107 B  379bb0b2c73b601c
+  round4_probe_route.txt                                279 B  de38c3cf9499f14e
+  round4_residue_after.md                             23952 B  174cfbdf33c4cac4
+  round4_seed_ranking.txt                             60405 B  3c3f72cc69ab9b32
+  round4_seed_tables.txt                               9362 B  b60311bc39d69321
+  round4_state_bytes.md                              121535 B  598f204dec199a94
+  round4_state_gate.md                                14797 B  2304b61b36e2dc2e
+  round4_sweep.tsv                                     2465 B  980adfa3c7385363
+  round4_symbol_table_key.txt                          5209 B  005f523ecc9c9230
+  round4_variant_ledgers.txt                          31729 B  e905923da10db026
+  round4_wall_clock.md                                 6269 B  7451cdc1e26c58bf

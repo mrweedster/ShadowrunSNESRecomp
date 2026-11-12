@@ -1,0 +1,214 @@
+== run1: /Users/wee/Documents/work/ports/ShadowrunSNESRecomp/build-r2b/ShadowrunSNESRecomp
+   exit=0
+   [host +0.001s] config dir anchored: /Users/wee/Documents/work/ports/ShadowrunSNESRecomp/build-r2b (exe-dir anchor: ok)
+   [host +43.781s] frame service: implementation=LLE seconds=43.743083708 fps=592.139 cpu_seconds=43.224731000
+   [host +43.781s] exit: script quit after 25902 frames
+   run1: interp  96.06%  aot   3.94%  cpu_cycles 1108981502  master_cycles 9257210204
+   frame dumps: 25902
+   manifest: /Users/wee/Documents/work/ports/ShadowrunSNESRecomp/tests/out/xp_aot_r8/run_manifest.json
+     exe    sha256 4c1775badab30111  2,936,672 B
+     tree   /Users/wee/Documents/work/ports/ShadowrunSNESRecomp/build-r2b  config=Release embed=OFF gen_objects=18
+     gen    18 units, 204 promoted functions, 252 dispatch entries, sha256 8374878ada424ce4
+     fw     /private/var/folders/cc/_czwdt293dg9ty_zgc1b57x00000gn/T/opencode/sr-pin  rev=773285b8210f2254ae87d0a14113980fb36990ad dirty=False
+     WARN   18 generated file(s) touched after this executable was linked: the binary may not contain them
+== run2: /Users/wee/Documents/work/ports/ShadowrunSNESRecomp/build-llefloor-r2b/ShadowrunSNESRecomp
+   exit=0
+   [host +0.000s] config dir anchored: /Users/wee/Documents/work/ports/ShadowrunSNESRecomp/build-llefloor-r2b (exe-dir anchor: ok)
+   [host +43.904s] frame service: implementation=LLE seconds=43.872130875 fps=590.398 cpu_seconds=43.349429000
+   [host +43.904s] exit: script quit after 25902 frames
+   run2: interp 100.00%  aot   0.00%  cpu_cycles 1075171039  master_cycles 9257210226
+   frame dumps: 25902
+   manifest: /Users/wee/Documents/work/ports/ShadowrunSNESRecomp/tests/out/xp_lle_r8/run_manifest.json
+     exe    sha256 088307497a2dcd78  1,254,208 B
+     tree   /Users/wee/Documents/work/ports/ShadowrunSNESRecomp/build-llefloor-r2b  config=Release embed=OFF gen_objects=7
+     gen    18 units, 204 promoted functions, 252 dispatch entries, sha256 8374878ada424ce4   <-- NOT this binary's set (linked from 7 .o)
+     fw     /private/var/folders/cc/_czwdt293dg9ty_zgc1b57x00000gn/T/opencode/sr-pin  rev=773285b8210f2254ae87d0a14113980fb36990ad dirty=False
+     WARN   stale build tree: 7 generated .o against 18 generated units in /Users/wee/Documents/work/ports/ShadowrunSNESRecomp/src/gen
+
+== cross-path VERDICT: cross-path fidelity horizon (baseline /Users/wee/Documents/work/ports/ShadowrunSNESRecomp/tests/baselines/horizon_xp.json) ==
+provenance of the two legs (run_manifest.json):
+  run1  4c1775badab30111  2,936,672 B  ShadowrunSNESRecomp
+        gen 18 units / 204 promoted fns / 252 dispatch entries  sha256 8374878ada424ce4
+        fw 773285b8210f2254ae87d0a14113980fb36990ad  config Release  embed OFF
+        WARN 18 generated file(s) touched after this executable was linked: the binary may not contain them
+  run2  088307497a2dcd78  1,254,208 B  ShadowrunSNESRecomp
+        gen 18 units / 204 promoted fns / 252 dispatch entries  sha256 8374878ada424ce4   <-- live src/gen, not this binary's set
+        fw 773285b8210f2254ae87d0a14113980fb36990ad  config Release  embed OFF
+        WARN stale build tree: 7 generated .o against 18 generated units in /Users/wee/Documents/work/ports/ShadowrunSNESRecomp/src/gen
+  note: inputs changed on purpose (run1: gen_functions was 210 in the baseline, 204 here)
+  note: inputs changed on purpose (run1: gen_sha256 was 27b2fbbd039fe066d591bd31fb3bb2c4e5155864efedc0210ad236cb27e66e98 in the baseline, 8374878ada424ce4e8b7682de811f11e20a2ed03a3357e7961218e36eae345c7 here)
+  note: inputs changed on purpose (run1: gen_units was 17 in the baseline, 18 here)
+  note: inputs changed on purpose (run2: gen_functions was 210 in the baseline, 204 here)
+  note: inputs changed on purpose (run2: gen_sha256 was 27b2fbbd039fe066d591bd31fb3bb2c4e5155864efedc0210ad236cb27e66e98 in the baseline, 8374878ada424ce4e8b7682de811f11e20a2ed03a3357e7961218e36eae345c7 here)
+  note: inputs changed on purpose (run2: gen_units was 17 in the baseline, 18 here)
+paired at the same host frame: 25902 frames (f0..f25901), frame-label bytes ignored
+noise band: 3 B outside the frame-label bytes
+before the horizon: 16125 frames; 65 stretches left the band and came back on their own (longest 5204 frames, peak 995 B)
+horizon: host f16125; the last frame that still matched was f16124
+  at the horizon: 26 B outside the frame labels (31 B including them)
+  whole-frame realignment at the horizon (run1 f16125 against run2 f16125+k, labels ignored):
+    k=-3:   3252 B
+    k=-2:   2867 B
+    k=-1:   2654 B
+    k=+0:     26 B   <- horizon pairing
+    k=+1:    283 B
+    k=+2:    396 B
+    k=+3:   1128 B
+  no whole-frame shift removes it (best k=+0 leaves 26 B): the difference is inside the frame -- one leg ran a pass of a guest loop the other had not reached
+  after the horizon (consequence, not evidence):
+    +   10 frames: f16135:     29 B
+    +  100 frames: f16225:    113 B
+    + 1000 frames: f17125:    186 B
+    + 5000 frames: f21125:    502 B
+    last frame f25901:  23593 B
+
+verdict against baseline /Users/wee/Documents/work/ports/ShadowrunSNESRecomp/tests/baselines/horizon_xp.json (horizon f16125; before it 65 stretches, longest 5204 frames):
+  holds: horizon f16125 vs baseline f16125 (within 1 frame of slack)
+VERDICT: PASS
+   => PASS
+
+== cross-path: tagged checkpoint frame buffers (md5) ==
+   H8.fb.bmp        match
+   J1.fb.bmp        differ
+   J10.fb.bmp       match
+   J2.fb.bmp        differ
+   J3.fb.bmp        differ
+   J4.fb.bmp        match
+   J5.fb.bmp        match
+   J6.fb.bmp        match
+   J7.fb.bmp        match
+   J8.fb.bmp        match
+   J9.fb.bmp        match
+   K1.fb.bmp        match
+   K2.fb.bmp        match
+   K3.fb.bmp        differ
+   L0.fb.bmp        differ
+   L1.fb.bmp        differ
+   M0.fb.bmp        differ
+   M1.fb.bmp        differ
+   M2.fb.bmp        differ
+   P1.fb.bmp        differ
+   P2.fb.bmp        differ
+   P3.fb.bmp        differ
+   Q0.fb.bmp        differ
+   S1.fb.bmp        differ
+   S2.fb.bmp        differ
+   S3.fb.bmp        differ
+   S4.fb.bmp        differ
+   S5.fb.bmp        differ
+   S6.fb.bmp        differ
+   T0.fb.bmp        differ
+   T1.fb.bmp        differ
+   U1.fb.bmp        differ
+   U2.fb.bmp        differ
+   U3.fb.bmp        differ
+   U4.fb.bmp        differ
+   U5.fb.bmp        differ
+   U6.fb.bmp        differ
+   U7.fb.bmp        differ
+   U8.fb.bmp        differ
+   U9.fb.bmp        differ
+   W1.fb.bmp        differ
+   W2.fb.bmp        differ
+   W3.fb.bmp        differ
+   checkpoint bmps: 10 match, 33 differ, 0 missing
+
+== cross-path: where the route diverges (diagnostic, not the gate) ==
+frames compared: 25902   differing 1 KiB blocks per frame (WRAM is 128 KiB = 128 blocks)
+   frames     mean   max
+       0-499      0.78     2
+     500-999      0.45     1
+    1000-1499     0.85     6
+    1500-1999     3.00    13
+    2000-2499     3.63    13
+    2500-2999     4.47    12
+    3000-3499     3.94    15
+    3500-3999     3.01     6
+    4000-4499     3.00     3
+    4500-4999     3.00     3
+    5000-5499     3.00     3
+    5500-5999     3.00     3
+    6000-6499     3.00     3
+    6500-6999     4.03    13
+    7000-7499     2.00     2
+    7500-7999     2.00     2
+    8000-8499     2.00     2
+    8500-8999     2.00     2
+    9000-9499     2.00     2
+    9500-9999     2.00     2
+   10000-10499    2.00     2
+   10500-10999    2.00     2
+   11000-11499    2.00     2
+   11500-11999    2.00     2
+   12000-12499    2.00     2
+   12500-12999    2.00     2
+   13000-13499    2.00     2
+   13500-13999    2.00     2
+   14000-14499    2.00     2
+   14500-14999    2.05    12
+   15000-15499    2.00     2
+   15500-15999    2.00     2
+   16000-16499    6.10    16
+   16500-16999    8.55    11
+   17000-17499    9.99    25
+   17500-17999   14.50    58
+   18000-18499   11.10    14
+   18500-18999   11.40    16
+   19000-19499   16.11    19
+   19500-19999   18.56    21
+   20000-20499   19.68    21
+   20500-20999   19.24    21
+   21000-21499   23.17    60
+   21500-21999   23.30    62
+   22000-22499   29.23    59
+   22500-22999   49.53    59
+   23000-23499   15.00    15
+   23500-23999   15.27    16
+   24000-24499   68.23    72
+   24500-24999   71.97    72
+   25000-25499   71.31    72
+   25500-25901   71.88    72
+
+first frame over 3 differing blocks: 1350
+worst frame: f24074 with 72 differing blocks
+
+exact bytes around the onset (f1326..f1374):
+  f  1326:     28 bytes total,     28 outside label bytes
+  f  1327:     37 bytes total,     37 outside label bytes
+  f  1328:     54 bytes total,     54 outside label bytes
+  f  1329:     20 bytes total,     20 outside label bytes
+  f  1330:     48 bytes total,     48 outside label bytes
+  f  1331:     45 bytes total,     45 outside label bytes
+  f  1332:     52 bytes total,     52 outside label bytes
+  f  1333:     65 bytes total,     65 outside label bytes
+  f  1334:     44 bytes total,     44 outside label bytes
+  f  1335:     45 bytes total,     45 outside label bytes
+  f  1336:     62 bytes total,     62 outside label bytes
+
+== cross-path: host-frame phase between the legs (diagnostic) ==
+counters: run1=25517 run2=25626 shared=25517 range=0..25516
+only in run1: 0  only in run2: 109
+phase segments (run1 host frame - run2 host frame, same guest tick):
+  k=+0  counters 0..22081  host f0..f22323  (22082 ticks)
+  k=+34  counters 22082..22609  host f22358..f22885  (528 ticks)
+  k=+0  counters 22610..23638  host f22886..f23914  (1029 ticks)
+  k=+109  counters 23639..25516  host f24024..f25901  (1878 ticks)
+steps: counter 22082: +34, counter 22610: -34, counter 23639: +109
+
+== cross-path: phase-aligned physics probe (diagnostic) ==
+    19110   19352   19352       223       -8        222  host f19344
+    19747   19989   19989       788      -12        459  host f19977
+    20384   20626   20626       491       +6        436  host f20632
+    21021   21263   21263       519       -3        509  host f21260
+    21658   21900   21900       618       -6        616  host f21894
+    22295   22571   22537         -      -25      27395  host f22546
+    22932   23208   23208       207      -12        205  host f23196
+    23569   23845   23845       196       +3        195  host f23848
+    24206   24591   24482         -     -121      23464  host f24470
+    24843   25228   25119         -     -121      23436  host f25107
+    25516   25901   25792         -     -121      23592  host f25780
+byte-identical after phase alignment: 2 of 41
+
+artifacts: /Users/wee/Documents/work/ports/ShadowrunSNESRecomp/tests/out/xp_aot_r8  /Users/wee/Documents/work/ports/ShadowrunSNESRecomp/tests/out/xp_lle_r8  (SRAM seed: /Users/wee/Documents/work/ports/ShadowrunSNESRecomp/tests/out/xp_srm)
+the other half of the verdict needs the trace builds and answers the value
+question on its own window:  ./tests/wram_trace.py --streams

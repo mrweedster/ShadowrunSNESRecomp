@@ -1,0 +1,64 @@
+{
+ "binary": "/Users/wee/Documents/work/ports/ShadowrunSNESRecomp/build-dht/ShadowrunSNESRecomp",
+ "build_tree": {
+  "build_version": "(derived from VERSION)",
+  "config": "Release",
+  "dir": "/Users/wee/Documents/work/ports/ShadowrunSNESRecomp/build-dht",
+  "embed_rom": "OFF",
+  "gen_objects_compiled": 18,
+  "sources_newer_than_binary": 0
+ },
+ "distinct_miss_keys": 0,
+ "exe": {
+  "bytes": 113173744,
+  "path": "/Users/wee/Documents/work/ports/ShadowrunSNESRecomp/build-dht/ShadowrunSNESRecomp",
+  "sha256": "3371495d84cd916b2ea574a30143e6b82f9697aa9ba59af58496a07252dde51a"
+ },
+ "execution_share": {
+  "aot_cycle_pct": 3.9402,
+  "interp_cycle_pct": 96.0598
+ },
+ "exit": 0,
+ "framework": {
+  "dirty": false,
+  "rev": "773285b8210f2254ae87d0a14113980fb36990ad",
+  "root": "/private/var/folders/cc/_czwdt293dg9ty_zgc1b57x00000gn/T/opencode/sr-pin"
+ },
+ "generated_set_live_src_gen": {
+  "dispatch_entries": 252,
+  "files": 20,
+  "promoted_functions": 204,
+  "sha256": "8374878ada424ce4e8b7682de811f11e20a2ed03a3357e7961218e36eae345c7",
+  "units": 18
+ },
+ "generated_set_note": "live src/gen digest, NOT a digest of the manifest this join used (that is manifest_joined)",
+ "hits_by_mode": {
+  "m0x0": 250681,
+  "m1x0": 21234,
+  "m1x1": 89
+ },
+ "manifest_joined": {
+  "bytes": 228635,
+  "nodes_by_pc": 251,
+  "path": "/Users/wee/Documents/work/ports/ShadowrunSNESRecomp/src/gen/program_manifest.json",
+  "sha256": "240af24bb4a71049085d650e33b1d97d1c62a536402d4fa63dc80e2f1e13edcc",
+  "variants": 269
+ },
+ "misses_by_mode": {},
+ "ring_cap": 1024,
+ "ring_file_shown": 1024,
+ "ring_live_captured": 272004,
+ "ring_live_evicted": 301283,
+ "ring_total": 574973,
+ "schema": 1,
+ "script": "tests/scripts/combat.txt",
+ "tallies": {
+  "dispatch_total": 574973,
+  "found0": 0,
+  "found0_pct": 0.0,
+  "found1": 574973,
+  "sampled_at_seconds": 50.21
+ },
+ "wall_seconds": 50.24,
+ "worklist": []
+}

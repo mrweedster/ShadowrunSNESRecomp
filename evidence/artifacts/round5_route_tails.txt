@@ -1,0 +1,233 @@
+# round5_route_tails.txt
+#
+# what: the last lines each variant's own route log printed, so the exit line and any gate it stopped at sit beside the ledger
+# how:  tail -25 of tests/out/r4/<variant>.log for the control, the shipped pair and the six swept seeds; these are the logs tests/seed_variant.sh and tests/seed_sweep.sh wrote
+#
+# framework pin: 773285b8210f2254ae87d0a14113980fb36990ad
+# generated: 2026-11-08T09:29:56Z (host Darwin arm64)
+# source tree: /Users/wee/Documents/work/ports/ShadowrunSNESRecomp
+
+
+================================================================================
+## r5base  (source: tests/out/r4/r5base.log)
+script f=17559 dump J5 ok
+script f=17680 dump J6 ok
+script f=17801 dump J7 ok
+script f=17951 dump J8 ok
+[host +26.309s] heartbeat: frame=18000
+script f=18101 dump J9 ok
+script f=18401 dump J10 ok
+script f=18552 dump K1 ok
+script f=18703 dump K2 ok
+script f=19003 dump K3 ok
+script f=19454 dump L0 ok
+script f=19761 dump L1 ok
+script f=20630 until 001F2 ok after 0 frames
+script f=20730 dump A0 ok
+script f=20744 until 001F0 ok after 5 frames
+script f=20844 dump A1 ok
+script f=21144 dump A2 ok
+script f=21444 dump A3 ok
+[host +30.843s] heartbeat: frame=21600
+script f=21744 dump A4 ok
+script f=22044 dump A5 ok
+script f=22044 quit
+[host +31.417s] exit: script quit after 22044 frames
+[host +31.417s] video totals: simulations=22044 presentations=1377 seconds=31.372
+[host +31.417s] frame service: implementation=LLE seconds=31.372365250 fps=702.657 cpu_seconds=31.162906000
+
+================================================================================
+## r5pair  (source: tests/out/r4/r5pair.log)
+script f=17559 dump J5 ok
+script f=17680 dump J6 ok
+script f=17801 dump J7 ok
+script f=17951 dump J8 ok
+[host +25.361s] heartbeat: frame=18000
+script f=18101 dump J9 ok
+script f=18401 dump J10 ok
+script f=18552 dump K1 ok
+script f=18703 dump K2 ok
+script f=19003 dump K3 ok
+script f=19454 dump L0 ok
+script f=19761 dump L1 ok
+script f=20630 until 001F2 ok after 0 frames
+script f=20730 dump A0 ok
+script f=20744 until 001F0 ok after 5 frames
+script f=20844 dump A1 ok
+script f=21144 dump A2 ok
+script f=21444 dump A3 ok
+[host +29.836s] heartbeat: frame=21600
+script f=21744 dump A4 ok
+script f=22044 dump A5 ok
+script f=22044 quit
+[host +30.399s] exit: script quit after 22044 frames
+[host +30.399s] video totals: simulations=22044 presentations=1377 seconds=30.352
+[host +30.399s] frame service: implementation=LLE seconds=30.351826250 fps=726.282 cpu_seconds=30.195713000
+
+================================================================================
+## s80C1C9  (source: tests/out/r4/s80C1C9.log)
+script f=17559 dump J5 ok
+script f=17680 dump J6 ok
+script f=17801 dump J7 ok
+script f=17951 dump J8 ok
+[host +26.051s] heartbeat: frame=18000
+script f=18101 dump J9 ok
+script f=18401 dump J10 ok
+script f=18552 dump K1 ok
+script f=18703 dump K2 ok
+script f=19003 dump K3 ok
+script f=19454 dump L0 ok
+script f=19761 dump L1 ok
+script f=20630 until 001F2 ok after 0 frames
+script f=20730 dump A0 ok
+script f=20744 until 001F0 ok after 5 frames
+script f=20844 dump A1 ok
+script f=21144 dump A2 ok
+script f=21444 dump A3 ok
+[host +30.616s] heartbeat: frame=21600
+script f=21744 dump A4 ok
+script f=22044 dump A5 ok
+script f=22044 quit
+[host +31.187s] exit: script quit after 22044 frames
+[host +31.187s] video totals: simulations=22044 presentations=1377 seconds=31.148
+[host +31.187s] frame service: implementation=LLE seconds=31.148184958 fps=707.714 cpu_seconds=30.992956000
+
+================================================================================
+## s80C1B3  (source: tests/out/r4/s80C1B3.log)
+script f=17559 dump J5 ok
+script f=17680 dump J6 ok
+script f=17801 dump J7 ok
+script f=17951 dump J8 ok
+[host +26.285s] heartbeat: frame=18000
+script f=18101 dump J9 ok
+script f=18401 dump J10 ok
+script f=18552 dump K1 ok
+script f=18703 dump K2 ok
+script f=19003 dump K3 ok
+script f=19454 dump L0 ok
+script f=19761 dump L1 ok
+script f=20630 until 001F2 ok after 0 frames
+script f=20730 dump A0 ok
+script f=20744 until 001F0 ok after 5 frames
+script f=20844 dump A1 ok
+script f=21144 dump A2 ok
+script f=21444 dump A3 ok
+[host +30.876s] heartbeat: frame=21600
+script f=21744 dump A4 ok
+script f=22044 dump A5 ok
+script f=22044 quit
+[host +31.452s] exit: script quit after 22044 frames
+[host +31.452s] video totals: simulations=22044 presentations=1377 seconds=31.418
+[host +31.452s] frame service: implementation=LLE seconds=31.417946708 fps=701.637 cpu_seconds=31.297149000
+
+================================================================================
+## s80F495  (source: tests/out/r4/s80F495.log)
+[host +21.134s] heartbeat: frame=14400
+script f=16188 dump H8 ok
+script f=16865 dump J1 ok
+script f=17196 dump J2 ok
+script f=17317 dump J3 ok
+script f=17438 dump J4 ok
+script f=17559 dump J5 ok
+script f=17680 dump J6 ok
+script f=17801 dump J7 ok
+script f=17951 dump J8 ok
+[host +25.585s] heartbeat: frame=18000
+script f=18101 dump J9 ok
+script f=18401 dump J10 ok
+script f=18552 dump K1 ok
+script f=18703 dump K2 ok
+script f=19003 dump K3 ok
+script f=19454 dump L0 ok
+script f=19761 dump L1 ok
+script f=20630 until 001F2 ok after 0 frames
+script f=20730 dump A0 ok
+[host +29.998s] heartbeat: frame=21600
+script f=21639 until 001F0 timed out after 900 frames
+[host +30.045s] exit: script until timed out after 21639 frames
+[host +30.045s] video totals: simulations=21639 presentations=1352 seconds=29.997
+[host +30.045s] frame service: implementation=LLE seconds=29.996807167 fps=721.377 cpu_seconds=29.876231000
+
+================================================================================
+## s80F362  (source: tests/out/r4/s80F362.log)
+script f=17559 dump J5 ok
+script f=17680 dump J6 ok
+script f=17801 dump J7 ok
+script f=17951 dump J8 ok
+[host +26.098s] heartbeat: frame=18000
+script f=18101 dump J9 ok
+script f=18401 dump J10 ok
+script f=18552 dump K1 ok
+script f=18703 dump K2 ok
+script f=19003 dump K3 ok
+script f=19454 dump L0 ok
+script f=19761 dump L1 ok
+script f=20630 until 001F2 ok after 0 frames
+script f=20730 dump A0 ok
+script f=20744 until 001F0 ok after 5 frames
+script f=20844 dump A1 ok
+script f=21144 dump A2 ok
+script f=21444 dump A3 ok
+[host +30.642s] heartbeat: frame=21600
+script f=21744 dump A4 ok
+script f=22044 dump A5 ok
+script f=22044 quit
+[host +31.213s] exit: script quit after 22044 frames
+[host +31.213s] video totals: simulations=22044 presentations=1377 seconds=31.165
+[host +31.213s] frame service: implementation=LLE seconds=31.165284542 fps=707.325 cpu_seconds=31.029580000
+
+================================================================================
+## s80F4F9  (source: tests/out/r4/s80F4F9.log)
+script f=17559 dump J5 ok
+script f=17680 dump J6 ok
+script f=17801 dump J7 ok
+script f=17951 dump J8 ok
+[host +25.866s] heartbeat: frame=18000
+script f=18101 dump J9 ok
+script f=18401 dump J10 ok
+script f=18552 dump K1 ok
+script f=18703 dump K2 ok
+script f=19003 dump K3 ok
+script f=19454 dump L0 ok
+script f=19761 dump L1 ok
+script f=20630 until 001F2 ok after 0 frames
+script f=20730 dump A0 ok
+script f=20744 until 001F0 ok after 5 frames
+script f=20844 dump A1 ok
+script f=21144 dump A2 ok
+script f=21444 dump A3 ok
+[host +30.397s] heartbeat: frame=21600
+script f=21744 dump A4 ok
+script f=22044 dump A5 ok
+script f=22044 quit
+[host +30.965s] exit: script quit after 22044 frames
+[host +30.965s] video totals: simulations=22044 presentations=1377 seconds=30.930
+[host +30.965s] frame service: implementation=LLE seconds=30.930054042 fps=712.705 cpu_seconds=30.803848000
+
+================================================================================
+## s80F889  (source: tests/out/r4/s80F889.log)
+script f=17559 dump J5 ok
+script f=17680 dump J6 ok
+script f=17801 dump J7 ok
+script f=17951 dump J8 ok
+[host +26.077s] heartbeat: frame=18000
+script f=18101 dump J9 ok
+script f=18401 dump J10 ok
+script f=18552 dump K1 ok
+script f=18703 dump K2 ok
+script f=19003 dump K3 ok
+script f=19454 dump L0 ok
+script f=19761 dump L1 ok
+script f=20630 until 001F2 ok after 0 frames
+script f=20730 dump A0 ok
+script f=20744 until 001F0 ok after 5 frames
+script f=20844 dump A1 ok
+script f=21144 dump A2 ok
+script f=21444 dump A3 ok
+[host +30.623s] heartbeat: frame=21600
+script f=21744 dump A4 ok
+script f=22044 dump A5 ok
+script f=22044 quit
+[host +31.186s] exit: script quit after 22044 frames
+[host +31.186s] video totals: simulations=22044 presentations=1377 seconds=31.148
+[host +31.186s] frame service: implementation=LLE seconds=31.147966417 fps=707.719 cpu_seconds=31.032446000

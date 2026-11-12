@@ -1,0 +1,67 @@
+# probe: a `[[func]]` root at $81B061, inside a body the program already compiled
+
+capture    evidence/artifacts/tier2_capture_round3_combat.json
+pin        /private/var/folders/cc/_czwdt293dg9ty_zgc1b57x00000gn/T/opencode/sr-pin
+
+## the capture at this loop
+
+| PC | entry M/X | interpreted insns | guest cycles | completed hits | observed hits |
+|---|---|---|---|---|---|
+| $81B061 | M0X0 | 27,574,565 | 165,447,390 | 0 | 0 |
+| $81B065 | M0X0 | 27,574,565 | 82,703,990 | 0 | 0 |
+| $81B05D | M0X0 | 19,706 | 118,236 | 0 | 0 |
+| $81B067 | M0X0 | 19,705 | 118,230 | 0 | 0 |
+
+`completed_hits` / `observed_hits` are 0 at the loop's own PCs: the capture never
+sees a transfer hand control there, so this address is not in the gap ranking
+at all.  A `[[func]]` entry at it is a probe, not a ranking row.
+
+## the probe's symbol table (generated, not typed)
+
+   name = "GS_81B061"
+   note = "round-4 probe seed: 165,447,390 cyc interp / 27,574,565 insns at this PC; 0 gap hits, i.e. the capture never sees a transfer hand control here, so this entry tests whether a root at a hot address makes the program run the body it already compiled  already covered by 81B05D:M0X0; gate not sighted at a gap"
+
+## what the regen and the build made of it
+
+   baseline: 1 generated block(s) removed, 40 [[func]] entries left
+   symbols [[func]] entries: 41
+   seed 81B061
+   manifest: 270 nodes (227 aot_eligible, 43 lle_only), 48 roots, sha256 c26fe39bf013e8f2
+   -- ShadowrunSNESRecomp: 18 generated translation unit(s) from /Users/wee/Documents/work/ports/ShadowrunSNESRecomp/src/gen
+   exe sha256 5429c29978a8d9b0 build-r4probe/ShadowrunSNESRecomp
+   gen_sha256=1a7ffe32063c  gen_units=18  gen_functions=204  gen_dispatch=253  framework=773285b8210f  config=Release  embed_rom=OFF  exe_sha256=5429c29978a8
+   exit=0 wall=30s  exit: script quit after 22044 frames
+   interp  96.15%  aot   3.85%  interp_cycles 919,307,323  cpu_cycles 956,096,571  master_cycles 7,878,127,092
+
+manifest nodes 269 -> 270, roots 47 -> 48, added ['81B061:M0X0'], removed none, other nodes changed 0
+   new node 81B061:M0X0  aot_eligible  3 insns  span $81B061-$81B067
+   existing node 81B05D:M0X0  aot_eligible  4 insns  span $81B05D-$81B067
+   existing node 81B05D:M1X1  aot_eligible  4 insns  span $81B05D-$81B067
+
+## the route run, same switches, control legs and probe legs
+
+| leg | binary | interp % | aot % | interp_insns | interp_cycles | cpu_cycles | master_cycles |
+|---|---|---|---|---|---|---|---|
+| base_nf | ShadowrunSNESRecomp | 96.15 | 3.85 | 226,953,466 | 919,307,323 | 956,096,571 | 7,878,127,092 |
+| base_r5 | ShadowrunSNESRecomp | 96.15 | 3.85 | 226,953,466 | 919,307,323 | 956,096,571 | 7,878,127,092 |
+| probe_nf | ShadowrunSNESRecomp | 96.15 | 3.85 | 226,953,466 | 919,307,323 | 956,096,571 | 7,878,127,092 |
+| probe_r1 | ShadowrunSNESRecomp | 96.15 | 3.85 | 226,953,466 | 919,307,323 | 956,096,571 | 7,878,127,092 |
+| probe_r2 | ShadowrunSNESRecomp | 96.15 | 3.85 | 226,953,466 | 919,307,323 | 956,096,571 | 7,878,127,092 |
+
+interp_cycles is identical on every control leg and every probe leg: 919,307,323, 919,307,323, 919,307,323, 919,307,323, 919,307,323
+A root at the hottest back-edge target in the game, with a compiled body
+and a dispatch entry for it, moves 0 guest cycles.  The bridge does not
+consult the dispatch table on that path, which is what round 3 measured as
+the 96.94 % fall-through / back-edge / resume residue.
+
+## why a second entry mode at $81B05D cannot be declared
+
+   tools/sync_symbols.py:90:         previous = addresses.get(symbol.pc24)
+   tools/sync_symbols.py:92:             raise ValueError(f"{context}: conflicting tier/entry modes at ${symbol.pc24:06X}")
+   tools/sync_symbols.py:93:         addresses[symbol.pc24] = policy
+
+   pair table + gap_seeds.py --force-pc '$81B05D' -> probe_81b05d.toml
+   loader refused it: probe_81b05d.toml: func #43 (GS_81B05D): conflicting tier/entry modes at $81B05D
+   The port declares $81B05D as `func CC_81B05D b05d entry_mx:1,1` in
+   recomp/bank81.cfg, so the symbol table already owns that pc24 with the
+   M1X1 policy, and the hot caller is M0X0.

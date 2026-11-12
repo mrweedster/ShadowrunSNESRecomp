@@ -1,0 +1,122 @@
+frames compared: 25902   differing 1 KiB blocks per frame (WRAM is 128 KiB = 128 blocks)
+   frames     mean   max
+       0-499      1.16     5
+     500-999      2.01     3
+    1000-1499     2.32    11
+    1500-1999     4.19    20
+    2000-2499     4.08    13
+    2500-2999     5.37    13
+    3000-3499     4.44    16
+    3500-3999     2.04     6
+    4000-4499     2.00     2
+    4500-4999     2.00     2
+    5000-5499     2.00     2
+    5500-5999     2.00     2
+    6000-6499     2.00     2
+    6500-6999     1.89     2
+    7000-7499     2.00     2
+    7500-7999     2.00     2
+    8000-8499     1.09     2
+    8500-8999     1.00     1
+    9000-9499     1.00     2
+    9500-9999     1.77     2
+   10000-10499    2.00     2
+   10500-10999    1.65     2
+   11000-11499    1.00     1
+   11500-11999    1.00     1
+   12000-12499    1.00     1
+   12500-12999    1.00     1
+   13000-13499    1.08     2
+   13500-13999    1.76     2
+   14000-14499    2.00     2
+   14500-14999    2.15    14
+   15000-15499    2.00     2
+   15500-15999    1.14     2
+   16000-16499    9.74    38
+   16500-16999    8.51    11
+   17000-17499   12.13    38
+   17500-17999   14.34    54
+   18000-18499   10.12    14
+   18500-18999   12.18    15
+   19000-19499   14.99    18
+   19500-19999   15.25    17
+   20000-20499   16.30    19
+   20500-20999   16.01    18
+   21000-21499   15.88    17
+   21500-21999   21.01    55
+   22000-22499   29.00    29
+   22500-22999   38.37    70
+   23000-23499   70.00    70
+   23500-23999   70.00    70
+   24000-24499   70.00    70
+   24500-24999   70.00    70
+   25000-25499   70.00    70
+   25500-25901   70.00    70
+
+first frame over 3 differing blocks: 476
+worst frame: f22905 with 70 differing blocks
+
+exact bytes around the onset (f452..f500):
+  f   452:      4 bytes total,      0 outside label bytes
+  f   453:      4 bytes total,      0 outside label bytes
+  f   454:      5 bytes total,      0 outside label bytes
+  f   455:     12 bytes total,      8 outside label bytes
+  f   456:      4 bytes total,      0 outside label bytes
+  f   457:      4 bytes total,      0 outside label bytes
+  f   458:      4 bytes total,      0 outside label bytes
+  f   459:     11 bytes total,      7 outside label bytes
+  f   460:      4 bytes total,      0 outside label bytes
+  f   461:      4 bytes total,      0 outside label bytes
+  f   462:     12 bytes total,      8 outside label bytes
+  f   463:     12 bytes total,      8 outside label bytes
+  f   464:      4 bytes total,      0 outside label bytes
+  f   465:      4 bytes total,      0 outside label bytes
+  f   466:      4 bytes total,      0 outside label bytes
+  f   467:     12 bytes total,      8 outside label bytes
+  f   468:     16 bytes total,     12 outside label bytes
+  f   469:     13 bytes total,      9 outside label bytes
+  f   470:      4 bytes total,      0 outside label bytes
+  f   471:      4 bytes total,      0 outside label bytes
+  f   472:      4 bytes total,      0 outside label bytes
+  f   473:      4 bytes total,      0 outside label bytes
+  f   474:     52 bytes total,     46 outside label bytes
+  f   475:    504 bytes total,    500 outside label bytes
+  f   476:    635 bytes total,    631 outside label bytes
+  f   477:    566 bytes total,    566 outside label bytes
+  f   478:    394 bytes total,    390 outside label bytes
+  f   479:      0 bytes total,      0 outside label bytes
+  f   480:      0 bytes total,      0 outside label bytes
+  f   481:      0 bytes total,      0 outside label bytes
+  f   482:      0 bytes total,      0 outside label bytes
+  f   483:      0 bytes total,      0 outside label bytes
+  f   484:      0 bytes total,      0 outside label bytes
+  f   485:      0 bytes total,      0 outside label bytes
+  f   486:      0 bytes total,      0 outside label bytes
+  f   487:      0 bytes total,      0 outside label bytes
+  f   488:      0 bytes total,      0 outside label bytes
+  f   489:      0 bytes total,      0 outside label bytes
+  f   490:      0 bytes total,      0 outside label bytes
+  f   491:      0 bytes total,      0 outside label bytes
+  f   492:      0 bytes total,      0 outside label bytes
+  f   493:      0 bytes total,      0 outside label bytes
+  f   494:      0 bytes total,      0 outside label bytes
+  f   495:      0 bytes total,      0 outside label bytes
+  f   496:   1448 bytes total,   1443 outside label bytes
+  f   497:     19 bytes total,      3 outside label bytes
+  f   498:      4 bytes total,      0 outside label bytes
+  f   499:      5 bytes total,      1 outside label bytes
+  f   500:      5 bytes total,      1 outside label bytes
+
+worst frame in the window: f496, 1448 bytes
+  $7E05500 +0xFF: 236 bytes
+  $7E05200 +0xFF: 208 bytes
+  $7E04F00 +0xFF: 184 bytes
+  $7E05000 +0xFF: 168 bytes
+  $7E05100 +0xFF: 151 bytes
+  $7E05300 +0xFF: 136 bytes
+  $7E05600 +0xFF: 131 bytes
+  $7E05400 +0xFF: 119 bytes
+  $7E04E00 +0xFF: 106 bytes
+  $7E00100 +0xFF: 7 bytes
+  $7E00000 +0xFF: 1 bytes
+  $7E01D00 +0xFF: 1 bytes

@@ -1,0 +1,190 @@
+name: Cross-platform build
+
+# Compile the port on Linux, Windows and macOS with the generators a player's
+# own machine uses: Unix Makefiles on Linux, Visual Studio 17 2022 on Windows,
+# Ninja on macOS. The commands are the ones README "Build" gives, so a green
+# run here means those commands work on a clean host.
+#
+# WHAT THIS BUILDS. src/gen/*.c, src/gen-de/*.c and src/gen-sv/*.c are
+# recompiler output derived from ROM bytes: they are not committed, and CI has
+# no ROM, so the playable game cannot be built here. The setup host is the same
+# executable without generated code (the framework links its setup-host
+# dispatch), so it still compiles every port source file -- including the
+# edition table and the mouse mod -- with each platform's compiler. It is also
+# the executable a setup pack ships.
+#
+# The configure step generates shadowrun_editions_data.c from rom_identity*.txt
+# and the "Check the linked editions" step below proves each platform's default
+# preset carries all three editions. That table and src/edition.c are the
+# universal build's platform-independent half; the multi-module link itself
+# needs generated trees, so it is built from the player's own dumps.
+#
+# WHY IT IS MANUAL. framework_pins.txt names a local framework commit; this
+# checkout has no snesrecomp/ submodule (README "Build"). Point the inputs at
+# a clone that can serve that revision -- a private mirror is enough -- and
+# run this from the Actions page. Do not add a push trigger until the pin is
+# reachable from the default checkout: every run would fail before it
+# compiled a line, which is worse than no signal.
+#
+# THE FRAMEWORK PATCHES. The mouse accessor and the OS-pointer hiding live in
+# the framework, and the interpreter's fused ROM read is framework code too.
+# The run applies tools/mouse_mod_framework.patch and
+# tools/interp_fused_rom_read_framework.patch to the checkout after cloning
+# it, the same commands README gives a builder; the configure step refuses a
+# framework without either.
+
+on:
+  workflow_dispatch:
+    inputs:
+      snesrecomp_repository:
+        description: "owner/name of the snesrecomp checkout to build against"
+        type: string
+        default: "RetroPortingToolKit/snesrecomp"
+      snesrecomp_ref:
+        description: "framework commit or tag (empty = the pin in framework_pins.txt)"
+        type: string
+        default: ""
+      build_setup_host:
+        description: "Build the setup host (required when src/gen is absent)"
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+
+env:
+  SNESRECOMP_ROOT: ${{ github.workspace }}/snesrecomp
+
+jobs:
+  resolve:
+    name: Resolve framework revision
+    runs-on: ubuntu-24.04
+    outputs:
+      ref: ${{ steps.pin.outputs.ref }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Read the pin
+        id: pin
+        shell: bash
+        env:
+          INPUT_REF: ${{ inputs.snesrecomp_ref }}
+        run: |
+          set -euo pipefail
+          ref="${INPUT_REF}"
+          if [[ -z "${ref}" ]]; then
+            ref="$(sed -n 's/^snesrecomp=//p' framework_pins.txt | head -n1)"
+          fi
+          if [[ -z "${ref}" ]]; then
+            echo "::error::framework_pins.txt has no snesrecomp= line; pass snesrecomp_ref"
+            exit 1
+          fi
+          echo "framework ref: ${ref}"
+          echo "ref=${ref}" >> "$GITHUB_OUTPUT"
+
+  build:
+    name: ${{ matrix.platform }}
+    needs: resolve
+    timeout-minutes: 90
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-24.04
+            platform: linux-x64
+            exe: build-linux-x64/ShadowrunSNESRecomp
+          - os: windows-2022
+            platform: windows-x64
+            exe: build-windows-x64/Release/ShadowrunSNESRecomp.exe
+          - os: macos-15
+            platform: macos-arm64
+            exe: build-macos-arm64/ShadowrunSNESRecomp
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check out the framework
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ inputs.snesrecomp_repository }}
+          ref: ${{ needs.resolve.outputs.ref }}
+          path: snesrecomp
+          token: ${{ secrets.SNESRECOMP_TOKEN || github.token }}
+
+      - name: Apply the port's framework patches
+        shell: bash
+        run: |
+          set -euo pipefail
+          git -C snesrecomp apply "${GITHUB_WORKSPACE}/tools/mouse_mod_framework.patch"
+          git -C snesrecomp apply "${GITHUB_WORKSPACE}/tools/interp_fused_rom_read_framework.patch"
+
+      - name: Install build tools (Linux)
+        if: runner.os == 'Linux'
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install -y \
+            libgl1-mesa-dev libegl1-mesa-dev \
+            libx11-dev libxext-dev libxrandr-dev libxcursor-dev libxi-dev \
+            libxfixes-dev libxss-dev libxtst-dev libxkbcommon-dev \
+            libwayland-dev libdecor-0-dev \
+            libasound2-dev libpulse-dev libudev-dev libdbus-1-dev
+
+      - name: Install build tools (macOS)
+        if: runner.os == 'macOS'
+        run: brew install ninja
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: Choose the preset
+        shell: bash
+        env:
+          SETUP_HOST: ${{ inputs.build_setup_host }}
+        run: |
+          set -euo pipefail
+          preset="${{ matrix.platform }}"
+          if [[ "${SETUP_HOST}" == "true" ]]; then preset="${preset}-setup"; fi
+          echo "preset=${preset}" >> "$GITHUB_ENV"
+
+      - name: Configure
+        shell: bash
+        run: cmake --preset "${preset}"
+
+      # The default preset is the universal build even when no generated code
+      # is present: the edition table comes from rom_identity*.txt, and the
+      # setup host still compiles src/edition.c and the table with each
+      # platform's compiler. Assert that here, where a silently single-edition
+      # preset would otherwise look green.
+      - name: Check the linked editions
+        shell: bash
+        run: |
+          set -euo pipefail
+          cache="build-${preset}/CMakeCache.txt"
+          data="build-${preset}/shadowrun_editions_data.c"
+          tr -d '\r' < "$cache" | grep -qx 'SHADOWRUN_EDITIONS:STRING=us;de;sv'
+          tr -d '\r' < "$cache" | grep -qx 'SHADOWRUN_UNIVERSAL:BOOL=ON'
+          count="$(grep -c '\.module_id = ' "$data")"
+          test "$count" -eq 3
+          grep -q '"shadowrun-de"' "$data"
+          grep -q '"shadowrun-sv"' "$data"
+          echo "edition table: ${count} modules (main, shadowrun-de, shadowrun-sv)"
+
+      - name: Check the desktop packager labels editions
+        shell: bash
+        run: ./tests/package_desktop_editions.sh
+
+      - name: Build
+        shell: bash
+        run: cmake --build --preset "${preset}" --parallel 4
+
+      - name: Smoke (host starts and prints its own usage)
+        shell: bash
+        run: ./${{ matrix.exe }} --help
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: shadowrun-${{ matrix.platform }}-host
+          path: ${{ matrix.exe }}
+          if-no-files-found: error

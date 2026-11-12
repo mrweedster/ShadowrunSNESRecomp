@@ -1,0 +1,65 @@
+== the A0 checkpoint, all four idle-poll parity legs (M2 promotion round 3, 2026-11-07) ==
+record: evidence/m2_promotion_round3.md section 5 (the A0 bullet) and section 6 item 3
+framework pin: snesrecomp=773285b8210f2254ae87d0a14113980fb36990ad
+executable: 8374878ada  build-r3/ShadowrunSNESRecomp (2,936,800 B)
+   exe sha256 1341448773c19617   framework 773285b8210f2254ae87d0a14113980fb36990ad   config Release, embed_rom off
+   generated set: 8374878ada424ce4 units=18 promoted=204 dispatch=252 files=20
+executable: 8374878ada  build-r2b/ShadowrunSNESRecomp (2,936,672 B)
+   exe sha256 4c1775badab30111   framework 773285b8210f2254ae87d0a14113980fb36990ad   config Release, embed_rom off
+   generated set: 8374878ada424ce4 units=18 promoted=204 dispatch=252 files=20
+   warning: 18 generated file(s) touched after this executable was linked: the binary may not contain them
+   both executables carry the same generated-set sha256: the A/B is host-side only
+   (those 'touched after' warnings are about file mtimes only; the hash above is
+    over the generated contents, and it is identical on both executables)
+route: tests/scripts/combat.txt from saves/save.srm; every leg reaches A0 at the SAME guest frame
+       because the route's gates sit on WRAM state, never on frame counts
+harness: tests/idle_parity.sh (FULLBYTES=1 TRIM=1), same executable, same SRAM seed
+source: tests/out/ip_<leg>/A0.info.json, A0.regs.json and the A0.<dump> files beside them
+what a checkpoint carries: info.json = frame / master_clock / vpos / hpos plus framebuffer
+   geometry; regs.json = PPU / HDMA register state (runner/src/state_dump.h). Neither
+   writes CPU registers, so this artifact says nothing about A,X,Y,S,D,DB,PB,P or PC.
+
+leg      polls               master_clock   vpos   hpos   note
+off      none                  7408545540    225      0   undeclared control
+m1x0     81ee8e                7408545544    225      4   $81EE8E only
+on       81b061,81ee8e         7408545548    225      8   both $7E1C92 waits
+m0x0     81b061                7408545560    225     20   $81B061 only
+   guest frame at A0: off=20730, m1x0=20730, on=20730, m0x0=20730
+   master_clock delta vs ip_off: m1x0=+4, on=+8, m0x0=+20
+   the same deltas per master cycle at this point: hpos moves 1 dot per cycle at vpos 225
+
+== A0.regs.json, every leg against ip_off (PPU / HDMA state; no CPU registers dumped) ==
+   m1x0   24 keys compared, 4 differ: dma, hscroll, m7matrix, vscroll
+      dma ch1  aAdr 50880->46592
+      hscroll: [207,207,0,0] -> [217,217,0,0]
+      m7matrix: [4,256,0,256,0,0,207,31] -> [4,256,0,256,0,0,217,26]
+      vscroll: [31,31,0,0] -> [26,26,0,0]
+   on     24 keys compared, 4 differ: dma, hscroll, m7matrix, vscroll
+      dma ch1  aAdr 50880->54336
+      dma ch3  aAdr 11744->11616
+      dma ch7  aAdr 11024->10976
+      hscroll: [207,207,0,0] -> [226,226,0,0]
+      m7matrix: [4,256,0,256,0,0,207,31] -> [23,512,0,256,0,0,226,24]
+      vscroll: [31,31,0,0] -> [24,24,0,0]
+   m0x0   24 keys compared, 4 differ: dma, hscroll, m7matrix, vscroll
+      dma ch1  aAdr 50880->46592
+      hscroll: [207,207,0,0] -> [216,216,0,0]
+      m7matrix: [4,256,0,256,0,0,207,31] -> [4,256,0,256,0,0,216,26]
+      vscroll: [31,31,0,0] -> [26,26,0,0]
+
+== the A0 checkpoint dumps beside A0 (sha256 prefix, equal hashes = equal bytes) ==
+   file        off          m1x0         on           m0x0           verdict
+   wram.bin    03d17d4a30   4fbfb62429   2fff5c8157   0a645baedd     differs
+   vram.bin    2546a2b3e7   2f54bbc04e   da0b377ff4   eeffb32a78     differs
+   oam.bin     3a48b1015d   aac185900b   780a20f941   e086f02c4c     differs
+   cgram.bin   3d3e497daa   3d3e497daa   3d3e497daa   55ee58aecd     differs
+   sram.bin    c47df74697   c47df74697   c47df74697   c47df74697     identical in all four
+   fb.bgrx     2fb6e3c0c3   d3906e2a19   0e54aadc23   21adbcdf9f     differs
+   apu.tsv     2d437c59dd   55bb75c7a8   f767bf7b23   6d2a4a134e     differs
+   ppuw.tsv    e9909e07e1   13da1248fd   6dc5432f6e   03ae8dd5fc     differs
+   dma.tsv     ad9616172f   ad9616172f   ad9616172f   ad9616172f     identical in all four
+
+reproduce:
+  FULLBYTES=1 TRIM=1 BIN=build-r3/ShadowrunSNESRecomp ./tests/idle_parity.sh
+  python3 tests/framedump_diff.py cpdump tests/out/ip_off tests/out/ip_m0x0 A0
+  python3 tests/idle_artifacts.py a0      # this file, again

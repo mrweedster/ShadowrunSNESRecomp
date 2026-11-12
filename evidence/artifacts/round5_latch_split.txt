@@ -1,0 +1,59 @@
+# round5_latch_split.txt
+#
+# what: the combat route's first $0126 split: which write, which value, and which block (PC) wrote it on each leg
+# how:  python3 tests/latch_writer.py --route tests/scripts/bisect_h8.txt --park 16200 --addrs 0x126,0x127 on the same trace builds; raw output: tests/out/r4/latch_split_combat.txt
+#
+# framework pin: 773285b8210f2254ae87d0a14113980fb36990ad
+# generated: 2026-11-08T09:29:56Z (host Darwin arm64)
+# source tree: /Users/wee/Documents/work/ports/ShadowrunSNESRecomp
+
+== ctrl: parked f16201, 8691 transfers, 9697 byte writes (paged record)
+   wrote /Users/wee/Documents/work/ports/ShadowrunSNESRecomp/tests/out/latch_ctrl.json
+== seed: parked f16201, 8690 transfers, 9696 byte writes (paged record)
+   wrote /Users/wee/Documents/work/ports/ShadowrunSNESRecomp/tests/out/latch_seed.json
+
+$0126: first byte value split at write #1412 (ctrl 2707 bytes, seed 2707)
+  ctrl:
+    #1410   f14663  =9E  func=bank_80_9E1E_M0X0      parent=bank_80_9E01_M0X0
+    #1411   f14663  =9E  func=bank_80_9E1E_M0X0      parent=bank_80_9E01_M0X0
+    #1412   f14664  =9E  func=interp@$809E00         parent=  <
+    #1413   f14664  =9E  func=interp@$809E00         parent=
+    #1414   f14664  =9E  func=interp@$809E00         parent=
+  seed:
+    #1410   f14663  =9E  func=bank_80_9E1E_M0X0      parent=bank_80_9E01_M0X0
+    #1411   f14663  =9E  func=bank_80_9E1E_M0X0      parent=bank_80_9E01_M0X0
+    #1412   f14664  =80  func=(none)                 parent=  <
+    #1413   f14664  =9E  func=interp@$809E39         parent=
+    #1414   f14664  =9E  func=interp@$809E39         parent=
+
+$0127: first byte value split at write #6043 (ctrl 6061 bytes, seed 6060)
+  ctrl:
+    #6041   f16129  =7E  func=bank_81_801A_M0X0      parent=bank_81_8CE0_M0X0
+    #6042   f16139  =81  func=bank_81_8CE0_M0X0      parent=bank_81_903E_M0X0
+    #6043   f16142  =BC  func=(none)                 parent=  <
+    #6044   f16144  =5E  func=(none)                 parent=
+    #6045   f16146  =5E  func=(none)                 parent=
+  seed:
+    #6041   f16129  =7E  func=bank_81_801A_M0X0      parent=bank_81_8CE0_M0X0
+    #6042   f16139  =81  func=bank_81_8CE0_M0X0      parent=bank_81_903E_M0X0
+    #6043   f16142  =B9  func=(none)                 parent=  <
+    #6044   f16144  =5A  func=(none)                 parent=
+    #6045   f16146  =5C  func=(none)                 parent=
+
+== pc pass: arm at f14314 and park at f14714 for $0126
+== ctrl: armed f14314+, 2434 transfers in the ring
+== seed: armed f14314+, 2435 transfers in the ring
+
+$0126: first byte value split at write #1143 (ctrl 2284 bytes, seed 2285)
+  ctrl:
+    #1141   f14663  =9E  pc=0x809ea6   func=bank_80_9E1E_M0X0      bi=162445986
+    #1142   f14663  =9E  pc=0x809e36   func=bank_80_9E1E_M0X0      bi=162445992
+    #1143   f14664  =9E  pc=0x809e3e   func=interp@$809E00         bi=162446196  <
+    #1144   f14664  =9E  pc=0x809e43   func=interp@$809E00         bi=162446200
+    #1145   f14664  =9E  pc=0x809e3e   func=interp@$809E00         bi=162446205
+  seed:
+    #1141   f14663  =9E  pc=0x809ea6   func=bank_80_9E1E_M0X0      bi=156633562
+    #1142   f14663  =9E  pc=0x809e36   func=bank_80_9E1E_M0X0      bi=156633568
+    #1143   f14664  =80  pc=0x809e39   func=(none)                 bi=156633571  <
+    #1144   f14664  =9E  pc=0x809e3e   func=interp@$809E39         bi=156633775
+    #1145   f14664  =9E  pc=0x809e43   func=interp@$809E39         bi=156633779

@@ -1,0 +1,119 @@
+diff --git a/runner/runner.cmake b/runner/runner.cmake
+index 3208062f..c7f5c459 100644
+--- a/runner/runner.cmake
++++ b/runner/runner.cmake
+@@ -16,6 +16,16 @@ set_property(SOURCE "${CMAKE_CURRENT_LIST_DIR}/src/desktop/host_main.c"
+     APPEND PROPERTY COMPILE_DEFINITIONS
+     SNESRECOMP_FRAME_STAGING_HLE=$<STREQUAL:${SNESRECOMP_FRAME_IMPL},HLE>)
+ message(STATUS "SNES desktop frame composition: ${SNESRECOMP_FRAME_IMPL}")
++set(SNESRECOMP_INTERP_READ_IMPL "REFERENCE" CACHE STRING
++    "Interpreter ROM read decoding (REFERENCE or FUSED)")
++set_property(CACHE SNESRECOMP_INTERP_READ_IMPL PROPERTY STRINGS REFERENCE FUSED)
++if(NOT SNESRECOMP_INTERP_READ_IMPL MATCHES "^(REFERENCE|FUSED)$")
++    message(FATAL_ERROR "SNESRECOMP_INTERP_READ_IMPL must be REFERENCE or FUSED")
++endif()
++set_property(SOURCE "${CMAKE_CURRENT_LIST_DIR}/src/snes/interp_bridge.c"
++    APPEND PROPERTY COMPILE_DEFINITIONS
++    SNESRECOMP_INTERP_FUSED_ROM_READ=$<STREQUAL:${SNESRECOMP_INTERP_READ_IMPL},FUSED>)
++message(STATUS "SNES interpreter ROM read decoding: ${SNESRECOMP_INTERP_READ_IMPL}")
+ option(SNESRECOMP_EXPOSE_COVERAGE_MOD "Show the default-off Coverage Capture mod" OFF)
+ add_compile_definitions(SNESRECOMP_EXPOSE_COVERAGE_MOD=$<BOOL:${SNESRECOMP_EXPOSE_COVERAGE_MOD}>)
+ include(${CMAKE_CURRENT_LIST_DIR}/ppu_8bpp_backend.cmake)
+diff --git a/runner/src/cpu_plain_rom_read.h b/runner/src/cpu_plain_rom_read.h
+new file mode 100644
+index 00000000..c49499c5
+--- /dev/null
++++ b/runner/src/cpu_plain_rom_read.h
+@@ -0,0 +1,10 @@
++#pragma once
++
++#include "cpu_state.h"
++
++/* Claim only immutable plain LoROM/HiROM high-window ROM. A successful read
++ * updates the same CPU/open-bus and cartridge address latches as cpu_read8,
++ * while exposing that it is stable to the interpreter's poll detector.
++ * False has no effects: use cpu_read8 for devices, SRAM and invalid pointers.
++ * No pointer or derived mapping survives this call. */
++bool cpu_read8_plain_rom(CpuState *cpu, uint8 bank, uint16 addr, uint8 *out);
+diff --git a/runner/src/cpu_state.c b/runner/src/cpu_state.c
+index 7ca17cc2..ae7d7f15 100644
+--- a/runner/src/cpu_state.c
++++ b/runner/src/cpu_state.c
+@@ -28,6 +28,7 @@
+  */
+ 
+ #include "cpu_state.h"
++#include "cpu_plain_rom_read.h"
+ #include "common_rtl.h"
+ #include "cpu_trace.h"
+ #include "snes/snes.h"
+@@ -421,6 +422,20 @@ static uint16 cpu_latch_read16(CpuState *cpu, uint16 value) {
+     return value;
+ }
+ 
++bool cpu_read8_plain_rom(CpuState *cpu, uint8 bank, uint16 addr, uint8 *out) {
++    Cart *cart = g_snes ? g_snes->cart : NULL;
++    /* Restrict to the high ROM window. Below $8000, SRAM/WRAM and MMIO take
++     * precedence over ROM-shaped mappings; coprocessors can own even vectors.
++     * Always resolve the live mapping: no retained pointer/invalidation state. */
++    if (addr < 0x8000 || !cart ||
++        (cart->type != CART_LOROM && cart->type != CART_HIROM)) return false;
++    uint8 *p = cart_getRomPtr(cart, bank, addr);
++    if (!p) return false; /* Preserve RomPtr's invalid-pointer diagnostics. */
++    cart_note_cpu_bus(cart, bank, addr);
++    *out = cpu_latch_read8(cpu, *p);
++    return true;
++}
++
+ uint8 cpu_read8(CpuState *cpu, uint8 bank, uint16 addr) {
+     if (g_snes && g_snes->cart)
+         cart_note_cpu_bus(g_snes->cart, bank, addr);
+diff --git a/runner/src/snes/interp_bridge.c b/runner/src/snes/interp_bridge.c
+index 6de65c17..dc322d08 100644
+--- a/runner/src/snes/interp_bridge.c
++++ b/runner/src/snes/interp_bridge.c
+@@ -7,6 +7,7 @@
+ #include <string.h>
+ #include <time.h>
+ #include "interp_bridge.h"
++#include "cpu_plain_rom_read.h"
+ #include "interp816.h"
+ #include "tier2_capture.h"
+ #include "snes.h"   /* Snes, apuCatchupCycles, snes_catchupApu */
+@@ -318,10 +319,25 @@ static int bridge_read_is_stable(uint32_t adr) {
+     return cart_getRomPtr(g_snes->cart, bank, a) != NULL;
+ }
+ 
++#ifndef SNESRECOMP_INTERP_FUSED_ROM_READ
++#define SNESRECOMP_INTERP_FUSED_ROM_READ 0
++#endif
++
+ static uint8_t bridge_bus_read(void *mem, uint32_t adr) {
+     CpuState *cpu = (CpuState *)mem;
+     bridge_timing_bus(adr, 'R');
+-    if (!bridge_read_is_stable(adr)) s_interp_volatile_read_epoch++;
++    uint8_t value;
++    int stable_rom = 0;
++#if SNESRECOMP_INTERP_FUSED_ROM_READ
++    /* A ROM fetch used to decode the same mapping twice: once to establish
++     * stable-poll eligibility, then again inside cpu_read8 -> RomPtr. Claim
++     * the immutable plain-cart case once. Device and invalid reads retain the
++     * reference classifier/bus, including synchronization and diagnostics. */
++    if ((uint16_t)adr >= 0x8000)
++        stable_rom = cpu_read8_plain_rom(cpu, (uint8_t)(adr >> 16),
++                                         (uint16_t)adr, &value);
++#endif
++    if (!stable_rom && !bridge_read_is_stable(adr)) s_interp_volatile_read_epoch++;
+     int continuous=bridge_continuous_read(adr);
+     if (continuous) {
+         s_interp_continuous_read_epoch++;
+@@ -332,7 +348,8 @@ static uint8_t bridge_bus_read(void *mem, uint32_t adr) {
+         if (!s_idle_poll_now) s_interp_idle_live_epoch++;
+     }
+     if (bridge_is_apu_port(adr)) bridge_apu_flush(cpu);
+-    uint8_t value=cpu_read8(cpu,(uint8)((adr>>16)&0xff),(uint16)adr);
++    if (!stable_rom)
++        value=cpu_read8(cpu,(uint8)((adr>>16)&0xff),(uint16)adr);
+     if (continuous) {
+         BridgeDynamicValue *d=&s_bridge_dynamic_values[(adr^(adr>>8)^(adr>>16))&63];
+         if (!d->valid || d->address!=adr || d->value!=value) {

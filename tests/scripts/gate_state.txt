@@ -1,0 +1,121 @@
+turbo on
+wait 1300
+press a 6
+wait 120
+press a 6
+wait 120
+press start 6
+wait 200
+press down 6
+wait 100
+press a 6
+wait 2600
+press down 60
+wait 300
+press left 120
+wait 300
+press up 90
+wait 300
+press left 120
+wait 300
+press up 60
+wait 400
+press r 6
+wait 300
+press r 6
+wait 1200
+press up 40
+wait 600
+press left 10
+wait 300
+press down 12
+wait 300
+press r 6
+wait 300
+press r 6
+wait 1200
+press up 18
+wait 600
+press left 120
+wait 300
+press up 30
+wait 300
+press left 18
+wait 600
+press r 6
+wait 300
+press left 6
+wait 300
+press b 6
+wait 300
+press r 6
+wait 900
+press left+down 30
+wait 900
+press down 12
+wait 300
+press down+right 120
+press down+right 120
+press down+right 60
+dump H8
+wait 240
+press down 2
+wait 60
+press b 6
+wait 60
+press b 6
+wait 300
+dump J1
+press down+right 30
+wait 300
+dump J2
+press down+left 120
+dump J3
+press down+left 120
+dump J4
+press down+left 120
+dump J5
+press down+left 120
+dump J6
+press down+left 120
+dump J7
+wait 150
+dump J8
+wait 150
+dump J9
+wait 300
+dump J10
+press down+left 150
+dump K1
+press down+left 150
+dump K2
+wait 300
+dump K3
+press down 150
+wait 300
+dump L0
+press left 6
+wait 300
+dump L1
+press r 6
+wait 300
+dump M0
+press left 6
+wait 300
+dump M1
+press left 6
+wait 300
+dump M2
+wait 120
+press right 6
+wait 120
+dump Q0
+press r 6
+wait 60
+dump P1
+wait 240
+dump P2
+wait 600
+dump P3
+wait 120
+quit

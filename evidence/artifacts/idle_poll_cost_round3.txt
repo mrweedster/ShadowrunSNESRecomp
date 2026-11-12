@@ -1,0 +1,113 @@
+== declared idle polls: cost per leg (M2 promotion round 3, 2026-11-07) ==
+record: evidence/m2_promotion_round3.md section 4
+framework pin: snesrecomp=773285b8210f2254ae87d0a14113980fb36990ad
+executable: 8374878ada  build-r3/ShadowrunSNESRecomp (2,936,800 B)
+   exe sha256 1341448773c19617   framework 773285b8210f2254ae87d0a14113980fb36990ad   config Release, embed_rom off
+   generated set: 8374878ada424ce4 units=18 promoted=204 dispatch=252 files=20
+executable: 8374878ada  build-r2b/ShadowrunSNESRecomp (2,936,672 B)
+   exe sha256 4c1775badab30111   framework 773285b8210f2254ae87d0a14113980fb36990ad   config Release, embed_rom off
+   generated set: 8374878ada424ce4 units=18 promoted=204 dispatch=252 files=20
+   warning: 18 generated file(s) touched after this executable was linked: the binary may not contain them
+   both executables carry the same generated-set sha256: the A/B is host-side only
+   (those 'touched after' warnings are about file mtimes only; the hash above is
+    over the generated contents, and it is identical on both executables)
+   every leg ran the r3 exe (poll-capable: DeclareIdlePolls() in src/game_rtl.c);
+   the r2b exe is the round-2b control, and the undeclared legs off/off2 reproduce
+   its counters exactly -- see their rows below, and evidence/m2_promotion_round2b.md
+route: tests/scripts/combat.txt, saves/save.srm seeded fresh per leg, turbo, dummy drivers
+harness: tests/idle_ab.sh, every leg re-arming --coverage-capture=on and ingested with
+           tools/tier2_ingest.py --json --cfg-dir recomp
+source: tests/out/idle_<leg>_ingest.json, tests/out/idle_<leg>.log,
+        tests/out/idle_<leg>/last_run_report.json, tests/out/spd_<leg>.log
+
+-- leg off: polls=none   undeclared control
+   interp  96.15% (226,953,466 insns / 919,307,323 cycles)  aot   3.85%  cpu_cycles 956,096,571  master_cycles 7,878,127,092
+   exit: script quit after 22044 frames   |   no idle-poll line (nothing declared)
+   capture: captures=1 gap tuples=292 interpreted=226,953,466 insns / 919,307,323 guest cycles / warnings=0
+   identity: program_digest=240af24bb4a71049 build_digest=1341448773 generation_digest=4e902f1ff9bdca6f rom_sha256=e6bc0a59 lorom
+   wait class: declared-poll candidates over 13 loops: 310,681,830 = 33.80% of attributed
+
+-- leg off2: polls=none   undeclared control, repeated: the determinism check
+   interp  96.15% (226,953,466 insns / 919,307,323 cycles)  aot   3.85%  cpu_cycles 956,096,571  master_cycles 7,878,127,092
+   exit: script quit after 22044 frames   |   no idle-poll line (nothing declared)
+   capture: captures=1 gap tuples=292 interpreted=226,953,466 insns / 919,307,323 guest cycles / warnings=0
+   identity: program_digest=240af24bb4a71049 build_digest=1341448773 generation_digest=4e902f1ff9bdca6f rom_sha256=e6bc0a59 lorom
+   wait class: declared-poll candidates over 13 loops: 310,681,830 = 33.80% of attributed
+
+-- leg on: polls=81b061,81ee8e   both $7E1C92 waits declared
+   interp  55.13% (160,742,293 insns / 627,692,693 cycles)  aot  44.87%  cpu_cycles 1,138,549,946  master_cycles 7,733,393,070
+   exit: script until timed out after 21639 frames   |   [shadowrun] idle polls declared: 2
+   capture: captures=1 gap tuples=292 interpreted=160,742,293 insns / 627,692,693 guest cycles / warnings=0
+   identity: program_digest=240af24bb4a71049 build_digest=1341448773 generation_digest=4e902f1ff9bdca6f rom_sha256=e6bc0a59 lorom
+   wait class: declared-poll candidates over 11 loops: 26,380,765 = 4.20% of attributed
+
+-- leg m0x0: polls=81b061   the M0X0 wait only
+   interp  60.20% (173,406,404 insns / 678,130,192 cycles)  aot  39.80%  cpu_cycles 1,126,390,276  master_cycles 7,878,127,092
+   exit: script quit after 22044 frames   |   [shadowrun] idle polls declared: 1
+   capture: captures=1 gap tuples=291 interpreted=173,406,404 insns / 678,130,192 guest cycles / warnings=0
+   identity: program_digest=240af24bb4a71049 build_digest=1341448773 generation_digest=4e902f1ff9bdca6f rom_sha256=e6bc0a59 lorom
+   wait class: declared-poll candidates over 13 loops: 68,365,635 = 10.08% of attributed
+
+-- leg m1x0: polls=81ee8e   the M1X0 wait only (this PC is also sighted in M1X1)
+   interp  88.73% (216,934,653 insns / 878,900,160 cycles)  aot  11.27%  cpu_cycles 990,558,327  master_cycles 7,878,127,126
+   exit: script quit after 22044 frames   |   [shadowrun] idle polls declared: 1
+   capture: captures=1 gap tuples=294 interpreted=216,934,653 insns / 878,900,160 guest cycles / warnings=0
+   identity: program_digest=240af24bb4a71049 build_digest=1341448773 generation_digest=4e902f1ff9bdca6f rom_sha256=e6bc0a59 lorom
+   wait class: declared-poll candidates over 11 loops: 267,694,662 = 30.46% of attributed
+
+== the declared waits, per leg (tests/wait_cost.py) ==
+   the same four PCs summed in every leg -- the two compare heads of $7E1C92 and the
+   back-edges they own -- so an undeclared leg is the price of the same waits
+   (wait_cost.py reads the capture's own hot table, no decoder, so it runs anywhere)
+declared: $81B061 $81B065 $81EE8E $81EE92
+leg            attributed cyc     declared waits    wait %
+off               919,307,323        289,832,044    31.53%
+         $81B061        165,447,390
+         $81B065         82,703,990
+         $81EE8E         26,051,305
+         $81EE92         15,629,359
+off2              919,307,323        289,832,044    31.53%
+         $81B061        165,447,390
+         $81B065         82,703,990
+         $81EE8E         26,051,305
+         $81EE92         15,629,359
+on                627,692,693          6,127,213     0.98%
+         $81B061          3,822,582
+         $81B065          1,931,712
+         $81EE8E            234,960
+         $81EE92            137,959
+m0x0              678,130,192         47,554,318     7.01%
+         $81B061          3,901,782
+         $81B065          1,971,872
+         $81EE8E         26,051,305
+         $81EE92         15,629,359
+m1x0              878,900,160        246,909,961    28.09%
+         $81B061        164,371,158
+         $81B065         82,165,884
+         $81EE8E            234,960
+         $81EE92            137,959
+
+== guest cpu cycles per host frame, and the host clock, per leg ==
+   cpu_cycles and frames both come from the run report's execution_share, and an
+   'exit line: N' column appears only when the script's own count differs from the
+   report's. The seconds/fps columns are that run's frame-service line. Read the
+   frame count before comparing rates: a leg that timed out ran less route, so its
+   rate is not the same measurement. The like-for-like rows ran the whole route.
+   leg        cpu_cycles   frames  cyc/frame      fps   seconds
+   off       956,096,571   22,044     43,372  702.062    31.399
+   off2      956,096,571   22,044     43,372  694.590    31.737
+   on      1,138,549,946   21,639     52,616  767.176    28.206
+   m0x0    1,126,390,276   22,044     51,097  772.712    28.528
+   m1x0      990,558,327   22,044     44,936  685.728    32.147
+
+== host time, same route, capture off (tests/out/spd_off.log, spd_m0x0.log) ==
+   nothing declared: frame service: implementation=LLE seconds=31.244375583 fps=705.535 cpu_seconds=31.017644000   (22,044 frames in both)
+   $81B061 declared: frame service: implementation=LLE seconds=28.137306000 fps=783.444 cpu_seconds=26.649945000   (22,044 frames in both)
+
+reproduce:
+  BIN=build-r3/ShadowrunSNESRecomp ./tests/idle_ab.sh                      # off off2 on
+  LEGS="m0x0:81b061 m1x0:81ee8e" BIN=build-r3/ShadowrunSNESRecomp ./tests/idle_ab.sh
+  python3 tests/wait_cost.py off=tests/out/idle_off_ingest.json \
+                             on=tests/out/idle_on_ingest.json    # the same rows, again
+  SNESRECOMP_ROOT=<pin> python3 tests/wait_class.py tests/out/idle_off_ingest.json 300000
+  python3 tests/idle_artifacts.py cost    # this file, again

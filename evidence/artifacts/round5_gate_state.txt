@@ -1,0 +1,32 @@
+# round5_gate_state.txt
+#
+# what: the six-seed onset read at frame boundaries on the parity route: registers, direct page, live stack and the latch bytes, control vs the $80C1C9 seed
+# how:  python3 tests/latch_state.py on the trace builds (build-tr-ctrl = directive-bearing control, build-tr-seed = the same tree plus $80C1C9), route tests/out/probe_dense.txt, frames 1830..1838.  Raw output: tests/out/r4/gate_state.txt
+#
+# framework pin: 773285b8210f2254ae87d0a14113980fb36990ad
+# generated: 2026-11-08T09:29:56Z (host Darwin arm64)
+# source tree: /Users/wee/Documents/work/ports/ShadowrunSNESRecomp
+
+legs: ctrl=build-tr-ctrl/ShadowrunSNESRecomp  seed=build-tr-seed/ShadowrunSNESRecomp
+note: run_to_frame stops one frame past the requested target; the frames below are the reported ones.
+
+ctrl f1830   S=0x0128 D=0x0000 cyc=63707230 mcyc=654290368 pc=0x81ac88 latch126_127=0100
+ctrl f1832   S=0x0128 D=0x0000 cyc=63805416 mcyc=655005082 pc=0x81ac82 latch126_127=82AC
+ctrl f1834   S=0x013a D=0x0000 cyc=63903702 mcyc=655719850 pc=0x81b065 latch126_127=82AC
+ctrl f1836   S=0x013a D=0x0000 cyc=63999886 mcyc=656434548 pc=0x81b061 latch126_127=82AC
+ctrl f1838   S=0x013a D=0x0000 cyc=64096551 mcyc=657149284 pc=0x81b061 latch126_127=82AC
+seed f1830   S=0x0128 D=0x0000 cyc=63707081 mcyc=654290348 pc=0x81ac85 latch126_127=0100
+seed f1832   S=0x0128 D=0x0000 cyc=63805272 mcyc=655005096 pc=0x81ac82 latch126_127=82AC
+seed f1834   S=0x013a D=0x0000 cyc=63902079 mcyc=655719818 pc=0x81b065 latch126_127=82AC
+seed f1836   S=0x013a D=0x0000 cyc=63998263 mcyc=656434548 pc=0x81b061 latch126_127=82AC
+seed f1838   S=0x013a D=0x0000 cyc=64094711 mcyc=657149300 pc=0x81b061 latch126_127=82AC
+
+f1830/1830: DP identical=True latch identical=True live-stack diffs=0 below-S diffs=0 S ctrl=0128 seed=0128 mcyc d=-20 cyc d=-149
+f1832/1832: DP identical=True latch identical=True live-stack diffs=0 below-S diffs=0 S ctrl=0128 seed=0128 mcyc d=+14 cyc d=-144
+f1834/1834: DP identical=False latch identical=True live-stack diffs=1 below-S diffs=6 S ctrl=013A seed=013A mcyc d=-32 cyc d=-1623
+   live: [('$013A', '3B', '11')]
+   below-S: [('$0134', '04', '88'), ('$0135', '62', '81'), ('$0136', '05', '10'), ('$0137', '81', 'B2')]
+f1836/1836: DP identical=False latch identical=True live-stack diffs=0 below-S diffs=0 S ctrl=013A seed=013A mcyc d=+0 cyc d=-1623
+f1838/1838: DP identical=False latch identical=True live-stack diffs=1 below-S diffs=6 S ctrl=013A seed=013A mcyc d=+16 cyc d=-1840
+   live: [('$013A', '3B', '11')]
+   below-S: [('$0134', '04', '88'), ('$0135', '62', '81'), ('$0136', '05', '10'), ('$0137', '81', 'B2')]

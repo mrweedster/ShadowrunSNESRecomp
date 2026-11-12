@@ -1,0 +1,404 @@
+diff --git a/runner/src/desktop/host_main.c b/runner/src/desktop/host_main.c
+index 08619c6b..f5c12b19 100644
+--- a/runner/src/desktop/host_main.c
++++ b/runner/src/desktop/host_main.c
+@@ -271,10 +271,170 @@ static double g_present_alpha = 1;
+ static bool g_reset_clock;
+ static double g_simulation_hz = SNES_HOST_NTSC_HZ;
+ 
++/* The player's cursor setting (g_cursor, flipped by the fullscreen key and
++ * restored after the launcher) and a title's request to draw its own
++ * pointer are separate: the OS pointer is visible only when both agree. */
++static bool g_game_pointer;
++
++static void HostApplyCursorVisibility(void) {
++  const bool visible = g_cursor && !g_game_pointer;
++  if (snesrecomp_sdl_cursor_visible() == visible) return;
++
++  /* SNESRECOMP_MOUSE_DEBUG=1: one line per change, beside the mapping lines
++   * from snesrecomp_desktop_mouse_state(). */
++  static int debug = -1;
++  if (debug < 0) {
++    const char *v = HostGetenv("MOUSE_DEBUG");
++    debug = (v && *v && *v != '0') ? 1 : 0;
++  }
++  if (debug)
++    fprintf(stderr,
++            "[mouse] OS pointer %s (title pointer %d, host cursor %d)\n",
++            visible ? "shown" : "hidden", (int)g_game_pointer, (int)g_cursor);
++
++  snesrecomp_sdl_show_cursor(visible);
++}
++
++void snesrecomp_desktop_set_game_pointer(int active) {
++  /* Re-apply even when active is unchanged: the launcher, a focus change or
++   * the fullscreen key may have shown the pointer behind our back between
++   * frames, and the comparison in HostApplyCursorVisibility() makes this
++   * idempotent. */
++  g_game_pointer = active != 0;
++  HostApplyCursorVisibility();
++}
++
+ int snesrecomp_desktop_frame_width(void) { return g_snes_width > 0 ? g_snes_width : 256; }
+ int snesrecomp_desktop_frame_height(void) { return g_snes_height > 0 ? g_snes_height : 224; }
+ void snesrecomp_desktop_request_clock_reset(void) { g_reset_clock = true; }
+ 
++int snesrecomp_desktop_mouse_state(int *x, int *y, unsigned *buttons) {
++  if (!g_window) return 0;
++
++  int win_w = 0, win_h = 0, win_x = 0, win_y = 0;
++  SDL_GetWindowSize(g_window, &win_w, &win_h);
++  SDL_GetWindowPosition(g_window, &win_x, &win_y);
++  if (win_w <= 0 || win_h <= 0) return 0;
++
++  /* Ask the platform, not SDL's cached focus-relative cursor: the app can be
++   * active while SDL has not yet latched an enter event (activation and a
++   * pointer that has not moved since the window opened is the common case),
++   * and then SDL_GetMouseState() answers from the wrong window. The global
++   * query is immediate and the window position is where SDL puts the client
++   * area, so the subtraction gives the same point coordinates as the cached
++   * one once motion has been seen. */
++  float gx = 0.0f, gy = 0.0f;
++  Uint32 held = 0;
++#if SNESRECOMP_SDL3
++  held = SDL_GetGlobalMouseState(&gx, &gy);
++#else
++  {
++    int ix = 0, iy = 0;
++    held = SDL_GetGlobalMouseState(&ix, &iy);
++    gx = (float)ix;
++    gy = (float)iy;
++  }
++#endif
++  /* SDL's event-driven cache is the authoritative button view (the global
++   * query is the platform's async state; a synthetic or remapped event can
++   * reach one and not the other). OR the two so a real click is seen
++   * whichever path it took. */
++  const Uint32 cached_buttons = SDL_GetMouseState(NULL, NULL);
++  held |= cached_buttons;
++
++  /* Window-local pointer, for the one platform where the global answer is not
++   * a desktop coordinate. Wayland does not tell a client where its window is,
++   * so SDL_GetWindowPosition() answers 0,0 and Wayland's
++   * SDL_GetGlobalMouseState() is already window-relative while the pointer is
++   * over the surface -- and answers 0,0, not the pointer, as soon as it is
++   * not. SDL's cached position is the right source there; it is only trusted
++   * while the window has mouse focus, because after a leave it still holds the
++   * last point seen inside the surface. Windows, X11 and macOS have real
++   * desktop coordinates and keep the global subtraction, which also works
++   * before the first motion event has reached SDL's cache. */
++  const char *video_driver = SDL_GetCurrentVideoDriver();
++  const bool wayland = video_driver && strcmp(video_driver, "wayland") == 0;
++
++  float cached_x = 0.0f, cached_y = 0.0f;
++#if SNESRECOMP_SDL3
++  SDL_GetMouseState(&cached_x, &cached_y);
++#else
++  {
++    int ix = 0, iy = 0;
++    SDL_GetMouseState(&ix, &iy);
++    cached_x = (float)ix;
++    cached_y = (float)iy;
++  }
++#endif
++
++  const int mx = wayland ? (int)cached_x : (int)gx - win_x;
++  const int my = wayland ? (int)cached_y : (int)gy - win_y;
++
++  const SDL_WindowFlags flags = SDL_GetWindowFlags(g_window);
++  const int input_focus = (flags & SDL_WINDOW_INPUT_FOCUS) != 0;
++  const int mouse_focus = (flags & SDL_WINDOW_MOUSE_FOCUS) != 0;
++  const int inside_window = mx >= 0 && my >= 0 && mx < win_w && my < win_h;
++
++  /* Mouse coordinates are in window points, the presenters work in drawable
++   * pixels: on a Retina display they differ by the backing scale. */
++  int drawable_w = 0, drawable_h = 0;
++  snesrecomp_sdl_get_drawable_size(g_window, &drawable_w, &drawable_h);
++  if (drawable_w <= 0 || drawable_h <= 0) return 0;
++  const int px = (int)((int64_t)mx * drawable_w / win_w);
++  const int py = (int)((int64_t)my * drawable_h / win_h);
++
++  const int frame_w = snesrecomp_desktop_frame_width();
++  const int frame_h = snesrecomp_desktop_frame_height();
++  SnesDisplayViewport viewport;
++  SnesDisplayAspect_ComputeViewport(
++      frame_w, frame_h, drawable_w, drawable_h,
++      SnesDisplayAspect_Clamp(g_config.display_aspect),
++      g_config.ignore_aspect_ratio, false, &viewport);
++  if (g_game->compute_viewport)
++    g_game->compute_viewport(frame_w, frame_h, drawable_w, drawable_h, &viewport);
++
++  /* SNESRECOMP_MOUSE_DEBUG=1: one line a second with everything the mapping
++   * used, so a title's pointer that lands in the wrong place can be read off
++   * instead of guessed at (Retina scale, letterbox, window scale). Logged
++   * before the gates so a pointer that never reaches the guest also shows
++   * up. */
++  static int debug = -1;
++  static uint32 last_debug_log;
++  if (debug < 0) {
++    const char *v = HostGetenv("MOUSE_DEBUG");
++    debug = (v && *v && *v != '0') ? 1 : 0;
++  }
++  if (debug) {
++    const uint32 now = SDL_GetTicks();
++    if (now - last_debug_log >= 1000) {
++      last_debug_log = now;
++      fprintf(stderr,
++              "[mouse] window %d,%d %dx%d drawable %dx%d viewport %d,%d %dx%d "
++              "driver %s global %.0f,%.0f point %d,%d input=%d mouse=%d "
++              "held=0x%x cached=0x%x%s\n",
++              win_x, win_y, win_w, win_h, drawable_w, drawable_h,
++              viewport.x, viewport.y, viewport.width, viewport.height,
++              video_driver ? video_driver : "?", (double)gx, (double)gy,
++              mx, my, input_focus, mouse_focus,
++              (unsigned)held, (unsigned)cached_buttons,
++              inside_window ? "" : " (outside window)");
++    }
++  }
++
++  if (!input_focus || !inside_window) return 0;
++  /* Wayland's cached point is only live while the surface has the pointer. */
++  if (wayland && !mouse_focus) return 0;
++  if (viewport.width <= 0 || viewport.height <= 0) return 0;
++  if (px < viewport.x || py < viewport.y ||
++      px >= viewport.x + viewport.width || py >= viewport.y + viewport.height)
++    return 0;
++
++  if (x) *x = (int)((int64_t)(px - viewport.x) * frame_w / viewport.width);
++  if (y) *y = (int)((int64_t)(py - viewport.y) * frame_h / viewport.height);
++  if (buttons) *buttons = (unsigned)held;
++  return 1;
++}
++
+ static double MonotonicSeconds(void) {
+ #if defined(__linux__)
+   /* Match the clock used by Linux sleep/audio scheduling. SDL's performance
+@@ -476,7 +636,7 @@ void snesrecomp_set_fullscreen(int mode)
+     g_win_flags = (g_win_flags & ~fs_mask) | want;
+     SDL_SetWindowFullscreen(g_window, want);
+     g_cursor = (want == 0);
+-    snesrecomp_sdl_show_cursor(g_cursor);
++    HostApplyCursorVisibility();
+ }
+ 
+ int snesrecomp_get_fullscreen(void)
+@@ -3084,7 +3244,7 @@ static void ApplyLiveSettings(const Config *before) {
+     g_win_flags = (g_win_flags & ~fs_mask) | want;
+     SDL_SetWindowFullscreen(g_window, want);
+     g_cursor = want == 0;
+-    snesrecomp_sdl_show_cursor(g_cursor);
++    HostApplyCursorVisibility();
+   }
+   /* The window follows the scale and, through WindowBaseWidth, the pixel
+    * aspect -- but only a window that is a window, and only one the player
+@@ -3181,6 +3341,9 @@ static void RunInGameLauncher(bool *running, const char **exit_reason) {
+       ? ReadWholeFile(g_mod_state_path, &mods_before_len) : NULL;
+   g_overlay_modal = true;
+   SetAudioPaused(true);
++  /* The launcher draws its own pointer; do not hold the OS one hidden while
++   * the game window is gone. */
++  snesrecomp_desktop_set_game_pointer(0);
+   SDL_HideWindow(g_window);
+   /* This process keeps running after the launcher's window closes. */
+   recomp_launcher_set_preserve_sdl(1);
+@@ -3203,7 +3366,7 @@ static void RunInGameLauncher(bool *running, const char **exit_reason) {
+    * was the last visible one). That close meant "back to the game". */
+   SDL_FlushEvent(SDL_QUIT);
+   /* The launcher's ImGui backend shows the cursor every frame. */
+-  snesrecomp_sdl_show_cursor(g_cursor);
++  HostApplyCursorVisibility();
+   if (g_renderer_funcs.Reconfigure) g_renderer_funcs.Reconfigure();
+ 
+   if (act == RECOMP_LAUNCHER_RESULT_QUIT) {
+@@ -4076,6 +4239,14 @@ error_reading:;
+     while (SDL_PollEvent(&event)) {
+       if (HandleDeviceEvent(&event))
+         continue;
++      /* The OS pointer comes back the moment the pointer leaves the window
++       * or another application takes focus. The title's next frame hides it
++       * again if the pointer is over the image (and has to stay visible if
++       * the game is paused, which is why this cannot live in the per-frame
++       * accessor alone). */
++      if (snesrecomp_sdl_event_window_left(&event) ||
++          snesrecomp_sdl_event_window_focus_lost(&event))
++        snesrecomp_sdl_show_cursor(g_cursor);
+       switch (event.type) {
+       case SDL_MOUSEWHEEL:
+         if (SDL_GetModState() & KMOD_CTRL && event.wheel.y != 0)
+@@ -4740,7 +4911,7 @@ static void HandleCommand(uint32 j, bool pressed) {
+       g_win_flags ^= SNESRECOMP_SDL_WINDOW_FULLSCREEN_DESKTOP;
+       SDL_SetWindowFullscreen(g_window, g_win_flags & SNESRECOMP_SDL_WINDOW_FULLSCREEN_DESKTOP);
+       g_cursor = !g_cursor;
+-      snesrecomp_sdl_show_cursor(g_cursor);
++      HostApplyCursorVisibility();
+       /* Keep the config in step with the window: the launcher reads
+        * g_config.fullscreen to seed its Display row, and the shutdown write
+        * persists it. Without this, toggling fullscreen in-game and quitting
+diff --git a/runner/src/desktop/host_main.h b/runner/src/desktop/host_main.h
+index d8efd856..f640b016 100644
+--- a/runner/src/desktop/host_main.h
++++ b/runner/src/desktop/host_main.h
+@@ -223,6 +223,30 @@ int snesrecomp_desktop_main(const SnesDesktopHostGame *game, int argc, char **ar
+ int snesrecomp_desktop_frame_width(void);
+ int snesrecomp_desktop_frame_height(void);
+ void snesrecomp_desktop_set_widescreen(int enabled);
++
++/* The mouse as this frame's SDL sees it, in SNES frame pixels.
++ *
++ * x/y are 0..frame_width-1 / 0..frame_height-1 after undoing the window's
++ * letterbox and the drawable-size scale, so a title can put an in-game
++ * pointer under the OS pointer without knowing which renderer or scale is
++ * in use. buttons is SDL's button mask (SDL_BUTTON_LMASK / MMASK / RMASK).
++ *
++ * Returns 1 only while this window has input focus and the pointer is
++ * inside the presented image; 0 leaves x/y/buttons untouched. A title that
++ * reads this every frame therefore leaves its guest alone while the pointer
++ * is over another application or the letterbox. */
++int snesrecomp_desktop_mouse_state(int *x, int *y, unsigned *buttons);
++
++/* Tell the host that the title is drawing its own pointer under the mouse.
++ *
++ * While active is nonzero the OS pointer is hidden whenever this window has
++ * input focus, so a guest hand cursor and the system arrow do not sit on top
++ * of each other. Passing 0 gives the pointer back. A title calls this every
++ * frame with the result of snesrecomp_desktop_mouse_state(), so leaving the
++ * window, switching applications or the fullscreen key still behaves the
++ * way the player expects: the pointer reappears outside the image and the
++ * host's own cursor setting is never overwritten, only layered over. */
++void snesrecomp_desktop_set_game_pointer(int active);
+ /* Selected PPU renderer, shared by hotkeys and diagnostic playback. Setting
+  * this also updates the live config; it does not write the user's file. */
+ int snesrecomp_desktop_new_renderer(void);
+diff --git a/runner/src/desktop/sdl_compat.h b/runner/src/desktop/sdl_compat.h
+index 7c7f9bf6..3066cb97 100644
+--- a/runner/src/desktop/sdl_compat.h
++++ b/runner/src/desktop/sdl_compat.h
+@@ -312,6 +312,36 @@ static inline void snesrecomp_sdl_show_cursor(bool visible) {
+ #endif
+ }
+ 
++static inline bool snesrecomp_sdl_cursor_visible(void) {
++#if SNESRECOMP_SDL3
++  return SDL_CursorVisible();
++#else
++  return SDL_ShowCursor(SDL_QUERY) == SDL_ENABLE;
++#endif
++}
++
++/* Window events that end a title's pointer ownership. The SDL3 event names
++ * and the SDL2 window-event subtypes do not compare the same way, so the
++ * host asks here instead of spelling both out at each call site. */
++static inline bool snesrecomp_sdl_event_window_left(const SDL_Event *event) {
++#if SNESRECOMP_SDL3
++  return event->type == SDL_EVENT_WINDOW_MOUSE_LEAVE;
++#else
++  return event->type == SDL_WINDOWEVENT &&
++         event->window.event == SDL_WINDOWEVENT_LEAVE;
++#endif
++}
++
++static inline bool snesrecomp_sdl_event_window_focus_lost(
++    const SDL_Event *event) {
++#if SNESRECOMP_SDL3
++  return event->type == SDL_EVENT_WINDOW_FOCUS_LOST;
++#else
++  return event->type == SDL_WINDOWEVENT &&
++         event->window.event == SDL_WINDOWEVENT_FOCUS_LOST;
++#endif
++}
++
+ static inline const uint8_t *snesrecomp_sdl_get_keyboard_state(void) {
+ #if SNESRECOMP_SDL3
+   return (const uint8_t *)SDL_GetKeyboardState(NULL);
+diff --git a/runner/src/keybinds.c b/runner/src/keybinds.c
+index 3e2cb757..9f211080 100644
+--- a/runner/src/keybinds.c
++++ b/runner/src/keybinds.c
+@@ -18,38 +18,30 @@
+ 
+ /* ── Defaults ─────────────────────────────────────────────────────────────── */
+ /*
+- * Defaults match the SMW/Zelda3-HLE legacy layout:
+- *   D-pad: Arrow keys
+- *   Select: RShift     Start: Return
+- *   Y/B (face L/D):    A / Z
+- *   X/A (face U/R):    S / X
+- *   L/R (shoulders):   C / V
++ * Shadowrun mouse mod layout:
++ *   D-pad: W A S D          Select: Y     Start: X
++ *   Y/B/A (face): mouse      X: C         L/R: Q/E
++ * The three action buttons are mouse-only: right = A, left = B, middle = Y.
++ * (The desktop host injects those from SDL_GetMouseState; see the title's
++ * src/mouse_cursor.c.)
+  */
+ 
+-/* Optional per-target defaults; other hosts retain the legacy C/V layout. */
+-#ifndef RECOMP_DEFAULT_KEY_L
+-#define RECOMP_DEFAULT_KEY_L SDL_SCANCODE_C
+-#endif
+-#ifndef RECOMP_DEFAULT_KEY_R
+-#define RECOMP_DEFAULT_KEY_R SDL_SCANCODE_V
+-#endif
+-
+ /* One literal for the default layout, shared by the boot state and the
+  * launcher's Reset-to-Defaults (keybinds_reset_player). */
+ #define KEYBINDS_DEFAULTS { \
+     .p1 = { \
+-        .a      = SDL_SCANCODE_X, \
+-        .b      = SDL_SCANCODE_Z, \
+-        .x      = SDL_SCANCODE_S, \
+-        .y      = SDL_SCANCODE_A, \
+-        .l      = RECOMP_DEFAULT_KEY_L, \
+-        .r      = RECOMP_DEFAULT_KEY_R, \
+-        .start  = SDL_SCANCODE_RETURN, \
+-        .select = SDL_SCANCODE_RSHIFT, \
+-        .up     = SDL_SCANCODE_UP, \
+-        .down   = SDL_SCANCODE_DOWN, \
+-        .left   = SDL_SCANCODE_LEFT, \
+-        .right  = SDL_SCANCODE_RIGHT, \
++        .a      = SDL_SCANCODE_UNKNOWN, \
++        .b      = SDL_SCANCODE_UNKNOWN, \
++        .x      = SDL_SCANCODE_C, \
++        .y      = SDL_SCANCODE_UNKNOWN, \
++        .l      = SDL_SCANCODE_Q, \
++        .r      = SDL_SCANCODE_E, \
++        .start  = SDL_SCANCODE_X, \
++        .select = SDL_SCANCODE_Y, \
++        .up     = SDL_SCANCODE_W, \
++        .down   = SDL_SCANCODE_S, \
++        .left   = SDL_SCANCODE_A, \
++        .right  = SDL_SCANCODE_D, \
+     }, \
+     /* Player 2 gets the SAME defaults as player 1.
+      *
+@@ -65,18 +57,18 @@
+      * configuration a player has to choose, and rebinding one of them is the
+      * answer; it is not a reason to ship slot 2 unusable. */ \
+     .p2 = { \
+-        .a      = SDL_SCANCODE_X, \
+-        .b      = SDL_SCANCODE_Z, \
+-        .x      = SDL_SCANCODE_S, \
+-        .y      = SDL_SCANCODE_A, \
+-        .l      = RECOMP_DEFAULT_KEY_L, \
+-        .r      = RECOMP_DEFAULT_KEY_R, \
+-        .start  = SDL_SCANCODE_RETURN, \
+-        .select = SDL_SCANCODE_RSHIFT, \
+-        .up     = SDL_SCANCODE_UP, \
+-        .down   = SDL_SCANCODE_DOWN, \
+-        .left   = SDL_SCANCODE_LEFT, \
+-        .right  = SDL_SCANCODE_RIGHT, \
++        .a      = SDL_SCANCODE_UNKNOWN, \
++        .b      = SDL_SCANCODE_UNKNOWN, \
++        .x      = SDL_SCANCODE_C, \
++        .y      = SDL_SCANCODE_UNKNOWN, \
++        .l      = SDL_SCANCODE_Q, \
++        .r      = SDL_SCANCODE_E, \
++        .start  = SDL_SCANCODE_X, \
++        .select = SDL_SCANCODE_Y, \
++        .up     = SDL_SCANCODE_W, \
++        .down   = SDL_SCANCODE_S, \
++        .left   = SDL_SCANCODE_A, \
++        .right  = SDL_SCANCODE_D, \
+     }, \
+ }
+ 

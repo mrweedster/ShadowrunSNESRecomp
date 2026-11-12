@@ -1,0 +1,21 @@
+{
+ "mode": "horizon",
+ "pair": [
+  "tests/out/bs_aot",
+  "tests/out/bs_lle"
+ ],
+ "noise_max": 3,
+ "range": [
+  0,
+  16427
+ ],
+ "frames": 16428,
+ "horizon_host": 16280,
+ "horizon_body": 20,
+ "horizon_total": 22,
+ "pre_frames": 16280,
+ "healed_runs": 63,
+ "pre_longest_run": 30,
+ "pre_peak": 40,
+ "last_body": 89
+}

@@ -1,0 +1,64 @@
+# round5_directive_inert.txt
+#
+# what: whether authorising $80F4F9 changes any generated machine code: the round-4 shipped set against the round-5 shipped set, at file, instruction-body and manifest level
+# how:  python3 compares round4_gen_r4pair.tar.gz with round5_gen_r5pair.tar.gz (member bytes) and round4_manifest_r4pair.json.bz2 with round5_manifest_r5pair.json.bz2 (top-level fields and every node); the program digest is read out of each module_v2.c
+#
+# framework pin: 773285b8210f2254ae87d0a14113980fb36990ad
+# generated: 2026-11-08T09:29:56Z (host Darwin arm64)
+# source tree: /Users/wee/Documents/work/ports/ShadowrunSNESRecomp
+
+== generated files
+  round-4 set 20 files, round-5 set 20 files
+  added   none
+  removed none
+  changed ['gen/.snesrecomp-cache.json', 'gen/module_v2.c', 'gen/program_manifest.json']
+
+== instruction bodies
+  generated .c files other than module_v2.c that changed: none
+  gen/bank00_v2.c                    identical  sha256 32dc41466b2166c5
+  gen/bank80_v2.c                    identical  sha256 ecb010f6119c45b2
+  gen/bank81_part00_v2.c             identical  sha256 f859447d57fecbc8
+  gen/bank81_part01_v2.c             identical  sha256 55a23c2509fa4f23
+  gen/bank81_part02_v2.c             identical  sha256 44f29c607427af0f
+  gen/bank81_part03_v2.c             identical  sha256 1b4ffb26ef1a43d6
+  gen/bank81_part04_v2.c             identical  sha256 b43fe6b2668c65c7
+  gen/bank81_part05_v2.c             identical  sha256 99670e2a9a124a83
+  gen/bank81_part06_v2.c             identical  sha256 db029262da931650
+  gen/bank81_part0a_v2.c             identical  sha256 5f9eedef9544296a
+  gen/bank81_part0b_v2.c             identical  sha256 e5172c9f773e10cf
+  gen/bank81_part0c_v2.c             identical  sha256 6c316d3669fc1863
+  gen/bank81_part0d_v2.c             identical  sha256 70531465bd2972db
+  gen/bank81_part0e_v2.c             identical  sha256 ad2c4b1b7adcdd7d
+  gen/bankab_v2.c                    identical  sha256 cc51c0ffa66fe010
+  gen/dispatch_v2.c                  identical  sha256 0844325e22e70ac3
+  gen/unresolved_stubs_v2.c          identical  sha256 47085f485c3e8d48
+
+== module_v2.c (the only changed machine-code file)
+  round 4: g_program_module.program_digest = "eea52f0716ab0f40616bf87170855b79c76eb3126cb6ccdd8d9b2b05a35d5fc6";
+  round 4: g_program_module.build_digest = "51ebb386698d8d5115785a5c5016c2ee0151b596cbe255c5beafb8cb26db64bb";
+  round 5: g_program_module.program_digest = "aa4a6f28a00afdb249f4953ac9ba96bab6d6a5688108a7b316958c610ac4d7c9";
+  round 5: g_program_module.build_digest = "bb92a258ee6698fa9136f2c5e7eceef01020d459aa61dbae76e5ed0dedf0bbbb";
+  differing lines: 4
+    -  g_program_module.program_digest = "eea52f0716ab0f40616bf87170855b79c76eb3126cb6ccdd8d9b2b05a35d5fc6";
+    -  g_program_module.build_digest = "51ebb386698d8d5115785a5c5016c2ee0151b596cbe255c5beafb8cb26db64bb";
+    +  g_program_module.program_digest = "aa4a6f28a00afdb249f4953ac9ba96bab6d6a5688108a7b316958c610ac4d7c9";
+    +  g_program_module.build_digest = "bb92a258ee6698fa9136f2c5e7eceef01020d459aa61dbae76e5ed0dedf0bbbb";
+  (two digest strings only: program_digest and build_digest)
+
+== program manifest
+  top-level keys equal: True
+  top-level field changed: exit_modes
+  nodes 283 -> 283; same keys: True
+  nodes with any differing field: 0
+  disposition counts (round 5): aot_eligible 240, lle_only 43
+  roots 49 -> 49; identical: True
+  exit_modes 249 -> 319  (+70 / -0 / ~0)
+  added keys: 808371:M0X0 808486:M0X0 808521:M0X0 80866F:M0X0 808AB5:M0X0 808BC5:M0X0 808EF5:M0X0 808FF5:M0X0 809022:M0X0 809471:M0X0 809CFD:M0X0 809D1B:M0X0 80A173:M0X0 80A882:M0X0 80A8AA:M0X0 80A8BC:M0X0 80A8E6:M0X0 80A8F0:M0X0 80A8FA:M0X0 80A9D9:M0X0 80BC06:M0X0 80BC37:M0X0 80BC50:M0X0 80BC69:M0X0 80C3D1:M0X0 80C4EF:M0X0 80C530:M0X0 80C65D:M0X0 80C666:M0X0 80C68F:M0X0 80C694:M0X0 80C6E6:M0X0 80C792:M0X0 80C9E5:M0X0 80C9F0:M0X0 80CA0A:M0X0 80CA19:M0X0 80CA72:M0X0 80CA84:M0X0 80CA9A:M0X0 80CAB0:M0X0 80CAFB:M0X0 80CB83:M0X0 80CBD7:M0X0 80CBE0:M0X0 80CD78:M0X0 80CF63:M0X0 80D0D5:M0X0 80D10E:M0X0 80D11A:M0X0 80D12C:M0X0 80D15A:M0X0 80D19A:M0X0 80D1AB:M0X0 80D21D:M0X0 80DE48:M0X0 80DE91:M0X0 80DF35:M0X0 80DFDE:M0X0 80E22C:M0X0 80E972:M0X0 80E98F:M0X0 80EA53:M0X0 80EA58:M0X0 80ED06:M0X0 80F4F9:M0X0 80F91D:M0X0 80FD99:M0X0 81A25F:M0X0 81A32D:M0X0
+
+== verdict
+  instruction bodies byte-identical: True
+  changed files limited to module_v2.c / program_manifest.json / cache: True
+  manifest nodes identical, roots identical: True
+  only top-level manifest change is exit_modes: True
+  => the directive is machine-code-inert on the shipped pair; it changes
+     the dispatch-value vocabulary recorded in the manifest, not a body.

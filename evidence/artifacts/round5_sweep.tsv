@@ -1,0 +1,15 @@
+# round5_sweep.tsv
+#
+# what: the per-seed sweep: one row per gap seed, what the route did with it, and the frame-dump verdict
+# how:  cat of tests/out/r4/sweep_r5base.tsv (redirect of tests/seed_sweep.sh); columns: variant, seed, build exit, route exit/first abandon, aot share, state verdict.  Each variant is the same directive-bearing control table plus exactly one generated [[func]] seed
+#
+# framework pin: 773285b8210f2254ae87d0a14113980fb36990ad
+# generated: 2026-11-08T09:29:56Z (host Darwin arm64)
+# source tree: /Users/wee/Documents/work/ports/ShadowrunSNESRecomp
+
+s80C1C9	seed $80C1C9	build rc=0	exit=0 wall=31s  exit: script quit after 22044 frames		aot   8.69%	state: first divergence at frame_001828;2745 of 4575 frames differ;
+s80C1B3	seed $80C1B3	build rc=0	exit=0 wall=32s  exit: script quit after 22044 frames		aot   8.69%	state: first divergence at frame_001828;2745 of 4575 frames differ;
+s80F495	seed $80F495	build rc=0	exit=3 wall=30s  exit: script until timed out after 21639 frames		aot   8.78%	state: first divergence at frame_001828;2745 of 4575 frames differ;
+s80F362	seed $80F362	build rc=0	exit=0 wall=31s  exit: script quit after 22044 frames		aot   8.69%	state: first divergence at frame_001828;2745 of 4575 frames differ;
+s80F4F9	seed $80F4F9	build rc=0	exit=0 wall=31s  exit: script quit after 22044 frames		aot   8.69%	state: first divergence at frame_001828;2745 of 4575 frames differ;
+s80F889	seed $80F889	build rc=0	exit=0 wall=31s  exit: script quit after 22044 frames		aot   8.69%	state: first divergence at frame_001828;2745 of 4575 frames differ;

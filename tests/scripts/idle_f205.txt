@@ -1,0 +1,18 @@
+# Boot-to-title-screen probe around the first frame the declared idle polls
+# change anything (f205, measured by tests/idle_parity.sh over combat.txt).
+# No inputs at all: the game's own startup reaches the wait on its own, so
+# whatever this compares is machine behaviour, not input timing.
+# Frames counted here are host frames, the same clock --framedump numbers, and
+# the waits straddle f205 on both sides.
+turbo on
+wait 195
+dump p195
+wait 5
+dump p200
+wait 3
+dump p203
+wait 2
+dump p205
+wait 5
+dump p210
+quit

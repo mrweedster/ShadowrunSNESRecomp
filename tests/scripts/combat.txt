@@ -1,0 +1,138 @@
+turbo on
+wait 1300
+press a 6
+wait 120
+press a 6
+wait 120
+press start 6
+wait 200
+press down 6
+wait 100
+press a 6
+wait 2600
+press down 60
+wait 300
+press left 120
+wait 300
+press up 90
+wait 300
+press left 120
+wait 300
+press up 60
+wait 400
+press r 6
+wait 300
+press r 6
+wait 1200
+press up 40
+wait 600
+press left 10
+wait 300
+press down 12
+wait 300
+press r 6
+wait 300
+press r 6
+wait 1200
+press up 18
+wait 600
+press left 120
+wait 300
+press up 30
+wait 300
+press left 18
+wait 600
+press r 6
+wait 300
+press left 6
+wait 300
+press b 6
+wait 300
+press r 6
+wait 900
+press left+down 30
+wait 900
+press down 12
+wait 300
+press down+right 120
+press down+right 120
+press down+right 60
+dump H8
+wait 240
+press down 2
+wait 60
+press b 6
+wait 60
+press b 6
+wait 300
+dump J1
+press down+right 30
+wait 300
+dump J2
+press down+left 120
+dump J3
+press down+left 120
+dump J4
+press down+left 120
+dump J5
+press down+left 120
+dump J6
+press down+left 120
+dump J7
+wait 150
+dump J8
+wait 150
+dump J9
+wait 300
+dump J10
+press down+left 150
+dump K1
+press down+left 150
+dump K2
+wait 300
+dump K3
+press down 150
+wait 300
+dump L0
+press left 6
+wait 300
+dump L1
+# --- dark-alley prologue. Both gates below are WRAM state, not frame counts:
+# $7E01F0/$7E01F2 are the running screen origin, and both paths land on exactly
+# the same values here, so the alley arrival is comparable across AOT and LLE.
+press up 40
+wait 200
+press down 6
+wait 200
+press down 6
+wait 200
+press left 6
+wait 200
+press b 6
+until16 1f2 == 6d00 900   # camera y reaches the alley screen (27904 = 0x6d00)
+wait 100
+dump A0
+press left 8
+until16 1f0 == 7600 900   # camera x reaches the alley's left clamp (30208)
+wait 100
+dump A1
+# Park on that screen. The alley is a scripted kill scene: standing still here,
+# the party is alive for ~1,500-2,900 frames and then the assassin's shot lands
+# on the game's own timer (probe legs on the r2b binaries: both intact at
+# f22344, LLE wiped by f22644, AOT still alive at f22644 and dead by f23739).
+# The route therefore ends at the last checkpoint where BOTH paths are proven
+# alive, A5 = arrival + 1,200 frames.
+# The Beretta pickup that used to be the goal of this segment is NOT reachable
+# on a route both paths agree on: the deeper approach that finds the gun
+# (screen y 31488) leaves the AOT leg 1,792 px away from the LLE leg under the
+# same inputs, so a gun-state tail would compare two different game states.
+# That route lives in the alley probe instead.
+wait 300
+dump A2
+wait 300
+dump A3
+wait 300
+dump A4
+wait 300
+dump A5
+quit

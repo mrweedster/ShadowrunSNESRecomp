@@ -1,0 +1,62 @@
+turbo on
+wait 1300
+press a 6
+wait 120
+press a 6
+wait 120
+press start 6
+wait 200
+press down 6
+wait 100
+press a 6
+wait 2600
+press down 60
+wait 300
+press left 120
+wait 300
+press up 90
+wait 300
+press left 120
+wait 300
+press up 60
+wait 400
+press r 6
+wait 300
+press r 6
+wait 1200
+press up 40
+wait 600
+press left 10
+wait 300
+press down 12
+wait 300
+press r 6
+wait 300
+press r 6
+wait 1200
+press up 18
+wait 600
+press left 120
+wait 300
+press up 30
+wait 300
+press left 18
+wait 600
+press r 6
+wait 300
+press left 6
+wait 300
+press b 6
+wait 300
+press r 6
+wait 900
+press left+down 30
+wait 900
+press down 12
+wait 300
+press down+right 120
+press down+right 120
+press down+right 60
+dump H8
+wait 240
+quit

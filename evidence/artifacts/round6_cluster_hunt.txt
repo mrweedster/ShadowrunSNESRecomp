@@ -1,0 +1,249 @@
+# round6_cluster_hunt.txt
+#
+# what: attribute the rejected $80C1C9 seed's round-5 gate divergence
+#       (first crc32 divergence frame_001828) to compiled bodies, on top
+#       of the shipped pair, and measure what demoting them costs
+# how:  SNESRECOMP_ROOT=<pin> python3 tests/cluster_ddmin.py --universe 52
+#       tests/latch_writer.py --addrs 0x000,0x001 ... --pc-arm 1828
+#       (writes tests/out/r6/gate_writer_r6.txt, read by section 8)
+#       then SNESRECOMP_ROOT=<pin> python3 tests/cluster_hunt_report.py
+#       (this file; files-only, reads tests/out/r6 and build-*/last_run_report)
+#
+# framework pin: 773285b8210f2254ae87d0a14113980fb36990ad (dirty=no)
+# generated: 2026-11-08T13:55:27Z (host arm64)
+# source tree: /Users/wee/Documents/work/ports/ShadowrunSNESRecomp
+
+== 1. Control, candidate, and the profile with the two demotions ==
+                     283 nodes   240 aot    43 lle   49 roots  pair  (tests/seed_variant.sh r6pair)
+                     486 nodes   349 aot   137 lle   50 roots  candidate  pair + $80C1C9  (tests/seed_variant.sh r6pc1c9)
+                     462 nodes   330 aot   132 lle   50 roots  adopted  candidate - force_lle 80AD9F,80C530
+
+  the seed adds 203 nodes (109 aot_eligible, 94 lle_only) over the pair
+  all 283 pair nodes are still present in the candidate; the
+  demotion only removes bodies, it does not rewrite the pair's own.
+  $80C1C9:M0X0 itself is lle_only (truncated_call_continuation, unproven_call_at_80C1D8_to_80F342_m0x0, unproven_callee_exit);
+  the divergence comes from bodies the seed makes reachable, not from
+  a compiled body at the seed address.
+
+== 2. The candidate's divergence on the parity route (4575 frames) ==
+  crc32_wram : first divergence at frame_001828, 2745 of 4575 frames differ
+  state scan : first differing non-label byte f1830; 305 of 4575 frames, 895 bytes
+  (the crc names f1828, a label byte; the first non-label byte is
+   $7E00126 88 -> 85 at f1830, the byte round 5 §8 named for round
+   4's $80ABBC; the DP $7E00000-$7E00006 cluster opens at f1832)
+      f1830: 1 state bytes differ (1 bytes including label bytes)
+          $7E00126: 88 -> 85
+      f1832: 12 state bytes differ (15 bytes including label bytes)
+          $7E00000: FF -> 2C
+          $7E00001: FF -> 82
+          $7E00002: 18 -> 01
+          $7E00004: 20 -> 15
+          $7E00006: 03 -> 04
+          $7E00134: 05 -> 88
+          $7E00135: 75 -> 81
+          $7E00136: 05 -> 10
+          ... 4 more
+
+== 3. Demoting the seed's added AOT bodies restores the pair ==
+  all 109 added AOT bodies: identical over 4575 frames | no non-label WRAM byte differs in 4575 shared frames
+  first 52 in PC order: identical over 4575 frames | no non-label WRAM byte differs in 4575 shared frames
+  the first 52 are a sufficient starting set for the search
+
+== 4. The search (tests/cluster_ddmin.py, state metric) ==
+  leg       bodies  verdict
+  dd01          26  clean
+  dd02          13  dirty: 1409 frames, 3409 bytes
+  dd03          13  dirty: 2485 frames, 5548 bytes
+  dd04          19  dirty: 1409 frames, 3409 bytes
+  dd05          19  clean
+  dd06          12  dirty: 1409 frames, 3409 bytes
+  dd07          13  clean
+  dd08           6  dirty: 1409 frames, 3409 bytes
+  dd09           7  dirty: 2485 frames, 5548 bytes
+  dd10           9  clean
+  dd11           6  dirty: 1409 frames, 3409 bytes
+  dd12           6  clean
+  dd13           3  dirty: 1409 frames, 3409 bytes
+  dd14           3  dirty: 2485 frames, 5548 bytes
+  dd15           4  clean
+  dd16           2  dirty: 1409 frames, 3409 bytes
+  dd17           3  clean
+  dd18           1  dirty: 1409 frames, 3409 bytes
+  dd19           2  dirty: 2485 frames, 5548 bytes
+  dd20           2  dirty: 1409 frames, 3409 bytes
+  dd21           2  clean
+  dd22           1  dirty: 1409 frames, 3409 bytes
+  dd23           1  dirty: 2485 frames, 5548 bytes
+
+  minimal clean demotion set: 2 bodies
+    $80AD9F   73 insns  $80AD9F-$80AE40
+    $80C530   19 insns  $80C530-$80C55C
+  (set recorded in tests/out/r6/forces_dd21.txt)
+  removing either one from the set:
+    verify_80AD9F     1  dirty: 1409 frames, 3409 bytes
+    verify_80C530     1  dirty: 2485 frames, 5548 bytes
+  -> each body is necessary; the set is 1-minimal
+
+== 5. What the passing profile keeps ==
+  leg         interp %    aot %   interp_cycles      saved
+  pair         91.3356   8.6644     178,528,177          0
+  candidate    89.1809  10.8191     174,315,380  4,212,797
+  adopted      91.2620   8.7380     178,384,304    143,873
+  cpu_cycles 195,463,918 and master_cycles 1,635,265,512 are identical in all three
+  the total budget does not move; only the tier split does
+  the two-body demotion carries 4,068,924 of the seed's 4,212,797 saved cycles
+  what is left saves 143,873 (3.4 % of the seed's gain)
+  the adopted profile was rebuilt 3 times (adopted, adopted_verify, adopted_final):
+  exe 5f8a67db612695bd; every leg reported identical crc and no differing state byte
+  note the analysis effect: force_lle names 2 bodies, but the adopted
+  program has 19 fewer AOT bodies than the candidate (330 against 349): 16 are dropped
+  and 3 change to lle_only, over 24 fewer nodes;
+  demoting the roots also removes the bodies only they reached
+
+== 6. The two bodies ==
+  $80AD9F: 73 instructions, $80AD9F-$80AE40, calls $80ABBC, $81A910, $81B05D
+  $80C530: 19 instructions, $80C530-$80C55C, calls none
+
+  head of $80AD9F (tests/disasm_span.py 80AD9F 20 0 0):
+    $80AD9F  BD5C11         LDA 115C,x
+    $80ADA2  F012           BEQ $ADB6
+    $80ADA4  20BCAB         JSR ABBC
+    $80ADA7  BD5C11         LDA 115C,x
+    $80ADAA  F02C           BEQ $ADD8
+    $80ADAC  2210A981       JSL 81A910
+    $80ADB0  225DB081       JSL 81B05D
+    $80ADB4  80EE           BRA $ADA4
+    $80ADB6  BDAC10         LDA 10AC,x
+    $80ADB9  853E           STA 003E
+    $80ADBB  BC0C12         LDY 120C,x
+    $80ADBE  88             DEY
+    $80ADBF  88             DEY
+    $80ADC0  B73E           LDA [003E],y
+    $80ADC2  1A             INC A
+    $80ADC3  8541           STA 0041
+    $80ADC5  A99B00         LDA #$009B
+    $80ADC8  8543           STA 0043
+    $80ADCA  A90080         LDA #$8000
+    $80ADCD  0441           TSB 0041
+
+  head of $80C530 (tests/disasm_span.py 80C530 19 0 0):
+    $80C530  08             PHP
+    $80C531  E230           SEP #$0030
+    $80C533  AC041D         LDY 1D04
+    $80C536  AD3721         LDA 2137
+    $80C539  B95DC5         LDA C55D,y
+    $80C53C  4F921C7E       EOR 7E1C92
+    $80C540  8500           STA 0000
+    $80C542  4D3C21         EOR 213C
+    $80C545  A8             TAY
+    $80C546  B95DC5         LDA C55D,y
+    $80C549  4F931C7E       EOR 7E1C93
+    $80C54D  8501           STA 0001
+    $80C54F  4D3D21         EOR 213D
+    $80C552  CD041D         CMP 1D04
+    $80C555  D001           BNE $C558
+    $80C557  1A             INC A
+    $80C558  8D041D         STA 1D04
+    $80C55B  28             PLP
+    $80C55C  60             RTS
+
+== 7. The round-5 siblings ==
+  archived manifests: does the seed's program compile the two bodies?
+  s80AAB3       282 nodes  239 aot  both no
+  s80ABBC       270 nodes  227 aot  both no
+  s80B1DB       272 nodes  229 aot  both no
+  s80C1B3       477 nodes  339 aot  both yes
+  s80C1C9       476 nodes  339 aot  both yes
+  s80C399       270 nodes  227 aot  both no
+  s80F362       476 nodes  339 aot  both yes
+  s80F495       476 nodes  406 aot  both yes
+  s80F4F9       476 nodes  339 aot  both yes
+  s80F889       476 nodes  339 aot  both yes
+  the five siblings of $80C1C9 all compile both bodies; the pair's own
+  seeds do not. That is why the six roots of the round-5 sweep share
+  one onset.
+
+== 8. The writer, by trace ==
+  build-r6tr-ctrl    ENABLE_TRACE=ON  exe fc8d53db15348ab9
+  build-r6tr-seed    ENABLE_TRACE=ON  exe a6663cee829df765
+  raw: tests/out/r6/gate_writer_r6.txt, written by
+       tests/latch_writer.py --addrs 0x000,0x001 --route
+       tests/out/probe_dense.txt --park 1832 --pc-arm 1828
+  == pc pass: arm at f1828 and park at f1882 for $0000
+  == ctrl: armed f1828+, 3903 transfers in the ring
+  == seed: armed f1828+, 3893 transfers in the ring
+
+  $0000: first byte value split at write #63 (ctrl 2548 bytes, seed 2548)
+    ctrl:
+      #61     f1832   =00  pc=0x80c3a5   func=GS_80C399_M0X0         bi=15739023
+      #62     f1832   =2C  pc=0x80c540   func=interp@$81AC82         bi=15745904
+      #63     f1832   =03  pc=0x80ff1c   func=interp@$81AC82         bi=15745920  <
+      #64     f1832   =14  pc=0x80c540   func=interp@$81AC82         bi=15745995
+      #65     f1832   =00  pc=0x80c50d   func=interp@$81AC82         bi=15746011
+    seed:
+      #61     f1832   =00  pc=0x80c3a5   func=GS_80C399_M0X0         bi=15723827
+      #62     f1832   =2C  pc=0x80c530   func=bank_80_C530_M0X0      bi=15730521
+      #63     f1833   =00  pc=0x80c3a5   func=GS_80C399_M0X0         bi=15732176  <
+      #64     f1833   =00  pc=0x80c3a5   func=GS_80C399_M0X0         bi=15732194
+      #65     f1833   =01  pc=0x80c3bf   func=GS_80C399_M0X0         bi=15732197
+
+  $0001: first byte value split at write #62 (ctrl 2547 bytes, seed 2548)
+    ctrl:
+      #60     f1832   =00  pc=0x80f4ae   func=interp@$81AC82         bi=15738971
+      #61     f1832   =00  pc=0x80c3a5   func=GS_80C399_M0X0         bi=15739023
+      #62     f1832   =08  pc=0x80c54d   func=interp@$81AC82         bi=15745909  <
+      #63     f1832   =00  pc=0x80ff1c   func=interp@$81AC82         bi=15745920
+      #64     f1832   =34  pc=0x80c54d   func=interp@$81AC82         bi=15746000
+    seed:
+      #60     f1832   =00  pc=0x80f4ae   func=interp@$81AC82         bi=15723775
+      #61     f1832   =00  pc=0x80c3a5   func=GS_80C399_M0X0         bi=15723827
+      #62     f1832   =82  pc=0x80c530   func=bank_80_C530_M0X0      bi=15730521  <
+      #63     f1833   =00  pc=0x80c3a5   func=GS_80C399_M0X0         bi=15732176
+      #64     f1833   =00  pc=0x80c3a5   func=GS_80C399_M0X0         bi=15732194
+
+  the first differing value is $0001 at f1832: the control writes
+  08 at pc=$80C54D (its STA $01) and the seed writes 82 from
+  func=bank_80_C530_M0X0 (the compiled body). $0000's store at #62
+  is 2C on both legs because it is computed from $1D04 and $7E1C92
+  before the $213C read; its next value differs because the stream
+  has already moved. $0001 is the first byte downstream of $213C,
+  the H counter. The f1832 dumps show $7E1C92 and $7E1C93 unchanged,
+  so the input that moves $0001 is the counter, not the mix bytes.
+  The trace names the same body the demotion named.
+  note: the stock pc pass arms 400 frames before the split; the
+  DP $00/$01 slice of the ring held 3898 entries and reached only
+  f1808, so --pc-arm 1828 arms shortly before the split instead.
+  The default is unchanged.
+
+== verdict ==
+  Of the 109 AOT bodies the rejected seed adds, demoting
+  $80AD9F and $80C530 alone restores the shipped pair:
+  crc32 identical and no non-label WRAM byte differs over 4575 frames.
+  Removing either one from that set brings the divergence back, so the
+  attribution is 1-minimal over the 52-body starting set. The
+  disassembly and the write trace name the mechanism: $80C530
+  latches the PPU counters ($2137 then $213C/$213D), mixes them into
+  DP $00/$01 and $1D04, and the trace shows its compiled store
+  writing $0001=82 against the interpreter's 08 at $80C54D.
+  $80AD9F is the 73-instruction loop that reaches $80ABBC, round 4's
+  rejected seed; demoting it takes that compiled path out as well.
+
+  The frame count is not monotone in the demotion set: 305 frames with
+  both compiled, 1409 with $80C530 interpreted, 2485 with $80AD9F
+  interpreted, 0 with both interpreted. A single wrong value would move
+  one byte at one point; this is the signature of a read whose result
+  depends on when it runs. The seed is adoptable only with both bodies
+  interpreted, and that keeps 3.4 % of its cycle gain: 143,873 cycles
+  against 4,212,797 with the bodies compiled. It buys
+  90 extra AOT bodies, 179 extra nodes and
+  +0.074 points of AOT share for a change the
+  gate cannot see.
+  The next lever is not another seed: it is making the AOT path charge
+  the same cycles at that counter read.
+
+reproduce the legs (each regens at the pin, rebuilds build-r6hunt and
+runs tests/parity.sh plus framedump_diff.py state):
+  . tests/rom.sh
+  tests/seed_variant.sh r6pair    --only '$80C399,$80AAB3'
+  tests/seed_variant.sh r6pc1c9   --only '$80C399,$80AAB3,$80C1C9'
+  SNESRECOMP_ROOT=<pin> python3 tests/cluster_ddmin.py --universe 52

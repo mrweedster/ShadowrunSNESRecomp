@@ -1,0 +1,136 @@
+diff --git a/runner/src/common_cpu_infra.c b/runner/src/common_cpu_infra.c
+index c9314d9a..2716f64a 100644
+--- a/runner/src/common_cpu_infra.c
++++ b/runner/src/common_cpu_infra.c
+@@ -930,6 +930,23 @@ void snes_refresh_state_set(uint64_t phase, uint64_t charged_upto) {
+ }
+ 
+ // Called at loop headers in generated code — detect infinite loops
++unsigned long g_r7_c530_inv;
++
++/* Round-7 phase tap: exact AOT entries into one body, with the cumulative
++ * master clock.  Called from the trace-off cpu_trace_func_entry inline, so it
++ * sees only real function entries (WatchdogCheck also fires on interior
++ * blocks of the same function).  Gated by SNESRECOMP_PHASETAP. */
++void r7_tap_func_entry(CpuState *cpu, uint32_t pc24, const char *name) {
++  static int tap = -1;
++  if (tap < 0) { const char *e = getenv("SNESRECOMP_PHASETAP");
++                 tap = (e && e[0] && e[0] != '0') ? 1 : 0; }
++  if (!tap || pc24 != 0x80C530u) return;
++  g_r7_c530_inv++;
++  fprintf(stderr, "[tap] f=%d inv=%lu tier=aot func=%s master=%llu\n",
++          snes_frame_counter, g_r7_c530_inv, name ? name : "-",
++          (unsigned long long)cpu->master_cycles);
++}
++
+ void WatchdogCheck(void) {
+   snes_refresh_charge();
+ #ifdef SNES_COSIM
+diff --git a/runner/src/common_rtl.c b/runner/src/common_rtl.c
+index e1016188..33c26c73 100644
+--- a/runner/src/common_rtl.c
++++ b/runner/src/common_rtl.c
+@@ -1682,8 +1682,48 @@ uint8 ReadRegOpenBus(uint16 reg, uint8 open_bus) {
+   if (reg >= 0x2000 && reg < 0x2008) {
+     return msu1_enabled() ? msu1_read(reg) : open_bus;
+   }
+-  if (reg == 0x2137)
+-    snes_sync_master_clock(g_snes, g_cpu.master_cycles);
++  if (reg == 0x2137) {
++    /* Round-7 experiment: the interpreter commits its per-transfer master
++     * charge only after the opcode returns, so at this read it still sits at
++     * the opcode's start, while AOT has already charged this instruction's
++     * fetches and the paced data transfer.  Optionally advance the beam to the
++     * in-flight time so both tiers latch the same counter phase.  Default off
++     * (= pinned behaviour); SNESRECOMP_LATCHLOG frames it. */
++    extern uint64_t interp_bridge_pending_master(void);
++    extern unsigned long g_r7_c530_inv;
++    uint64_t _pending = interp_bridge_pending_master();
++    static int _sync_pending = -1;
++    if (_sync_pending < 0) {
++      const char *e = getenv("SNESRECOMP_LATCH_SYNC");
++      _sync_pending = (e && e[0] && e[0] != '0') ? 1 : 0;
++    }
++    static int _ll = -1, _llo = 0, _lhi = 0x7fffffff;
++    if (_ll < 0) {
++      const char *e = getenv("SNESRECOMP_LATCHLOG");
++      _ll = (e && e[0] && e[0] != '0') ? 1 : 0;
++      e = getenv("SNESRECOMP_LATCHLOG_FRAMES");
++      if (e && e[0] && sscanf(e, "%d-%d", &_llo, &_lhi) != 2) _llo = 0, _lhi = 0x7fffffff;
++    }
++    uint64_t _sync = g_cpu.master_cycles + (_sync_pending ? _pending : 0);
++    snes_sync_master_clock(g_snes, _sync);
++    if (_ll) {
++      extern int snes_frame_counter;
++      extern const char *g_last_recomp_func;
++      extern uint32_t g_interp_wlog_pc24;
++      if (snes_frame_counter >= _llo && snes_frame_counter <= _lhi)
++        fprintf(stderr,
++                "[latch] f=%d inv=%lu tier=%s func=%s pc=%06X master=%llu pending=%llu "
++                "eff=%llu sync=%llu h=%u v=%u\n",
++                snes_frame_counter, g_r7_c530_inv, _pending ? "interp" : "aot",
++                g_last_recomp_func ? g_last_recomp_func : "-",
++                (unsigned)g_interp_wlog_pc24,
++                (unsigned long long)g_cpu.master_cycles,
++                (unsigned long long)_pending,
++                (unsigned long long)(g_cpu.master_cycles + _pending),
++                (unsigned long long)_sync,
++                (unsigned)(g_snes->hPos / 4), (unsigned)g_snes->vPos);
++    }
++  }
+   if (reg >= 0x3000 && reg < 0x3300 && g_snes->cart->type == CART_SUPERFX) {
+     cart_sync_coprocessors(g_snes->cart, g_cpu.master_cycles);
+     return cart_read(g_snes->cart, 0, reg);
+diff --git a/runner/src/cpu_trace.h b/runner/src/cpu_trace.h
+index 9e229aaa..5c76b97f 100644
+--- a/runner/src/cpu_trace.h
++++ b/runner/src/cpu_trace.h
+@@ -1314,7 +1314,8 @@ void cpu_trace_dump_wram(const char *tag, int scan_n);
+ #else  /* SNESRECOMP_TRACE = 0 */
+ 
+ static inline void cpu_trace_block(CpuState *cpu, uint32_t pc24)            { (void)cpu; (void)pc24; }
+-static inline void cpu_trace_func_entry(CpuState *cpu, uint32_t pc24, const char *name) { (void)cpu; (void)pc24; (void)name; }
++void r7_tap_func_entry(CpuState *cpu, uint32_t pc24, const char *name);
++static inline void cpu_trace_func_entry(CpuState *cpu, uint32_t pc24, const char *name) { r7_tap_func_entry(cpu, pc24, name); }
+ static inline void cpu_trace_event(CpuState *cpu, uint32_t pc24, uint8_t et,
+                                    uint8_t e0, uint16_t e1)                 { (void)cpu; (void)pc24; (void)et; (void)e0; (void)e1; }
+ static inline void cpu_trace_db_change(CpuState *cpu, uint32_t pc24, uint8_t o,
+diff --git a/runner/src/snes/interp_bridge.c b/runner/src/snes/interp_bridge.c
+index 6de65c17..6dc1b420 100644
+--- a/runner/src/snes/interp_bridge.c
++++ b/runner/src/snes/interp_bridge.c
+@@ -186,6 +186,15 @@ static unsigned bridge_region_speed(uint32_t adr) {
+     return (unsigned)cpu_region_speed(adr);
+ }
+ 
++/* Round-7 experiment: master clocks this interpreted opcode has already spent
++ * on real bus transfers but not yet committed to cpu->master_cycles.  The
++ * commit happens after interp816_runOpcode returns (see the tail of the step
++ * loop), so a hardware register read inside the opcode would otherwise sample
++ * the beam at the opcode's start.  Zero between opcodes and on the AOT tier. */
++uint64_t interp_bridge_pending_master(void) {
++    return s_interp_bus_timing_active ? s_interp_bus_master : 0;
++}
++
+ /* Index of the lowest set bit; v must be non-zero. */
+ static inline unsigned bridge_ctz64(uint64_t v) {
+ #if defined(_MSC_VER) && !defined(__clang__)
+@@ -2662,6 +2671,18 @@ static int _interp_run_core(CpuState *cpu, uint32_t entry_pc24,
+         s_interp_bus_cycles=0;
+         s_bus_trace_pc = pc_before;
+         s_interp_bus_timing_active=1;
++        /* Round-7 phase tap: first interpreted entry per frame into $80C530. */
++        { static int _tap = -1;
++          if (_tap < 0) { const char *e = getenv("SNESRECOMP_PHASETAP");
++                          _tap = (e && e[0] && e[0] != '0') ? 1 : 0; }
++          if (_tap && pc_before == 0x80C530u) {
++            extern unsigned long g_r7_c530_inv;
++            g_r7_c530_inv++;
++            fprintf(stderr, "[tap] f=%d inv=%lu tier=interp pc=%06X master=%llu\n",
++                    snes_frame_counter, g_r7_c530_inv, (unsigned)pc_before,
++                    (unsigned long long)cpu->master_cycles);
++          }
++        }
+         /* Optional first-divergence observability: bus callbacks receive only
+          * CpuState, while the live interpreter registers normally stay in the
+          * local Interp816 struct until a bridge boundary.  Publish the pre-op

@@ -1,0 +1,10 @@
+# Self-verifying run: waits on Shadowrun's own WRAM tick counter instead of
+# guessing frame counts. $7E01C92 is a 16-bit counter the game advances once per
+# emulated frame (measured: value == frames since start + a fixed ~8 frame boot
+# delay), so watching it climb proves the ROM is really executing.
+#
+# If a condition never becomes true the host exits 3, which is how a stuck boot
+# shows up as a failed test instead of a silent hang.
+until16 01c92 != 0000 300
+until 01c93 != 00 900
+quit

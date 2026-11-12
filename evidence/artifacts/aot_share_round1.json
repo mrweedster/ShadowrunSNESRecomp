@@ -1,0 +1,63 @@
+{
+ "binary": "/Users/wee/Documents/work/ports/ShadowrunSNESRecomp/build-r0/ShadowrunSNESRecomp",
+ "build_tree": {
+  "build_version": "(derived from VERSION)",
+  "config": "Release",
+  "dir": "/Users/wee/Documents/work/ports/ShadowrunSNESRecomp/build-r0",
+  "embed_rom": "OFF",
+  "gen_objects_compiled": 17,
+  "sources_newer_than_binary": 18
+ },
+ "cart_trace": {
+  "bytes": 2712742,
+  "path": "/Users/wee/Documents/work/ports/ShadowrunSNESRecomp/tests/out/b0/combat.json",
+  "sha256": "cbb2baa0761a0a51f84a0793087182dfd24bf86c4de5c4a0d7256d05d001504c"
+ },
+ "coverage": {
+  "measured_against": {
+   "generated_set_sha256": "27b2fbbd039fe066d591bd31fb3bb2c4e5155864efedc0210ad236cb27e66e98",
+   "root": "/Users/wee/Documents/work/ports/ShadowrunSNESRecomp",
+   "units": 17
+  },
+  "nm_available": true,
+  "wrappers_declared": 236,
+  "wrappers_in_binary": 236,
+  "wrappers_missing_from_binary": []
+ },
+ "dump_dir": {
+  "frame_bytes_sha256": "574e66802bece79d0fc349a112cc664ad53d3f73787f1dcc952d2ec0e80a26b9",
+  "frames": 43,
+  "manifest": true,
+  "path": "/Users/wee/Documents/work/ports/ShadowrunSNESRecomp/tests/out/xp_aot_r5"
+ },
+ "exe": {
+  "bytes": 3329664,
+  "path": "/Users/wee/Documents/work/ports/ShadowrunSNESRecomp/build-r0/ShadowrunSNESRecomp",
+  "sha256": "6d8b8e7f97da2cd9993a341db8d066ef16a7460fcbc3518ec34b3374776b16cc"
+ },
+ "execution_share": {
+  "aot_cycle_pct": 3.9402,
+  "cpu_cycles": 1108981502,
+  "frame": 25902,
+  "interp_cycle_pct": 96.0598,
+  "interp_cycles": 1065285588,
+  "interp_insns": 263660881,
+  "master_cycles": 9257210204
+ },
+ "frame_service": "frame service: implementation=LLE seconds=42.930139375 fps=603.352 cpu_seconds=42.608226000",
+ "framework": {
+  "dirty": false,
+  "rev": "773285b8210f2254ae87d0a14113980fb36990ad",
+  "root": "/private/var/folders/cc/_czwdt293dg9ty_zgc1b57x00000gn/T/opencode/sr-pin"
+ },
+ "generated_set": {
+  "describes_this_binary": true,
+  "dispatch_entries": 252,
+  "files": 19,
+  "promoted_functions": 210,
+  "sha256": "27b2fbbd039fe066d591bd31fb3bb2c4e5155864efedc0210ad236cb27e66e98",
+  "units": 17
+ },
+ "problems": [],
+ "schema": "snesrecomp.aot-share.v1"
+}

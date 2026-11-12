@@ -1,0 +1,226 @@
+# round4_seed_tables.txt
+#
+# what: the generated seed blocks: the one the tree ships, and the ones the round generated and did not ship
+# how:  generated blocks extracted out of the tables, plus their digests; the generator is tests/gap_seeds.py, so a block is checked against a fresh generation of the same seeds
+#
+# framework pin: 773285b8210f2254ae87d0a14113980fb36990ad
+# generated: 2026-11-08T08:02:38Z (host Darwin arm64)
+# source tree: /Users/wee/Documents/work/ports/ShadowrunSNESRecomp
+
+baseline: 1 generated block(s) removed, 40 [[func]] entries left
+== recomp/symbols.toml
+   whole table sha256 c2e6a99f1e174553, 42 [[func]] entries in the file
+   block: 45 lines, 2 [[func]], seeds $80C399 $80AAB3
+   block sha256 5cbd4e2c1fc12f99 (leading separator normalised)
+# --- M2 promotion round 4 (gap-driven seeds) ---------------------------------
+#
+# Rounds 1-2 seeded from the read trace (tests/frontier_seeds.py), a source
+# retired at 0.0 % of reads left. Round 3 measured what the interpreted residue
+# is instead (evidence/m2_promotion_round3.md): 28,131,074 of 919,307,323
+# attributed interpreted guest cycles sit at a transfer gap the bridge could
+# hand a body to, and the other 96.94 % is entered by fall-through, back-edge
+# or resume, where no seed at any address intercepts it.
+#
+# The 2 entries below are the top of that ranking as tests/coverage_gaps.py
+# ranks it, emitted by tests/gap_seeds.py from tier2_capture_round3_combat.json
+# over combat, and 4 sighted entries already have an entry at that address and
+# mode, so they are left out. Every number in a note is the capture's own for
+# that address, not a guess.
+#
+#   This block is a subset of the ranking, emitted with --only $80C399,$80AAB3:
+#   2 of the 229 kept entries survive it, and they gate 3,680,454 cyc. The
+#   ceiling figures below still describe the full ranking.
+#
+#   capture identity  program_digest 240af24bb4a71049  generation_digest
+#   4e902f1ff9bdca6f
+#   rom_sha256 e6bc0a595d5c7c4b  mapper lorom  captures 1  warnings []
+#   these 2 ranking seeds gate 3,680,454 cyc = 0.40 % of the residue, 13.1 % of
+#   what is seedable (top 10 = 1.62 %, top 50 = 2.71 %, all 229 kept entries =
+#   3.06 %): the knee is at the top of the list, so a round that stops here is
+#   not leaving money on the table
+
+[[func]]
+name = "GS_80C399"
+addr = "C399"
+bank = 0x80
+emit = true
+entry_m = 0
+entry_x = 0
+note = "round-4 gap seed: 2,196,990 cyc interp, 366,165 hits via call at $80C1C9; frames 1766..22043; gate candidate_requires_analysis_and_replay"
+
+[[func]]
+name = "GS_80AAB3"
+addr = "AAB3"
+bank = 0x80
+emit = true
+entry_m = 0
+entry_x = 0
+note = "round-4 gap seed: 1,483,464 cyc interp, 247,244 hits via call at $80AF66; frames 1765..22043; gate candidate_requires_analysis_and_replay"
+== tests/out/r4/symbols_pair.toml
+   whole table sha256 c2e6a99f1e174553, 42 [[func]] entries in the file
+   block: 45 lines, 2 [[func]], seeds $80C399 $80AAB3
+   block sha256 5cbd4e2c1fc12f99 (leading separator normalised)
+# --- M2 promotion round 4 (gap-driven seeds) ---------------------------------
+#
+# Rounds 1-2 seeded from the read trace (tests/frontier_seeds.py), a source
+# retired at 0.0 % of reads left. Round 3 measured what the interpreted residue
+# is instead (evidence/m2_promotion_round3.md): 28,131,074 of 919,307,323
+# attributed interpreted guest cycles sit at a transfer gap the bridge could
+# hand a body to, and the other 96.94 % is entered by fall-through, back-edge
+# or resume, where no seed at any address intercepts it.
+#
+# The 2 entries below are the top of that ranking as tests/coverage_gaps.py
+# ranks it, emitted by tests/gap_seeds.py from tier2_capture_round3_combat.json
+# over combat, and 4 sighted entries already have an entry at that address and
+# mode, so they are left out. Every number in a note is the capture's own for
+# that address, not a guess.
+#
+#   This block is a subset of the ranking, emitted with --only $80C399,$80AAB3:
+#   2 of the 229 kept entries survive it, and they gate 3,680,454 cyc. The
+#   ceiling figures below still describe the full ranking.
+#
+#   capture identity  program_digest 240af24bb4a71049  generation_digest
+#   4e902f1ff9bdca6f
+#   rom_sha256 e6bc0a595d5c7c4b  mapper lorom  captures 1  warnings []
+#   these 2 ranking seeds gate 3,680,454 cyc = 0.40 % of the residue, 13.1 % of
+#   what is seedable (top 10 = 1.62 %, top 50 = 2.71 %, all 229 kept entries =
+#   3.06 %): the knee is at the top of the list, so a round that stops here is
+#   not leaving money on the table
+
+[[func]]
+name = "GS_80C399"
+addr = "C399"
+bank = 0x80
+emit = true
+entry_m = 0
+entry_x = 0
+note = "round-4 gap seed: 2,196,990 cyc interp, 366,165 hits via call at $80C1C9; frames 1766..22043; gate candidate_requires_analysis_and_replay"
+
+[[func]]
+name = "GS_80AAB3"
+addr = "AAB3"
+bank = 0x80
+emit = true
+entry_m = 0
+entry_x = 0
+note = "round-4 gap seed: 1,483,464 cyc interp, 247,244 hits via call at $80AF66; frames 1765..22043; gate candidate_requires_analysis_and_replay"
+== tests/out/r4/symbols_full10.toml
+   whole table sha256 5ef76341bf5e65e5, 50 [[func]] entries in the file
+   block: 113 lines, 10 [[func]], seeds $80C1C9 $80C399 $80C1B3 $80F495 $80F362 $80AAB3 $80F4F9 $80ABBC $80B1DB $80F889
+   block sha256 222442d5a27d7011 (leading separator normalised)
+# --- M2 promotion round 4 (gap-driven seeds) ---------------------------------
+#
+# Rounds 1-2 seeded from the read trace (tests/frontier_seeds.py), a source
+# retired at 0.0 % of reads left. Round 3 measured what the interpreted residue
+# is instead (evidence/m2_promotion_round3.md): 28,131,074 of 919,307,323
+# attributed interpreted guest cycles sit at a transfer gap the bridge could
+# hand a body to, and the other 96.94 % is entered by fall-through, back-edge
+# or resume, where no seed at any address intercepts it.
+#
+# The 10 entries below are the top of that ranking as tests/coverage_gaps.py
+# ranks it, emitted by tests/gap_seeds.py from tier2_capture_round3_combat.json
+# over tests/scripts/combat.txt, and 4 sighted entries already have an entry at
+# that address and mode, so they are left out. Every number in a note is the
+# capture's own for that address, not a guess.
+#
+#   capture identity  program_digest 240af24bb4a71049  generation_digest
+#   4e902f1ff9bdca6f
+#   rom_sha256 e6bc0a595d5c7c4b  mapper lorom  captures 1  warnings []
+#   these 10 seeds gate 14,923,151 cyc = 1.62 % of the residue, 53.0 % of what
+#   is seedable (top 10 = 1.62 %, top 50 = 2.71 %, all 229 kept entries = 3.06
+#   %): the knee is at the top of the list, so a round that stops here is not
+#   leaving money on the table
+
+[[func]]
+name = "GS_80C1C9"
+addr = "C1C9"
+bank = 0x80
+emit = true
+entry_m = 0
+entry_x = 0
+note = "round-4 gap seed: 2,196,990 cyc interp, 366,165 hits via call at $80C1B8; frames 1766..22043; gate candidate_requires_analysis_and_replay"
+
+[[func]]
+name = "GS_80C399"
+addr = "C399"
+bank = 0x80
+emit = true
+entry_m = 0
+entry_x = 0
+note = "round-4 gap seed: 2,196,990 cyc interp, 366,165 hits via call at $80C1C9; frames 1766..22043; gate candidate_requires_analysis_and_replay"
+
+[[func]]
+name = "GS_80C1B3"
+addr = "C1B3"
+bank = 0x80
+emit = true
+entry_m = 0
+entry_x = 0
+note = "round-4 gap seed: 1,927,350 cyc interp, 19,305 hits via call at $809643; frames 1765..22043; gate candidate_requires_analysis_and_replay"
+
+[[func]]
+name = "GS_80F495"
+addr = "F495"
+bank = 0x80
+emit = true
+entry_m = 0
+entry_x = 0
+note = "round-4 gap seed: 1,783,776 cyc interp, 222,972 hits via goto at $80F35A; frames 1766..22043; gate landing_requires_function_boundary"
+
+[[func]]
+name = "GS_80F362"
+addr = "F362"
+bank = 0x80
+emit = true
+entry_m = 0
+entry_x = 0
+note = "round-4 gap seed: 1,509,550 cyc interp, 188,694 hits via goto at $80F35A; frames 1766..22043; gate landing_requires_function_boundary"
+
+[[func]]
+name = "GS_80AAB3"
+addr = "AAB3"
+bank = 0x80
+emit = true
+entry_m = 0
+entry_x = 0
+note = "round-4 gap seed: 1,483,464 cyc interp, 247,244 hits via call at $80AF66; frames 1765..22043; gate candidate_requires_analysis_and_replay"
+
+[[func]]
+name = "GS_80F4F9"
+addr = "F4F9"
+bank = 0x80
+emit = true
+entry_m = 0
+entry_x = 0
+note = "round-4 gap seed: 1,114,860 cyc interp, 222,972 hits via call at $80F4D0; frames 1766..22043; gate candidate_requires_analysis_and_replay"
+
+[[func]]
+name = "GS_80ABBC"
+addr = "ABBC"
+bank = 0x80
+emit = true
+entry_m = 0
+entry_x = 0
+note = "round-4 gap seed: 988,976 cyc interp, 247,244 hits via call at $80AF81; frames 1765..22043; gate candidate_requires_analysis_and_replay"
+
+[[func]]
+name = "GS_80B1DB"
+addr = "B1DB"
+bank = 0x80
+emit = true
+entry_m = 0
+entry_x = 0
+note = "round-4 gap seed: 957,845 cyc interp, 191,569 hits via call at $80B8E1; frames 1767..22043; gate candidate_requires_analysis_and_replay"
+
+[[func]]
+name = "GS_80F889"
+addr = "F889"
+bank = 0x80
+emit = true
+entry_m = 0
+entry_x = 0
+note = "round-4 gap seed: 763,350 cyc interp, 152,670 hits via goto at $80F35A; frames 1766..22043; gate landing_requires_function_boundary"
+
+== shipped block re-derived from the capture over the stripped shipped table
+   command: tests/gap_seeds.py evidence/artifacts/tier2_capture_round3_combat.json --route combat --round 4 --only '$80C399,$80AAB3' --symbols <stripped table> --manifest evidence/artifacts/round4_manifest_pre.json.bz2
+   shipped sha256 5cbd4e2c1fc12f99   re-derived sha256 5cbd4e2c1fc12f99   MATCH   (45 lines)

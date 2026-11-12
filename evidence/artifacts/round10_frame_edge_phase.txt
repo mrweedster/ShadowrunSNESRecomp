@@ -1,0 +1,275 @@
+ROUND 10 — the frame-edge phase is quantization, not drift
+
+# inputs
+#   tests/out/r9/frames_ctrl.err                 sha256 9291b3f9111085bc
+#   tests/out/r9/frames_seed.err                 sha256 8d4f5fe9885f8666
+#   tests/out/r9/final2_ctrl.err                 sha256 1530047ac0b468ca
+#   tests/out/r9/final2_seed.err                 sha256 c23ab79c3ee24cf3
+#   tests/out/r9/gate.txt                        sha256 7bd5a10c6dd1e9c8
+#   tests/out/r9/gate.parity.log                 sha256 0d1dd77bd055301f
+#   evidence/artifacts/round9_probe.diff         sha256 7888d15fdb47e9ea
+#   build-r9-ctrl/ShadowrunSNESRecomp            sha256 d4e56dadd93b9dcc
+#   build-r9-seed/ShadowrunSNESRecomp            sha256 355133810fb5efac
+# the probe tree this needs is a clone of the pin at 773285b8 with
+#   evidence/artifacts/round9_probe.diff applied; the clone is deleted,
+#   so these executables are the only way these lines exist now.
+# how the logs were made (frame tap over the whole route; note that
+#   the tap's on-test is `e[0] && e[0] != '0'`, so `0-4600` prints
+#   NOTHING — the range has to start at 1):
+#     for leg in ctrl seed; do
+#       SNESRECOMP_FRAMETAP=1-4600 \
+#         build-r9-$leg/ShadowrunSNESRecomp --no-launcher --rom "$rom" \
+#           --script tests/out/probe_dense.txt >/dev/null \
+#           2>tests/out/r9/frames_$leg.err
+#     done
+
+== 1. the achieved frame boundary, whole route ==
+
+  frames logged      control 4574  seed 4574   shared frame numbers 4574
+  frame numbers      1..4574
+  control master     664276 -> 1635265512
+  seed master        664276 -> 1635265512
+  elapsed over 4573 frame boundaries: control 1634601236, seed 1634601236
+  d_master at first / last shared frame: +0 / +0
+
+  d_master range     -58 .. +70
+  d_master == 0      4095 of 4574 frames
+  |d_master| <= 8    4181 frames
+  |d_master| <= 16   4280 frames
+  |d_master| <= 32   4510 frames
+  |d_master| <= 64   4573 frames
+  |d_master| <= 128  4574 frames
+  |d_master| > 32    64 frames
+  the frames outside +-32: f1768 +38, f1789 +40, f1876 -50, f1878 +48, f1883 +38, f1886 +38, f1928 -40, f1932 +58, f1992 +34, f2001 +40, f2038 -58, f2065 +40, f2072 -58, f2116 -40, f2128 +40, f2172 +58, f2179 -40, f2229 -34, f2247 +40, f2264 -40, f2328 -40, f2330 +58, f2349 +58, f2362 -40, f2375 -40, f2394 -34, f2412 -36, f2414 -38, f2416 -34, f2425 -40, f2427 +40, f2449 +40, f2457 +40, f2599 -58, f2639 +38, f2654 +34, f2659 -48, f2712 +70, f2749 -38, f2750 -38, f2802 -40, f2806 -40, f2810 -40, f2818 -40, f2819 +40, f3005 +58, f3042 +40, f3056 +40, f3063 -58, f3070 +40, f3071 -40, f3144 +48, f3173 +40, f3235 -58, f3300 +48, f3325 +58, f3426 +40, f3578 +40, f3645 -40, f3700 +40, f3710 -40, f3775 -40, f3840 -40, f4555 +40
+
+  the gate's first frame with a differing state byte is f1830, so
+  the 1829 boundaries at or before f1829 run while the two
+  legs still hold byte-identical machine state:
+    d != 0 on 16 of 1829 of those frames, range -26..+40
+    the phase that round 9 names at f1832 (+14) is one of them: d(boundary f1831) = +14
+  The phase split is therefore older than the state split, and cannot
+  be an effect of it.
+
+  does the offset drift or snap back?  first frame with a non-zero offset f1767, last f4555
+    241 separated runs of non-zero offset; run lengths: 1x152 2x47 3x16 4x6 5x4 6x3 7x4 8x2 9x2 10x1 11x1 12x2 16x1
+    longest run 16 frames, and the offset is back to 0 at f4574 (+0) after 19 frames
+  An accumulating charge would give one long run and a monotonically
+  growing offset; this gives short runs that close and a bounded value.
+
+== 2. per-frame length difference ==
+
+  frame length = boundary master difference, deadline is 357368
+  mode of control lengths (357368, 1110)
+  mode of seed lengths    (357368, 1113)
+  mean control 357446.15   mean seed 357446.15   difference +0.000000
+  d(frame length) == 0 on 3915 of 4573 frames
+  distinct non-zero differences: 51
+  the non-zero values, with how often each appears:
+  -80 x2
+  -64 x1
+  -58 x13
+  -50 x2
+  -48 x2
+  -40 x54
+  -38 x4
+  -36 x2
+  -34 x7
+  -32 x2
+  -30 x6
+  -28 x5
+  -26 x4
+  -24 x2
+  -22 x62
+  -20 x6
+  -18 x78
+  -16 x5
+  -14 x13
+  -12 x9
+  -10 x24
+   -8 x11
+   -6 x15
+   -4 x5
+   -2 x4
+    2 x4
+    4 x2
+    6 x15
+    8 x10
+   10 x16
+   12 x8
+   14 x13
+   16 x4
+   18 x81
+   20 x3
+   22 x57
+   24 x2
+   26 x1
+   28 x4
+   30 x4
+   32 x5
+   34 x3
+   36 x3
+   38 x3
+   40 x57
+   48 x3
+   54 x3
+   58 x12
+   60 x1
+   62 x2
+   80 x4
+
+  which frames the differences land on is not one long split:
+  longest runs of consecutive differing frames (79 runs of 3 or more): f1767-f1769 (3), f1824-f1830 (7), f1832-f1834 (3), f1839-f1843 (5), f1848-f1850 (3), f1852-f1858 (7), f1866-f1868 (3), f1874-f1884 (11), f1886-f1890 (5), f1955-f1959 (5), f1964-f1969 (6), f1971-f1977 (7)
+
+== 3. where the boundary lands against the deadline ==
+
+  ctrl: exact 1110 frames, under deadline 1654, over deadline 1803
+     deviation from the 357368 deadline, ordinary frames only (|d| <= 200): -76 .. 76
+     total deviation over the route: 357372 master clocks
+  seed: exact 1113 frames, under deadline 1654, over deadline 1800
+     deviation from the 357368 deadline, ordinary frames only (|d| <= 200): -72 .. 68
+     total deviation over the route: 357372 master clocks
+
+  The three route pauses, identical on both legs to the clock:
+     boundary after f194: control length 531466, seed length 531466
+     boundary after f195: control length 183250, seed length 183250
+     boundary after f475: control length 826762, seed length 826762
+     boundary after f476: control length 245348, seed length 245348
+     boundary after f1316: control length 553796, seed length 553796
+     boundary after f1317: control length 160926, seed length 160926
+  Each long frame is paid for by the next short one; those are the
+  script's own parked waits, and the pair (long, short) is the same on
+  both legs, so they are not seam events.
+
+== 4. the two counters, same run ==
+
+  d(g_cpu.cycles)   range -2609 .. +141   zero on 1766 of 4574 frames
+  d(g_cpu.cycles) at the last shared frame: -1309
+  d(master_cycles)  range -58 .. +70   zero on 4095 of 4574 frames
+  d(master_cycles) at the last shared frame: +0
+  the guest cycle counter runs away and keeps its sign, the master
+  clock does not; `evidence/upstream_seam_cycle_bookkeeping.md` says
+  why they are different quantities and why only the master clock can
+  be compared across tiers.
+
+== 5. the onset window, boundary versus anchor ==
+
+  The NMI that starts frame f follows the boundary printed at f-1, so
+  the boundary column is read one frame to the left of the anchor.
+
+  frame  d(boundary f-1)  d(NMI $00C0E2)  d(1st $80C530)   $4212 reads  $80C530 entries  tier NMI ctrl/seed  tier $80C530 ctrl/seed
+   1826           -26               -26                 -     0 / 0     0 / 0   interp/interp -/-
+   1827           +14               +14                 -     0 / 0     0 / 0   interp/interp -/-
+   1828            -4                -4                 -     1 / 1     0 / 0   interp/interp -/-
+   1829           +14               +14                 -     1 / 1     0 / 0   interp/interp -/-
+   1830           -20               -20                 -    24 / 24    0 / 0   interp/interp -/-
+   1831           +14               +14                 -     1 / 1     0 / 0   interp/interp -/-
+   1832           +14               +14               -52     5 / 4     2 / 1   interp/interp interp/aot
+   1833            +0                +0               -40     1 / 1     5 / 1   interp/interp interp/aot
+   1834           -32               -32               +56     1 / 1     1 / 1   interp/interp interp/aot
+   1835            +0                +0                +0     1 / 1     1 / 1   interp/interp interp/aot
+   1836            +0                +0                +0     1 / 1     1 / 1   interp/interp interp/aot
+   1837            -6                -6                -6     0 / 0     2 / 1   interp/interp interp/aot
+
+  frames in this window where the NMI entry offset equals the previous frame's boundary offset: 12 of 12
+  (`[anchor]` reports `cpu->master_cycles` at handler entry; the frame
+   line is printed where `snes_frame_counter++` happens, and
+   `generic_frame_driver.c` mentions `master_cycles` on two lines only
+   (`:79` the deadline, `:103` the test), so the PPU draw in between
+   charges nothing and the end of frame f-1 and the NMI that starts
+   frame f are the same clock.  That is what the 12 of 12 agreement
+   says, and it is why the phase cannot be an artefact of how the tap
+   is placed.)
+  Tier of each anchor, control/seed: `$00C0E2` is the NMI handler and is
+  interpreted on both legs.  `$80C530` is interpreted on the control (it
+  is not in the shipped pair) and compiled AOT on the seed (it is in the
+  demoted set); that is the entire difference between the two legs.
+  Caveat on the entry counts: the AOT hook can only fire where the
+  compiled function's own entry pc is the anchor, while the interp hook
+  fires at every opcode start at that pc.  A pass that enters the seed's
+  root mid-body is invisible to the AOT hook, so the two counts are
+  tap-site counts, not call counts; the offset columns compare the first
+  entry each leg can report, which both tiers reach as an entry.
+
+  The busy-window end measured on the busy reads of f1830 and f1832,
+  `beam + autoJoyTimer`, which is where the auto-joypad handoff lands:
+    ctrl f1830: 654294564
+    ctrl f1832: 655009300
+    seed f1830: 654294564
+    seed f1832: 655009300
+  The edge is the same master clock on both legs, so the handoff is a
+  shared event; only the guest's sampling of it differs.  The reads:
+    ctrl:
+      beam 655009096  timer 204  v/pos 227/1292  val C1  busy, loops
+      beam 655009162  timer 138  v/pos 227/1358  val C1  busy, loops
+      beam 655009228  timer  72  v/pos 228/  60  val 81  busy, loops
+      beam 655009294  timer   6  v/pos 228/ 126  val 81  busy, loops
+      beam 655009360  timer   0  v/pos 228/ 192  val 80  clear, leaves the poll
+    seed:
+      beam 655009110  timer 190  v/pos 227/1306  val C1  busy, loops
+      beam 655009176  timer 124  v/pos 228/   8  val 81  busy, loops
+      beam 655009242  timer  58  v/pos 228/  74  val 81  busy, loops
+      beam 655009308  timer   0  v/pos 228/ 140  val 80  clear, leaves the poll
+  Control's fourth read lands 6 clocks before that edge and still sees
+  the busy bit, so it takes a fifth pass; the seed's fourth lands 8
+  clocks after it and leaves.  One pass of the poll costs 66 master
+  clocks on both legs, and that single pass is the whole -66 that
+  round 9 traced: entry offset +14 at the NMI, -52 at `$80C530`.
+
+== 6. what the same binaries do with no taps on ==
+
+  first frame with a state byte differing: f1830
+  frames with a state byte differing: 305 of 4575   total state bytes: 895
+  crc32 of WRAM: frame_001828 0xB615CF19 vs 0xC912779D
+  leg exe: d4e56dadd93b9dcc  3,137,312 B
+  leg exe: 355133810fb5efac  3,977,600 B
+  The instrumented pair, with every tap left unset, reproduces the
+  round-7 and round-8 gate numbers exactly, so the instrumentation is
+  inert and these measurements describe the shipped behaviour.
+  `framedump_diff.py state` is the attribution metric; label bytes are
+  excluded from it, the crc32 line above includes them.
+
+== 7. what this decides ==
+
+  The frame-edge offset that round 8 measured at f1832 (+14) is one
+  sample of a bounded, self-cancelling quantity, not a charge that
+  accumulates:
+  * over the 4574 shared boundaries it is 0 on 4095 and never leaves -58..+70;
+  * it appears in 241 separate runs, 152 of them one frame long, longest 16 frames;
+  * both legs cover exactly 1634601236 master clocks across the route, so nothing is lost;
+  * the guest cycle counter `cpu->cycles` by contrast ends at -1309 and reaches -2609, which is the counter
+    `evidence/upstream_seam_cycle_bookkeeping.md` says cannot be compared across tiers.
+
+  Where it comes from, in the pinned `generic_frame_driver.c`: the frame
+  deadline is `frame_end = master_cycles + 357368`, taken from wherever
+  the previous frame ended, the NMI is taken once before the slice loop,
+  a pending IRQ is serviced after each slice, and the loop tests
+  `master_cycles >= frame_end` only at the top of a slice.  So the
+  achieved boundary is the first instruction boundary at or after the
+  deadline that the loop can notice, and the overshoot is a whole number
+  of block or interrupt-take lengths.  Changing which bodies are compiled
+  changes which block that test first becomes true inside, which moves
+  the boundary by one such quantum - and at f1832 one quantum was enough
+  to move a 66-clock poll across a hardware edge both legs agree on.
+
+  That leaves exactly four conceivable levers, and all four are closed:
+  1. make the seed's block boundaries coincide with the control's at every
+     frame - impossible for a different body set; the offset is non-zero
+     on 479 boundaries route-wide, and it starts at f1767, 63 frames before the first
+     differing state byte;
+  2. make the guest's use of the edge insensitive to entry phase - the
+     read-time change of round 7 tried the only version of this available
+     to the title and made it worse (305 -> 1,333 differing frames);
+  3. price the seed's bodies so the overshoot comes out identical - that
+     is tuning the cycle model to a one-frame coincidence, and the
+     `+-40` charge at call boundaries that round 8 section 9 left unnamed
+     is still unnamed; round 9 watched it appear and cancel, so it is
+     not a lever either;
+  4. make the frame driver's deadline check land at instruction
+     granularity, so the overshoot stops being quantized - that is a
+     change to `runner/src/generic_frame_driver.c`, which is the pinned
+     framework, and the pin stays clean.
+
+  Decision: no seed is adopted, no `force_lle` block is added, and this
+  line of investigation is closed.  The shipped pair stays
+  `$80C399` + `$80AAB3`, executable a0587ed0a0e34687.  Anything further
+  here needs an upstream seam change, not a seed.

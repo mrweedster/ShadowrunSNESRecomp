@@ -1,0 +1,24 @@
+# ROM identity for the German release of Shadowrun — one edition of the port.
+#
+# Same format and consumers as rom_identity.txt (USA). The German translation
+# is a separate program: its reset vector, its code layout and its WRAM cursor
+# block all differ from the USA release, so it gets its own generated code
+# (src/gen-de) and its own build presets. The digests are of the bare image.
+#
+# Build this edition with:
+#   bash tools/regen.sh --identity rom_identity.de.txt --out-dir src/gen-de \
+#                       --cfg-dir recomp-lle
+#   cmake --preset linux-x64-de        # windows-x64-de, macos-arm64-de, ...
+#
+# See evidence/language_roms.md for how these were measured.
+
+display_name    = Shadowrun (Germany)
+rom_file        = Shadowrun (Germany).sfc
+expected_crc32  = e420e96f
+expected_md5    = c3dac1984c06eee0f9889667f83dc869
+expected_sha1   = 3118192dd257c0666067bfb6797769f26bdf4489
+expected_sha256 = fda5d1cc6e5202ee311e4777eaa8614ed7361a8f77661aad52c7a1a8cf86a17f
+rom_size        = 1048576
+mapping         = lorom
+region          = Germany
+game_id         = shadowrun-de

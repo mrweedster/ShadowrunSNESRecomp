@@ -1,0 +1,8 @@
+# Idle replay window: the street transition runs on timers, not input, so a
+# route that touches nothing reproduces it. Driven by tests/gate_state.py
+# after load_state, so frame numbering restarts at 0 for every replay.
+wait 30
+dump R0
+wait 1400
+dump R1
+quit

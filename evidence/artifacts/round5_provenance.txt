@@ -1,0 +1,66 @@
+# round5_provenance.txt
+#
+# what: what round 5 measured against, and every artifact that carries its evidence
+# how:  this script; the file index is shasum -a 256 over evidence/artifacts/round5_*
+#
+# framework pin: 773285b8210f2254ae87d0a14113980fb36990ad
+# generated: 2026-11-08T09:29:56Z (host Darwin arm64)
+# source tree: /Users/wee/Documents/work/ports/ShadowrunSNESRecomp
+
+framework pin file : framework_pins.txt
+  snesrecomp=773285b8210f2254ae87d0a14113980fb36990ad
+framework root     : /private/var/folders/cc/_czwdt293dg9ty_zgc1b57x00000gn/T/opencode/sr-pin
+  rev=773285b8210f2254ae87d0a14113980fb36990ad  dirty=no
+combat route       : tests/scripts/combat.txt  sha256 0a6c550da8c40f88384575910f875b10e630ab7f7729395cd877669a3d73154c
+parity route       : tests/out/probe_dense.txt  sha256 de38c3cf9499f14ed357e87daee8e878c0e5583c875b5debcf0a2837ddb3329f
+capture (round 3)  : evidence/artifacts/tier2_capture_round3_combat.json  sha256 3ea7fd1e494a15b21626a40c64d7cbaf27f0375b92e1743962c9c59733a538b6
+capture (accepted) : artifacts/tier2_capture_round5_accepted.json  sha256 3b619f1d2297a0828360c0f07988f42b46676aaf065c675df1b85dd97f466d22
+save state         : saves/save.srm  sha256 c47df746973ab9de95b1b8404920441af2783e82e3da7c90dc92d7fad753ebdf
+seed table (live)  : recomp/symbols.toml  sha256 c2e6a99f1e1745535367aa535d19789b2b4cfb6e6551873575ab6507a871c632
+committed cfg set  : recomp/bank00.cfg recomp/bank80.cfg recomp/bank81.cfg recomp/bankab.cfg 
+bank80.cfg         : sha256 9cfcb0392376d818dc6e0612041750fb5d3171901368fedcbbaa7ed6453453ba
+
+== archived generated sets
+  r5base  manifest 240af24bb4a71049  generated-set sha256 5c721b675499e425
+          269 nodes (226 aot_eligible, 43 lle_only), 47 roots, 229 exit modes
+  r5pair  manifest aa4a6f28a00afdb2  generated-set sha256 c52a74911a813662
+          283 nodes (240 aot_eligible, 43 lle_only), 49 roots, 319 exit modes
+
+== project digests in the archived module_v2.c
+  r5base  program_digest 240af24bb4a71049 build_digest a36a42fc0d6bf763
+  r5pair  program_digest aa4a6f28a00afdb2 build_digest bb92a258ee6698fa
+
+== every round-5 executable, by digest
+  build-r5base       79a45fc23cc7f7f9  2936800 B
+  build-r5pair       a0587ed0a0e34687  3103776 B
+  build-tr-ctrl      bcd699d3947d330d  113173824 B
+  build-tr-seed      a09dd9c2a37f95b2  114064096 B
+  build-s80C1C9      af287854fe96b6b4  3777568 B
+  build-s80C1B3      9772e4fd5722d7a5  3777568 B
+  build-s80F495      e5445f85d79ef53c  4315056 B
+  build-s80F362      f44fcdb2a4fcf9cc  3777568 B
+  build-s80F4F9      2000ec1922e505a7  3777568 B
+  build-s80F889      d476ed4111a5d5e4  3777568 B
+  (a swept build dir already removed still has its exe digest in
+   round5_variant_ledgers.txt, printed by tests/seed_variant.sh at build time)
+
+== artifacts, by digest (this file excepted)
+  round5_accepted_verify.md                           31502 B  5130fcdf95779b2c
+  round5_directive_inert.txt                           4680 B  912c53884b4b79ba
+  round5_directive.txt                                 2965 B  faa22f7282a8a7fa
+  round5_gate_state.txt                                2614 B  0402e8f65b3f301e
+  round5_gate_writer.txt                                886 B  311ea9b8985efd2c
+  round5_gen_r5base.tar.gz                           435288 B  5c721b675499e425
+  round5_gen_r5pair.tar.gz                           483650 B  c52a74911a813662
+  round5_latch_split.txt                               3427 B  838dd3381cdffb81
+  round5_latch_state.txt                               2215 B  521979eb7f189b29
+  round5_manifest_r5base.json.bz2                      7889 B  914be087adf50b94
+  round5_manifest_r5pair.json.bz2                      8454 B  6488228ea0d8a7a7
+  round5_pair_bytes.txt                                7127 B  dee13a0b31f1c05e
+  round5_pair_checkpoints.txt                          1894 B  98611fc353b39d7d
+  round5_pair_parity.txt                               3056 B  81ccf04ac00f0e91
+  round5_probe_route.txt                                279 B  de38c3cf9499f14e
+  round5_route_tails.txt                               8572 B  d6dd326b1fadb276
+  round5_sweep_sets.tar.gz                           104828 B  7e03f68ec843b0b3
+  round5_sweep.tsv                                     1588 B  10319bb1f9bf02bb
+  round5_variant_ledgers.txt                          11556 B  7b3108f374c67f29

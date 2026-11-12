@@ -1,0 +1,41 @@
+# round5_pair_parity.txt
+#
+# what: the shipped pair against the directive-bearing control on the dense parity route: frame dumps compared over the whole run
+# how:  cat of tests/out/r4/r5pair_parity.log, the redirect of tests/parity.sh tests/out/probe_dense.txt with PORT_BIN=build-r5base and PORT_BIN2=build-r5pair.  The run1 provenance warning is expected and is explained at the end of this file
+#
+# framework pin: 773285b8210f2254ae87d0a14113980fb36990ad
+# generated: 2026-11-08T09:29:56Z (host Darwin arm64)
+# source tree: /Users/wee/Documents/work/ports/ShadowrunSNESRecomp
+
+run1  build-r5base/ShadowrunSNESRecomp
+       anchor: /Users/wee/Documents/work/ports/ShadowrunSNESRecomp/build-r5base (own saves/, own config.ini)
+       [host +8.210s] frame service: implementation=LLE seconds=8.178543292 fps=559.391 cpu_seconds=8.164255000
+       [host +8.210s] exit: script quit after 4575 frames
+run2  build-r5pair/ShadowrunSNESRecomp
+       anchor: /Users/wee/Documents/work/ports/ShadowrunSNESRecomp/build-r5pair (own saves/, own config.ini)
+       [host +7.948s] frame service: implementation=LLE seconds=7.915153500 fps=578.005 cpu_seconds=7.878167000
+       [host +7.948s] exit: script quit after 4575 frames
+       manifest: /Users/wee/Documents/work/ports/ShadowrunSNESRecomp/tests/out/run1/run_manifest.json
+         exe    sha256 79a45fc23cc7f7f9  2,936,800 B
+         tree   /Users/wee/Documents/work/ports/ShadowrunSNESRecomp/build-r5base  config=Release embed=OFF gen_objects=18
+         gen    18 units, 215 promoted functions, 263 dispatch entries, sha256 3f22138eb5d1b401
+         fw     /private/var/folders/cc/_czwdt293dg9ty_zgc1b57x00000gn/T/opencode/sr-pin  rev=773285b8210f2254ae87d0a14113980fb36990ad dirty=False
+         WARN   9 generated file(s) touched after this executable was linked: the binary may not contain them
+       manifest: /Users/wee/Documents/work/ports/ShadowrunSNESRecomp/tests/out/run2/run_manifest.json
+         exe    sha256 a0587ed0a0e34687  3,103,776 B
+         tree   /Users/wee/Documents/work/ports/ShadowrunSNESRecomp/build-r5pair  config=Release embed=OFF gen_objects=18
+         gen    18 units, 215 promoted functions, 263 dispatch entries, sha256 3f22138eb5d1b401
+         fw     /private/var/folders/cc/_czwdt293dg9ty_zgc1b57x00000gn/T/opencode/sr-pin  rev=773285b8210f2254ae87d0a14113980fb36990ad dirty=False
+       same inputs: gen_sha256=3f22138eb5d1  gen_units=18  gen_functions=215  gen_dispatch=263  framework=773285b8210f  config=Release  embed_rom=OFF
+identical over 4575 frames
+
+== reading the run1 warning
+  run1 (the control exe) was linked before the pair tree regenerated src/gen, so
+  provenance.py labels its generated-set digest as possibly not compiled in.
+  That label is about the control binary, not about run2: the pair exe's own
+  identity is established against the archived set in round5_provenance.txt, and
+  the gate is the equality of the two runs' frame dumps, which does not depend
+  on the control's printed gen digest.
+
+  verdict lines:
+    identical over 4575 frames
